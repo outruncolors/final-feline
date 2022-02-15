@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import { NavigateFunction } from "react-router-dom";
 import {
   basicTextStyle,
   titleTextStyle,
@@ -12,10 +13,11 @@ const refs: Record<string, PIXI.Container> = {};
 
 export const initializeWorldMap = (
   app: PIXI.Application,
-  screen: PIXI.Container
+  screen: PIXI.Container,
+  navigator: NavigateFunction
 ) => {
   addTitle(app, screen);
-  addOptions(app, screen);
+  addOptions(app, screen, navigator);
 };
 
 const addTitle = (app: PIXI.Application, screen: PIXI.Container) => {
@@ -26,21 +28,27 @@ const addTitle = (app: PIXI.Application, screen: PIXI.Container) => {
   screen.addChild(title);
 };
 
-const addOptions = (app: PIXI.Application, screen: PIXI.Container) => {
+const addOptions = (
+  app: PIXI.Application,
+  screen: PIXI.Container,
+  navigator: NavigateFunction
+) => {
   const optionWrapper = new PIXI.Container();
   const options = locations.sort((a, b) => a.name.localeCompare(b.name));
 
   let optionIndex = 0;
   for (const option of options) {
     const optionText = new PIXI.Text(option.name.toUpperCase(), basicTextStyle);
+    optionText.anchor.set(1);
     optionText.position.set(
-      padding.small,
-      optionIndex * optionText.height + padding.small
+      0,
+      optionIndex * optionText.height + padding.medium
     );
 
     if (typeof option.accessible === "undefined" || option.accessible) {
       makeHighlightable(optionText);
-      const handleInteraction = () => handleSelectOption(option, screen);
+      const handleInteraction = () =>
+        handleSelectOption(option, screen, navigator);
       optionText.on("mousedown", handleInteraction);
       optionText.on("touchstart", handleInteraction);
     } else {
@@ -59,6 +67,14 @@ const addOptions = (app: PIXI.Application, screen: PIXI.Container) => {
   screen.addChild(optionWrapper);
 };
 
-const handleSelectOption = (option: WorldLocation, screen: PIXI.Container) => {
+const handleSelectOption = (
+  option: WorldLocation,
+  screen: PIXI.Container,
+  navigator: NavigateFunction
+) => {
   screen.removeChildren();
+
+  if (option.name === "Pub") {
+    navigator("/pub");
+  }
 };
