@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@pixi/filter-color-overlay": "^4.1.5",
+    "@pixi/sound": "^4.2.0",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -13,6 +15,7 @@
     "@types/react-dom": "^17.0.11",
     "chance": "^1.1.8",
     "mobx": "^6.3.13",
+    "pixi.js": "^6.2.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
