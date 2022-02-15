@@ -1,3 +1,4 @@
+export * from "./bootstrap";
 export * from "./non-combat-event";
 export * from "./pub";
 export * from "./pve-battle";

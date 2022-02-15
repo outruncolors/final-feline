@@ -1,7 +1,7 @@
 import "./App.css";
 import * as PIXI from "pixi.js";
 import { useEffect, useRef } from "react";
-import { bootstrap } from "./common";
+import { bootstrap } from "./instances";
 
 function App() {
   const mainRef = useRef<null | HTMLElement>(null);
