@@ -1,7 +1,8 @@
 export const locations: WorldLocation[] = [
   {
     id: 0,
-    name: "Pub",
+    name: "Arena",
+    accessible: false,
   },
   {
     id: 1,
@@ -9,12 +10,11 @@ export const locations: WorldLocation[] = [
   },
   {
     id: 2,
-    name: "Shop",
+    name: "Cave",
   },
   {
     id: 3,
-    name: "Arena",
-    accessible: false,
+    name: "Forest",
   },
   {
     id: 4,
@@ -26,15 +26,15 @@ export const locations: WorldLocation[] = [
   },
   {
     id: 6,
-    name: "Forest",
-  },
-  {
-    id: 7,
     name: "Mountain",
   },
   {
+    id: 7,
+    name: "Pub",
+  },
+  {
     id: 8,
-    name: "Cave",
+    name: "Shop",
   },
   {
     id: 9,
@@ -42,6 +42,6 @@ export const locations: WorldLocation[] = [
   },
   {
     id: 10,
-    name: "Barracks",
+    name: "World Map",
   },
 ];
