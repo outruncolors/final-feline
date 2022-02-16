@@ -1,47 +1,47 @@
 export const locations: WorldLocation[] = [
   {
     id: 0,
-    name: "Arena",
+    name: "arena",
     accessible: false,
   },
   {
     id: 1,
-    name: "Beach",
+    name: "beach",
   },
   {
     id: 2,
-    name: "Cave",
+    name: "cave",
   },
   {
     id: 3,
-    name: "Forest",
+    name: "forest",
   },
   {
     id: 4,
-    name: "Housing",
+    name: "housing",
   },
   {
     id: 5,
-    name: "Market",
+    name: "market",
   },
   {
     id: 6,
-    name: "Mountain",
+    name: "mountain",
   },
   {
     id: 7,
-    name: "Pub",
+    name: "pub",
   },
   {
     id: 8,
-    name: "Shop",
+    name: "shop",
   },
   {
     id: 9,
-    name: "Valley",
+    name: "valley",
   },
   {
     id: 10,
-    name: "World Map",
+    name: "world-map",
   },
 ];

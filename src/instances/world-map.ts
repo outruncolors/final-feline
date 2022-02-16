@@ -11,8 +11,6 @@ import {
 } from "../common";
 import { locations } from "../data";
 
-const refs: Record<string, PIXI.Container> = {};
-
 export const initializeWorldMap = (
   app: PIXI.Application,
   screen: PIXI.Container,
@@ -28,7 +26,6 @@ const addTitle = (app: PIXI.Application, screen: PIXI.Container) => {
   const title = new PIXI.Text(config.GAME_TITLE, titleTextStyle);
   title.anchor.set(0.5);
   title.position.set(app.view.width / 2, padding.large * 2);
-  refs.title = title;
   screen.addChild(title);
 };
 
@@ -38,7 +35,9 @@ const addOptions = (
   navigator: NavigateFunction
 ) => {
   const optionWrapper = new PIXI.Container();
-  const options = locations.sort((a, b) => a.name.localeCompare(b.name));
+  const options = locations
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .filter(({ name }) => name !== "world-map");
 
   let optionIndex = 0;
   for (const option of options) {
@@ -67,7 +66,6 @@ const addOptions = (
     app.view.width / 2 - optionWrapper.width,
     padding.large * 4
   );
-  refs.optionWrapper = optionWrapper;
   screen.addChild(optionWrapper);
 };
 
@@ -78,10 +76,7 @@ const handleSelectOption = (
 ) => {
   screen.removeChildren();
   sound.stop("world-map");
-
-  if (option.name === "Pub") {
-    navigator("/pub");
-  }
+  navigator(`/${option.name}`);
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {

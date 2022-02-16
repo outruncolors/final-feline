@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import { NavigateFunction } from "react-router-dom";
 
 const loader = PIXI.Loader.shared;
+let alreadyLoaded = false;
 
 export const bootstrap = async (
   app: PIXI.Application,
@@ -16,7 +17,10 @@ export const bootstrap = async (
   app.stage.addChild(screen);
   app.renderer.render(app.stage);
 
-  await loadCommonAssets();
+  if (!alreadyLoaded) {
+    await loadCommonAssets();
+    alreadyLoaded = true;
+  }
 
   instance(app, screen, navigator);
 };

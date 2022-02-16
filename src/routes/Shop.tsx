@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { registry } from "../instances";
 import { useInstance } from "../common";
 
-export const Pub = () => {
+export const Shop = () => {
   const mainRef = useRef<null | HTMLElement>(null);
 
   useInstance(mainRef.current, registry);
