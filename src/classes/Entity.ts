@@ -36,6 +36,9 @@ export class Entity {
   damageTakenTextVelocity = 0;
   damageTakenFlashCount = 0;
 
+  // Clips
+  onFinishAnimation: () => void = () => {};
+
   constructor(_name: EntityName) {
     this.name = _name;
   }
@@ -119,6 +122,7 @@ export class Entity {
   public attack() {
     const attack = this.showAnimation("attacking");
     attack.loop = false;
+    this.perform("attacking");
   }
 
   public defend() {
@@ -182,7 +186,6 @@ export class Entity {
   private die() {
     const dying = this.showAnimation("dying") as PIXI.AnimatedSprite;
     dying.loop = false;
-
     dying.onComplete = () => {
       if (this.castShadow) {
         this.castShadow.width = 60 * config.ENTITY_SCALE;
@@ -285,6 +288,7 @@ export class Entity {
         this.movedDistance = 0;
         this.movingVelocity = 0;
         this.showAnimation("standing");
+        this.onFinishAnimation();
       }
     }
   }
@@ -299,8 +303,23 @@ export class Entity {
         this.movingDirection = "none";
         this.movingVelocity = 0;
         this.showAnimation("standing");
+        this.onFinishAnimation();
       }
     }
+  }
+
+  // Clips
+  private perform(animation: keyof EntityAnimations) {
+    this.onFinishAnimation = () => {
+      this.showAnimation(animation);
+
+      setTimeout(() => {
+        this.onFinishAnimation = () => {};
+        this.stepBack();
+      }, 1250);
+    };
+
+    this.stepUp();
   }
 }
 
