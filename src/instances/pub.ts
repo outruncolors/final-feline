@@ -1,8 +1,12 @@
 import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
+import Chance from "chance";
 import { NavigateFunction } from "react-router-dom";
-import { getLocationSprite } from "../common";
+import { config, getLocationSprite } from "../common";
+import { entityStats } from "../data";
 import { Entity } from "../classes";
+
+const CHANCE = new Chance();
 
 export const initializePub = (
   app: PIXI.Application,
@@ -11,7 +15,7 @@ export const initializePub = (
 ) => {
   addImage(app, screen);
   playBackgroundMusic();
-  loadMercenary("copamancer", app, screen);
+  populatePub(app, screen);
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
@@ -28,20 +32,29 @@ const playBackgroundMusic = async () => {
   });
 };
 
-const loadMercenary = async (
-  mercenary: EntityName,
-  app: PIXI.Application,
-  screen: PIXI.Container
-) => {
-  const entity = new Entity(mercenary);
+const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
+  const populationCount = CHANCE.integer({
+    min: config.PUB_POPULATION_MINIMUM,
+    max: config.PUB_POPULATION_MAXIMUM,
+  });
+  const populationWrapper = new PIXI.Container();
 
-  await entity.load();
+  // const possibleEntities = Object.keys(entityStats) as EntityName[];
+  const possibleEntities = ["dramanaut", "copamancer"] as EntityName[];
+  for (let i = 0; i < populationCount; i++) {
+    const entity = new Entity(CHANCE.pickone(possibleEntities));
 
-  const wrapper = entity.container!;
-  wrapper.position.set(app.view.width / 2, app.view.height / 2);
+    await entity.load();
 
-  screen.addChild(wrapper);
+    const container = entity.container!;
+    container.position.x = CHANCE.integer({
+      min: 0,
+      max: app.view.width * 0.9,
+    });
+    populationWrapper.addChild(container);
+  }
 
-  // FOR DEBUG
-  (window as any).entity = entity;
+  populationWrapper.position.y = app.view.height - populationWrapper.height;
+
+  screen.addChild(populationWrapper);
 };

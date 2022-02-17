@@ -51,8 +51,12 @@ export class Entity {
   public async load() {
     const name = this.name as EntityName;
 
-    if (!this.loaded) {
-      this.animations = await loadEntityAnimations(name);
+    try {
+      if (!this.loaded) {
+        this.animations = await loadEntityAnimations(name);
+        this.loaded = true;
+      }
+    } catch {
       this.loaded = true;
     }
 

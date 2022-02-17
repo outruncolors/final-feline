@@ -23,48 +23,44 @@ export const getLocationSprite = (locationName: string) => {
   }
 };
 
+const _loadEntityAnimations = (job: string) => {
+  const sheet =
+    PIXI.Loader.shared.resources[`/assets/images/${job}.json`].spritesheet!;
+  const { stand, walk, attack, defend, down } = sheet.textures;
+  const container = new PIXI.Container();
+  const standing = new PIXI.AnimatedSprite([stand]);
+  const walking = new PIXI.AnimatedSprite([stand, walk]);
+  const attacking = new PIXI.AnimatedSprite([stand, attack, stand]);
+  const defending = new PIXI.AnimatedSprite([stand, defend]);
+  const dying = new PIXI.AnimatedSprite([stand, down]);
+
+  for (const animation of [standing, walking, attacking, defending, dying]) {
+    animation.scale.set(5);
+    animation.animationSpeed = 0.05;
+    animation.visible = false;
+    container.addChild(animation);
+  }
+
+  standing.visible = true;
+
+  return {
+    job,
+    container,
+    standing,
+    walking,
+    attacking,
+    defending,
+    dying,
+  };
+};
+
 export const loadEntityAnimations = (job: string): Promise<EntityAnimations> =>
-  new Promise((resolve) =>
-    loader
-      .add(`/assets/images/${job}.json`, { crossOrigin: "anonymous" })
-      .load(() => {
-        const sheet =
-          PIXI.Loader.shared.resources[`/assets/images/${job}.json`]
-            .spritesheet;
-
-        if (sheet) {
-          const { stand, walk, attack, defend, down } = sheet.textures;
-          const container = new PIXI.Container();
-          const standing = new PIXI.AnimatedSprite([stand]);
-          const walking = new PIXI.AnimatedSprite([stand, walk]);
-          const attacking = new PIXI.AnimatedSprite([stand, attack, stand]);
-          const defending = new PIXI.AnimatedSprite([stand, defend]);
-          const dying = new PIXI.AnimatedSprite([stand, down]);
-
-          for (const animation of [
-            standing,
-            walking,
-            attacking,
-            defending,
-            dying,
-          ]) {
-            animation.scale.set(5);
-            animation.animationSpeed = 0.05;
-            animation.visible = false;
-            container.addChild(animation);
-          }
-
-          standing.visible = true;
-
-          resolve({
-            job,
-            container,
-            standing,
-            walking,
-            attacking,
-            defending,
-            dying,
-          });
-        }
-      })
-  );
+  new Promise((resolve) => {
+    try {
+      loader
+        .add(`/assets/images/${job}.json`, { crossOrigin: "anonymous" })
+        .load(() => resolve(_loadEntityAnimations(job)));
+    } catch (error) {
+      return resolve(_loadEntityAnimations(job));
+    }
+  });
