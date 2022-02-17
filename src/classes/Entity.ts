@@ -4,6 +4,8 @@ import { allSkills, entitySkills, entityStats } from "../data";
 import Chance from "chance";
 
 const CHANCE = new Chance();
+const MOVING_DISTANCE = 256;
+const WALKING_VELOCITY = 2;
 
 const ticker = PIXI.Ticker.shared;
 
@@ -18,6 +20,13 @@ export class Entity {
   currentStats: null | Record<StatName, number> = null;
   maxStats: null | Record<StatName, number> = null;
   baseSkills: EntitySkill[] = [];
+
+  // Moving
+  movingDirection: "back" | "none" | "forward" = "none";
+  movingVelocity = 0;
+  movedDistance = 0;
+
+  // Damage Taken
   displayingDamageTaken = false;
   damageTakenText: null | PIXI.Text = null;
   damageTakenTextVelocity = 0;
@@ -27,6 +36,7 @@ export class Entity {
     this.name = _name;
   }
 
+  // Public
   public get isDead() {
     return Boolean(this.currentStats?.HP === 0);
   }
@@ -42,6 +52,8 @@ export class Entity {
     ticker.add(this.update.bind(this));
 
     this.container = this.animations!.container;
+
+    this.addShadow();
 
     // Add Stats
     const stats = entityStats[name];
@@ -110,6 +122,24 @@ export class Entity {
     defend.loop = false;
   }
 
+  public stepUp() {
+    this.movingVelocity = WALKING_VELOCITY;
+    this.movingDirection = "forward";
+    this.showAnimation("walking");
+  }
+
+  public stepBack() {
+    if (this.container) {
+      this.movingVelocity = WALKING_VELOCITY;
+      this.movingDirection = "back";
+
+      const walking = this.showAnimation("walking");
+      walking.anchor.x = 1;
+      walking.scale.x *= -1;
+    }
+  }
+
+  // Private
   private hideAllAnimations() {
     if (this.animations) {
       const { job, container, ...animations } = this.animations;
@@ -117,6 +147,11 @@ export class Entity {
       for (const animation of Object.values(animations)) {
         animation.stop();
         animation.visible = false;
+        animation.anchor.x = 0;
+
+        if (animation.scale.x < 0) {
+          animation.scale.x *= -1;
+        }
       }
     }
   }
@@ -144,6 +179,12 @@ export class Entity {
   private update() {
     if (this.displayingDamageTaken) {
       this.liftDamageTaken();
+    }
+
+    if (this.movingDirection === "forward") {
+      this.moveForward();
+    } else if (this.movingDirection === "back") {
+      this.moveBackward();
     }
   }
 
@@ -197,6 +238,51 @@ export class Entity {
 
       if (this.isDead) {
         this.die();
+      }
+    }
+  }
+
+  private addShadow() {
+    if (this.container) {
+      const circle = new PIXI.Graphics();
+      circle.beginFill(colors.grey);
+      circle.drawCircle(0, 0, 32);
+      circle.endFill();
+      circle.alpha = 0.75;
+      circle.width = 128;
+      circle.height = 32;
+      circle.x = this.container.width / 2 + 12;
+      circle.y = this.container.height - 12;
+      circle.blendMode = PIXI.BLEND_MODES.MULTIPLY;
+
+      this.container.addChildAt(circle, 0);
+    }
+  }
+
+  private moveForward() {
+    if (this.container) {
+      this.container.position.x += this.movingVelocity;
+      this.movedDistance += this.movingVelocity;
+
+      if (this.movedDistance >= MOVING_DISTANCE) {
+        this.movingDirection = "none";
+        this.movedDistance = 0;
+        this.movingVelocity = 0;
+        this.showAnimation("standing");
+      }
+    }
+  }
+
+  private moveBackward() {
+    if (this.container) {
+      this.container.position.x -= this.movingVelocity;
+      this.movedDistance += this.movingVelocity;
+
+      if (this.movedDistance >= MOVING_DISTANCE) {
+        this.movedDistance = 0;
+        this.movingDirection = "none";
+        this.movingVelocity = 0;
+        this.showAnimation("standing");
       }
     }
   }
