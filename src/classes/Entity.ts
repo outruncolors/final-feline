@@ -81,6 +81,24 @@ export class Entity {
     }
   }
 
+  public walk() {
+    this.showAnimation("walking");
+  }
+
+  public stand() {
+    this.showAnimation("standing");
+  }
+
+  public attack() {
+    const attack = this.showAnimation("attacking");
+    attack.loop = false;
+  }
+
+  public defend() {
+    const defend = this.showAnimation("defending");
+    defend.loop = false;
+  }
+
   private hideAllAnimations() {
     if (this.animations) {
       const { job, container, ...animations } = this.animations;
@@ -98,7 +116,7 @@ export class Entity {
 
       this.hideAllAnimations();
 
-      entry.play();
+      entry.gotoAndPlay(0);
       entry.visible = true;
 
       return entry;

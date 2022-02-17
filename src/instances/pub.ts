@@ -46,5 +46,17 @@ const loadMercenary = async (
     damage(amount: number) {
       entity.damageBy(amount);
     },
+    walk() {
+      entity.walk();
+    },
+    stand() {
+      entity.stand();
+    },
+    attack() {
+      entity.attack();
+    },
+    defend() {
+      entity.defend();
+    },
   };
 };

@@ -37,7 +37,7 @@ export const loadEntityAnimations = (job: string): Promise<EntityAnimations> =>
           const container = new PIXI.Container();
           const standing = new PIXI.AnimatedSprite([stand]);
           const walking = new PIXI.AnimatedSprite([stand, walk]);
-          const attacking = new PIXI.AnimatedSprite([stand, attack]);
+          const attacking = new PIXI.AnimatedSprite([stand, attack, stand]);
           const defending = new PIXI.AnimatedSprite([stand, defend]);
           const dying = new PIXI.AnimatedSprite([stand, down]);
 
