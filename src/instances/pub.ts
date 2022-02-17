@@ -11,7 +11,7 @@ export const initializePub = (
 ) => {
   addImage(app, screen);
   playBackgroundMusic();
-  loadMercenary("copamancer", app, screen);
+  loadMercenary("dramanaut", app, screen);
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
@@ -42,21 +42,5 @@ const loadMercenary = async (
 
   screen.addChild(wrapper);
 
-  (window as any).sprite_actions = {
-    damage(amount: number) {
-      entity.damageBy(amount);
-    },
-    walk() {
-      entity.walk();
-    },
-    stand() {
-      entity.stand();
-    },
-    attack() {
-      entity.attack();
-    },
-    defend() {
-      entity.defend();
-    },
-  };
+  (window as any).entity = entity;
 };

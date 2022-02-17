@@ -1,9 +1,11 @@
 import * as PIXI from "pixi.js";
-import { loadEntityAnimations } from "../common";
+import { colors, loadEntityAnimations, basicTextStyle } from "../common";
 import { allSkills, entitySkills, entityStats } from "../data";
 import Chance from "chance";
 
 const CHANCE = new Chance();
+
+const ticker = PIXI.Ticker.shared;
 
 export class Entity {
   id = CHANCE.guid();
@@ -16,9 +18,17 @@ export class Entity {
   currentStats: null | Record<StatName, number> = null;
   maxStats: null | Record<StatName, number> = null;
   baseSkills: EntitySkill[] = [];
+  displayingDamageTaken = false;
+  damageTakenText: null | PIXI.Text = null;
+  damageTakenTextVelocity = 0;
+  damageTakenFlashCount = 0;
 
   constructor(_name: EntityName) {
     this.name = _name;
+  }
+
+  public get isDead() {
+    return Boolean(this.currentStats?.HP === 0);
   }
 
   public async load() {
@@ -28,6 +38,8 @@ export class Entity {
       this.animations = await loadEntityAnimations(name);
       this.loaded = true;
     }
+
+    ticker.add(this.update.bind(this));
 
     this.container = this.animations!.container;
 
@@ -71,13 +83,12 @@ export class Entity {
   }
 
   public damageBy(amount: number) {
-    const stats = this.currentStats!;
-    const hpAfterAttack = Math.max(stats.HP - amount, 0);
+    if (!this.isDead) {
+      const stats = this.currentStats!;
+      const hpAfterAttack = Math.max(stats.HP - amount, 0);
+      stats.HP = hpAfterAttack;
 
-    stats.HP = hpAfterAttack;
-
-    if (stats.HP === 0) {
-      this.die();
+      this.displayDamageTaken(amount);
     }
   }
 
@@ -128,6 +139,66 @@ export class Entity {
   private die() {
     const dying = this.showAnimation("dying");
     dying.loop = false;
+  }
+
+  private update() {
+    if (this.displayingDamageTaken) {
+      this.liftDamageTaken();
+    }
+  }
+
+  private displayDamageTaken(amount: number) {
+    if (this.container) {
+      const damagedBy = amount * -1;
+      this.displayingDamageTaken = true;
+      this.damageTakenText = new PIXI.Text(damagedBy.toString(), {
+        ...basicTextStyle,
+        fontSize: 52,
+      });
+      this.damageTakenText.anchor.set(0.5);
+      this.damageTakenText.position.set(
+        this.container.width / 2,
+        this.container.height / 2
+      );
+      this.container.addChild(this.damageTakenText);
+
+      if (damagedBy > 0) {
+        this.damageTakenText.text = `+${this.damageTakenText.text}`;
+        this.damageTakenText.tint = colors.green;
+      }
+    }
+  }
+
+  private liftDamageTaken() {
+    if (this.container && this.displayingDamageTaken && this.damageTakenText) {
+      this.damageTakenTextVelocity += 0.3;
+      this.damageTakenText.position.y -= this.damageTakenTextVelocity;
+
+      this.damageTakenFlashCount++;
+
+      if (this.damageTakenFlashCount % 10 === 0) {
+        this.container.alpha = this.container.alpha === 0.5 ? 1 : 0.5;
+        this.damageTakenFlashCount = 0;
+      }
+
+      if (this.damageTakenText.getGlobalPosition().y <= 0) {
+        this.hideDamageTaken();
+      }
+    }
+  }
+
+  private hideDamageTaken() {
+    if (this.container && this.displayingDamageTaken && this.damageTakenText) {
+      this.damageTakenText.destroy();
+      this.displayingDamageTaken = false;
+      this.damageTakenTextVelocity = 0;
+      this.damageTakenFlashCount = 0;
+      this.container.alpha = 1;
+
+      if (this.isDead) {
+        this.die();
+      }
+    }
   }
 }
 
