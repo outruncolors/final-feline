@@ -41,4 +41,10 @@ const loadMercenary = async (
   wrapper.position.set(app.view.width / 2, app.view.height / 2);
 
   screen.addChild(wrapper);
+
+  (window as any).sprite_actions = {
+    damage(amount: number) {
+      entity.damageBy(amount);
+    },
+  };
 };

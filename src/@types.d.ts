@@ -26,6 +26,8 @@ declare interface EntityStats {
   ATB: number;
 }
 
+declare type StatName = keyof EntityStats;
+
 declare interface EntitySkill {
   id: number;
   name: string;
