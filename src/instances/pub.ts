@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import { NavigateFunction } from "react-router-dom";
-import { getLocationSprite, loadJobAnimations } from "../common";
+import { getLocationSprite } from "../common";
 import { Entity } from "../classes";
 
 export const initializePub = (
@@ -29,7 +29,7 @@ const playBackgroundMusic = async () => {
 };
 
 const loadMercenary = async (
-  mercenary: string,
+  mercenary: EntityName,
   app: PIXI.Application,
   screen: PIXI.Container
 ) => {

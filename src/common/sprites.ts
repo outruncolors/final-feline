@@ -23,7 +23,7 @@ export const getLocationSprite = (locationName: string) => {
   }
 };
 
-export const loadJobAnimations = (job: string): Promise<EntityAnimations> =>
+export const loadEntityAnimations = (job: string): Promise<EntityAnimations> =>
   new Promise((resolve) =>
     loader
       .add(`/assets/images/${job}.json`, { crossOrigin: "anonymous" })

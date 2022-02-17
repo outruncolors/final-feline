@@ -1,3 +1,11 @@
+declare type EntityName =
+  | "dramanaut"
+  | "copamancer"
+  | "seethesayer"
+  | "dilationist"
+  | "maldician"
+  | "janninator";
+
 declare interface EntityAnimations {
   job: string;
   container: PIXI.Container;
@@ -6,6 +14,29 @@ declare interface EntityAnimations {
   attacking: PIXI.AnimatedSprite;
   defending: PIXI.AnimatedSprite;
   dying: PIXI.AnimatedSprite;
+}
+
+declare interface EntityStats {
+  STR: number[];
+  AGI: number[];
+  MAG: number[];
+  STA: number[];
+  HP: number[];
+  MP: number[];
+  ATB: number;
+}
+
+declare interface EntitySkill {
+  id: number;
+  name: string;
+  description: string;
+  friendly?: boolean;
+  multi?: boolean;
+  cost: number;
+  effect: (
+    user: any,
+    target: any
+  ) => void | ((user: any, targets: any[]) => void);
 }
 
 declare interface WorldLocation {
