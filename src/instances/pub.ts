@@ -11,7 +11,7 @@ export const initializePub = (
 ) => {
   addImage(app, screen);
   playBackgroundMusic();
-  loadMercenary("copamancer", app, screen);
+  loadMercenary("dramanaut", app, screen);
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {

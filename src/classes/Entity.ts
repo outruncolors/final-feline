@@ -1,11 +1,14 @@
 import * as PIXI from "pixi.js";
-import { colors, loadEntityAnimations, basicTextStyle } from "../common";
+import {
+  colors,
+  config,
+  loadEntityAnimations,
+  basicTextStyle,
+} from "../common";
 import { allSkills, entitySkills, entityStats } from "../data";
 import Chance from "chance";
 
 const CHANCE = new Chance();
-const MOVING_DISTANCE = 256;
-const WALKING_VELOCITY = 2;
 
 const ticker = PIXI.Ticker.shared;
 
@@ -20,6 +23,7 @@ export class Entity {
   currentStats: null | Record<StatName, number> = null;
   maxStats: null | Record<StatName, number> = null;
   baseSkills: EntitySkill[] = [];
+  castShadow: null | PIXI.Graphics = null;
 
   // Moving
   movingDirection: "back" | "none" | "forward" = "none";
@@ -123,14 +127,14 @@ export class Entity {
   }
 
   public stepUp() {
-    this.movingVelocity = WALKING_VELOCITY;
+    this.movingVelocity = config.ENTITY_WALKING_VELOCITY;
     this.movingDirection = "forward";
     this.showAnimation("walking");
   }
 
   public stepBack() {
     if (this.container) {
-      this.movingVelocity = WALKING_VELOCITY;
+      this.movingVelocity = config.ENTITY_WALKING_VELOCITY;
       this.movingDirection = "back";
 
       const walking = this.showAnimation("walking");
@@ -154,6 +158,10 @@ export class Entity {
         }
       }
     }
+
+    if (this.castShadow) {
+      this.castShadow.width = 25 * config.ENTITY_SCALE;
+    }
   }
 
   private showAnimation(animation: keyof EntityAnimations) {
@@ -172,8 +180,14 @@ export class Entity {
   }
 
   private die() {
-    const dying = this.showAnimation("dying");
+    const dying = this.showAnimation("dying") as PIXI.AnimatedSprite;
     dying.loop = false;
+
+    dying.onComplete = () => {
+      if (this.castShadow) {
+        this.castShadow.width = 60 * config.ENTITY_SCALE;
+      }
+    };
   }
 
   private update() {
@@ -245,17 +259,19 @@ export class Entity {
   private addShadow() {
     if (this.container) {
       const circle = new PIXI.Graphics();
+
       circle.beginFill(colors.grey);
       circle.drawCircle(0, 0, 32);
       circle.endFill();
       circle.alpha = 0.75;
-      circle.width = 128;
+      circle.width = 25 * config.ENTITY_SCALE;
       circle.height = 32;
       circle.x = this.container.width / 2 + 12;
       circle.y = this.container.height - 12;
       circle.blendMode = PIXI.BLEND_MODES.MULTIPLY;
 
-      this.container.addChildAt(circle, 0);
+      this.castShadow = circle;
+      this.container.addChildAt(this.castShadow, 0);
     }
   }
 
@@ -264,7 +280,7 @@ export class Entity {
       this.container.position.x += this.movingVelocity;
       this.movedDistance += this.movingVelocity;
 
-      if (this.movedDistance >= MOVING_DISTANCE) {
+      if (this.movedDistance >= config.ENTITY_MOVING_DISTANCE) {
         this.movingDirection = "none";
         this.movedDistance = 0;
         this.movingVelocity = 0;
@@ -278,7 +294,7 @@ export class Entity {
       this.container.position.x -= this.movingVelocity;
       this.movedDistance += this.movingVelocity;
 
-      if (this.movedDistance >= MOVING_DISTANCE) {
+      if (this.movedDistance >= config.ENTITY_MOVING_DISTANCE) {
         this.movedDistance = 0;
         this.movingDirection = "none";
         this.movingVelocity = 0;
