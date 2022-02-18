@@ -23,10 +23,15 @@ export const getLocationSprite = (locationName: string) => {
   }
 };
 
-const _loadEntityAnimations = (job: string) => {
+const _loadEntityAnimations = (job: EntityName) => {
   const sheet =
-    PIXI.Loader.shared.resources[`/assets/images/${job}.json`].spritesheet!;
-  const { stand, walk, attack, defend, down } = sheet.textures;
+    PIXI.Loader.shared.resources[`/assets/images/jobs.json`].spritesheet!;
+  const stand = sheet.textures[`${job}_stand`];
+  const walk = sheet.textures[`${job}_walk`];
+  const attack = sheet.textures[`${job}_attack`];
+  const defend = sheet.textures[`${job}_defend`];
+  const down = sheet.textures[`${job}_down`];
+
   const container = new PIXI.Container();
   const standing = new PIXI.AnimatedSprite([stand]);
   const walking = new PIXI.AnimatedSprite([stand, walk]);
@@ -44,7 +49,6 @@ const _loadEntityAnimations = (job: string) => {
   standing.visible = true;
 
   return {
-    job,
     container,
     standing,
     walking,
@@ -54,11 +58,13 @@ const _loadEntityAnimations = (job: string) => {
   };
 };
 
-export const loadEntityAnimations = (job: string): Promise<EntityAnimations> =>
+export const loadEntityAnimations = (
+  job: EntityName
+): Promise<EntityAnimations> =>
   new Promise((resolve) => {
     try {
       loader
-        .add(`/assets/images/${job}.json`, { crossOrigin: "anonymous" })
+        .add(`/assets/images/jobs.json`, { crossOrigin: "anonymous" })
         .load(() => resolve(_loadEntityAnimations(job)));
     } catch (error) {
       return resolve(_loadEntityAnimations(job));

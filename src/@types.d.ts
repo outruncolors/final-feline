@@ -7,7 +7,6 @@ declare type EntityName =
   | "janninator";
 
 declare interface EntityAnimations {
-  job: string;
   container: PIXI.Container;
   standing: PIXI.AnimatedSprite;
   walking: PIXI.AnimatedSprite;

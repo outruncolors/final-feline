@@ -154,7 +154,7 @@ export class Entity {
   // Private
   private hideAllAnimations() {
     if (this.animations) {
-      const { job, container, ...animations } = this.animations;
+      const { container, ...animations } = this.animations;
 
       for (const animation of Object.values(animations)) {
         animation.stop();
@@ -313,7 +313,7 @@ export class Entity {
   }
 
   // Clips
-  private perform(animation: keyof EntityAnimations) {
+  public perform(animation: keyof EntityAnimations) {
     this.onFinishAnimation = () => {
       this.showAnimation(animation);
 
