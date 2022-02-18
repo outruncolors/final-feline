@@ -19,8 +19,10 @@ export const initializePub = (
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
   const sprite = getLocationSprite("pub");
-  sprite.scale.set(1.33, 1);
-  screen.addChild(sprite);
+
+  if (sprite) {
+    screen.addChild(sprite);
+  }
 };
 
 const playBackgroundMusic = async () => {

@@ -59,15 +59,9 @@ export class Entity {
 
   public async load() {
     const name = this.name as EntityName;
+    this.animations = loadEntityAnimations(name)!;
 
-    try {
-      if (!this.loaded) {
-        this.animations = await loadEntityAnimations(name);
-        this.loaded = true;
-      }
-    } catch {
-      this.loaded = true;
-    }
+    this.loaded = true;
 
     ticker.add(this.update.bind(this));
 

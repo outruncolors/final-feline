@@ -1,72 +1,52 @@
 import * as PIXI from "pixi.js";
-import locationTextures from "../data/locations.json";
-
-const loader = PIXI.Loader.shared;
 
 export const getLocationSprite = (locationName: string) => {
-  const entry = locationTextures.frames.find(({ filename }) =>
-    filename.startsWith(locationName)
-  );
-
-  if (entry) {
-    const texture = PIXI.utils.TextureCache["/assets/images/locations.png"];
-    const { x, y, w, h } = entry.frame;
-    const rectangle = new PIXI.Rectangle(x, y, w, h);
-
-    texture.frame = rectangle;
-
-    const screen = new PIXI.Sprite(texture);
-
-    return screen;
-  } else {
-    throw new Error(`Unable to find location sprite for ${locationName}`);
-  }
-};
-
-const _loadEntityAnimations = (job: EntityName) => {
   const sheet =
-    PIXI.Loader.shared.resources[`/assets/images/jobs.json`].spritesheet!;
-  const stand = sheet.textures[`${job}_stand`];
-  const walk = sheet.textures[`${job}_walk`];
-  const attack = sheet.textures[`${job}_attack`];
-  const defend = sheet.textures[`${job}_defend`];
-  const down = sheet.textures[`${job}_down`];
+    PIXI.Loader.shared.resources[`/assets/sprites.json`].spritesheet;
 
-  const container = new PIXI.Container();
-  const standing = new PIXI.AnimatedSprite([stand]);
-  const walking = new PIXI.AnimatedSprite([stand, walk]);
-  const attacking = new PIXI.AnimatedSprite([stand, attack, stand]);
-  const defending = new PIXI.AnimatedSprite([stand, defend]);
-  const dying = new PIXI.AnimatedSprite([stand, down]);
-
-  for (const animation of [standing, walking, attacking, defending, dying]) {
-    animation.scale.set(5);
-    animation.animationSpeed = 0.05;
-    animation.visible = false;
-    container.addChild(animation);
+  if (sheet) {
+    const texture = sheet.textures[`locations/${locationName}`];
+    const sprite = new PIXI.Sprite(texture);
+    sprite.scale.set(4, 3);
+    return sprite;
   }
-
-  standing.visible = true;
-
-  return {
-    container,
-    standing,
-    walking,
-    attacking,
-    defending,
-    dying,
-  };
 };
 
-export const loadEntityAnimations = (
-  job: EntityName
-): Promise<EntityAnimations> =>
-  new Promise((resolve) => {
-    try {
-      loader
-        .add(`/assets/images/jobs.json`, { crossOrigin: "anonymous" })
-        .load(() => resolve(_loadEntityAnimations(job)));
-    } catch (error) {
-      return resolve(_loadEntityAnimations(job));
+export const loadEntityAnimations = (job: EntityName) => {
+  const sheet =
+    PIXI.Loader.shared.resources[`/assets/sprites.json`].spritesheet;
+
+  if (sheet) {
+    const container = new PIXI.Container();
+    const prefix = `jobs/${job}/${job}`;
+    const standing = new PIXI.AnimatedSprite(
+      sheet.animations[`${prefix}_stand`]
+    );
+    const walking = new PIXI.AnimatedSprite(sheet.animations[`${prefix}_walk`]);
+    const attacking = new PIXI.AnimatedSprite(
+      sheet.animations[`${prefix}_attack`]
+    );
+    const defending = new PIXI.AnimatedSprite(
+      sheet.animations[`${prefix}_defend`]
+    );
+    const dying = new PIXI.AnimatedSprite(sheet.animations[`${prefix}_down`]);
+
+    for (const animation of [standing, walking, attacking, defending, dying]) {
+      animation.scale.set(5);
+      animation.animationSpeed = 0.05;
+      animation.visible = false;
+      container.addChild(animation);
     }
-  });
+
+    standing.visible = true;
+
+    return {
+      container,
+      standing,
+      walking,
+      attacking,
+      defending,
+      dying,
+    };
+  }
+};

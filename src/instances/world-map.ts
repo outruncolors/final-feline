@@ -81,12 +81,15 @@ const handleSelectOption = (
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
   const sprite = getLocationSprite("world-map");
-  sprite.scale.set(0.5);
-  sprite.position.set(
-    app.view.width / 2 - padding.large * 2,
-    padding.large * 4
-  );
-  screen.addChild(sprite);
+
+  if (sprite) {
+    sprite.scale.set(0.9);
+    sprite.position.set(
+      app.view.width / 2 - padding.large * 2,
+      padding.large * 4
+    );
+    screen.addChild(sprite);
+  }
 };
 
 const playBackgroundMusic = async () => {

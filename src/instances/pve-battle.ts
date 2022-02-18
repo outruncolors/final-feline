@@ -22,8 +22,10 @@ const addImage = (
   screen: PIXI.Container
 ) => {
   const sprite = getLocationSprite(location);
-  sprite.scale.set(1.33, 1);
-  screen.addChild(sprite);
+
+  if (sprite) {
+    screen.addChild(sprite);
+  }
 };
 
 const playBackgroundMusic = async () => {

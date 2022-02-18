@@ -2,7 +2,6 @@ import * as PIXI from "pixi.js";
 import { NavigateFunction } from "react-router-dom";
 
 const loader = PIXI.Loader.shared;
-let alreadyLoaded = false;
 
 export const bootstrap = async (
   app: PIXI.Application,
@@ -17,10 +16,9 @@ export const bootstrap = async (
   app.stage.addChild(screen);
   app.renderer.render(app.stage);
 
-  if (!alreadyLoaded) {
+  try {
     await loadCommonAssets();
-    alreadyLoaded = true;
-  }
+  } catch (error) {}
 
   instance(app, screen, navigator);
 };
@@ -28,7 +26,7 @@ export const bootstrap = async (
 const loadCommonAssets = () => {
   return new Promise((resolve) => {
     loader
-      .add("/assets/images/locations.png", { crossOrigin: "anonymous" })
+      .add("/assets/sprites.json", { crossOrigin: "anonymous" })
       .load(resolve);
   });
 };
