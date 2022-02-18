@@ -38,7 +38,6 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
   });
   const populationWrapper = new PIXI.Container();
   const entities: Entity[] = [];
-
   const possibleEntities = [
     "dramanaut",
     "copamancer",
@@ -46,10 +45,13 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
     "maldician",
     "seethesayer",
   ] as EntityName[];
+
   for (let i = 0; i < populationCount; i++) {
     const entity = new Entity(CHANCE.pickone(possibleEntities));
     entities.push(entity);
     await entity.load();
+
+    entity.meander();
 
     const container = entity.container!;
     container.position.x = CHANCE.integer({
