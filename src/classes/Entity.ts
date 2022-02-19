@@ -15,6 +15,7 @@ import {
   entitySkills,
   entityStats,
 } from "../data";
+import { BattleMessage } from "./Message";
 
 const CHANCE = new Chance();
 const ticker = PIXI.Ticker.shared;
@@ -22,6 +23,7 @@ const ticker = PIXI.Ticker.shared;
 export class Entity {
   id = CHANCE.guid();
   name: "" | EntityName = "";
+  screen: PIXI.Container;
   stage = 1;
   loaded = false;
   container: null | PIXI.Container = null;
@@ -59,8 +61,9 @@ export class Entity {
   // Clips
   onFinishAnimation: () => void = () => {};
 
-  constructor(_name: EntityName) {
+  constructor(_name: EntityName, _screen: PIXI.Container) {
     this.name = _name;
+    this.screen = _screen;
   }
 
   // Public
@@ -151,6 +154,18 @@ export class Entity {
   }
 
   public cast(skill: keyof AllSkills, target: Entity) {
+    const castMessage = new BattleMessage(
+      this.screen,
+      `${this.name} cast ${skill}!`,
+      {
+        onFlashEnd: () => {
+          this.screen.removeChild(castMessage.container);
+          castMessage.container.destroy();
+        },
+      }
+    );
+    this.screen.addChild(castMessage.container);
+
     this.perform("attacking", 2500, () => {
       if (
         this.container &&
@@ -237,7 +252,6 @@ export class Entity {
   }
 
   public inflict(effect: keyof AllEffects) {
-    // Pass
     if (!this.afflictions.includes(effect)) {
       this.afflictions.push(effect);
 
@@ -250,6 +264,18 @@ export class Entity {
       afflictionAnimation.play();
       this.afflictionAnimations.push(afflictionAnimation);
       this.container?.addChild(afflictionAnimation);
+
+      const afflictedMessage = new BattleMessage(
+        this.screen,
+        `${this.name} was ${effect}!`,
+        {
+          onFlashEnd: () => {
+            this.screen.removeChild(afflictedMessage.container);
+            afflictedMessage.container.destroy();
+          },
+        }
+      );
+      this.screen.addChild(afflictedMessage.container);
     }
   }
 

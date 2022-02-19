@@ -50,7 +50,7 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
   ] as EntityName[];
 
   for (let i = 0; i < populationCount; i++) {
-    const entity = new Entity(CHANCE.pickone(possibleEntities));
+    const entity = new Entity(CHANCE.pickone(possibleEntities), screen);
     entities.push(entity);
     await entity.load();
 

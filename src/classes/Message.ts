@@ -5,6 +5,7 @@ interface MessageOptions {
   minWidth?: number;
   minHeight?: number;
   duration?: number;
+  onFlashEnd?: () => void;
 }
 
 type FlashStatus = "in" | "none" | "out" | "done";
@@ -113,11 +114,43 @@ export class Message {
         this.flashCounter = 0;
         this.container.alpha = 0;
         this.flashStatus = "done";
+
+        if (this.options.onFlashEnd) {
+          this.options.onFlashEnd();
+        }
       }
     }
   }
 }
 
+// A type of message which appears in the top middle, usually during battle.
+export class BattleMessage extends Message {
+  screen: PIXI.Container;
+
+  constructor(
+    screen: PIXI.Container,
+    _text: string,
+    _options: MessageOptions = {}
+  ) {
+    const options = {
+      duration: 180,
+      ..._options,
+    };
+    super(_text, options);
+
+    this.screen = screen;
+    this.adjustPosition();
+  }
+
+  private adjustPosition() {
+    this.container.position.set(
+      this.screen.width / 2 - this.container.width / 2,
+      config.SCREEN_MESSAGE_BOX_MARGIN
+    );
+  }
+}
+
+// A type of message which stretches along the bottom of the screen.
 export class ScreenMessage extends Message {
   screen: PIXI.Container;
 

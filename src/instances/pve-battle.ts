@@ -37,8 +37,8 @@ const playBackgroundMusic = async () => {
 };
 
 const populateTeams = async (app: PIXI.Application, screen: PIXI.Container) => {
-  const entityA = new Entity("maldician");
-  const entityB = new Entity("seethesayer");
+  const entityA = new Entity("maldician", screen);
+  const entityB = new Entity("seethesayer", screen);
   const battleContainer = new PIXI.Container();
 
   await entityA.load();
