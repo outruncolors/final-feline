@@ -57,4 +57,5 @@ const populateTeams = async (app: PIXI.Application, screen: PIXI.Container) => {
   screen.addChild(battleContainer);
 
   entityA.cast("bussy-blasta", entityB);
+  setTimeout(() => entityA.cast("shadowban", entityB), 7000);
 };

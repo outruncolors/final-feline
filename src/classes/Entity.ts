@@ -1,16 +1,22 @@
 import * as PIXI from "pixi.js";
+import Chance from "chance";
 import {
   colors,
   config,
   loadEntityAnimations,
   basicTextStyle,
   loadSkillAnimation,
+  loadEffectAnimation,
 } from "../common";
-import { AllSkills, allSkills, entitySkills, entityStats } from "../data";
-import Chance from "chance";
+import {
+  AllEffects,
+  AllSkills,
+  allSkills,
+  entitySkills,
+  entityStats,
+} from "../data";
 
 const CHANCE = new Chance();
-
 const ticker = PIXI.Ticker.shared;
 
 export class Entity {
@@ -34,6 +40,10 @@ export class Entity {
   targettedAura: null | PIXI.Graphics = null;
   targettedOverlay: null | PIXI.Graphics = null;
   targettedFlashCount = 0;
+
+  // Afflictions
+  afflictions: string[] = [];
+  afflictionAnimations: PIXI.AnimatedSprite[] = [];
 
   // Moving
   movingDirection: "back" | "none" | "forward" = "none";
@@ -181,6 +191,17 @@ export class Entity {
               target.container?.removeChild(animation);
               animation.destroy();
               target.damageBy(10);
+
+              if (skillEntry.inflicts) {
+                const [affliction, chanceToInflict] = skillEntry.inflicts;
+                const willInflict = CHANCE.bool({
+                  likelihood: chanceToInflict,
+                });
+
+                if (willInflict) {
+                  target.inflict(affliction);
+                }
+              }
             }
           };
 
@@ -213,6 +234,23 @@ export class Entity {
 
   public meander() {
     this.meandering = true;
+  }
+
+  public inflict(effect: keyof AllEffects) {
+    // Pass
+    if (!this.afflictions.includes(effect)) {
+      this.afflictions.push(effect);
+
+      const afflictionAnimation = new PIXI.AnimatedSprite(
+        loadEffectAnimation(effect)
+      );
+      afflictionAnimation.position.x += 64 * this.afflictions.length - 1;
+      afflictionAnimation.scale.set(2);
+      afflictionAnimation.animationSpeed = 0.05;
+      afflictionAnimation.play();
+      this.afflictionAnimations.push(afflictionAnimation);
+      this.container?.addChild(afflictionAnimation);
+    }
   }
 
   // Private

@@ -70,8 +70,10 @@ export const loadEffectAnimation = (effectName: keyof AllEffects) => {
   const sheet =
     PIXI.Loader.shared.resources[`/assets/sprites.json`].spritesheet;
 
+  console.log(sheet);
+
   if (sheet) {
-    const key = `effects/${effectName}/skill_${effectName}`;
+    const key = `effects/${effectName}/effect_${effectName}`;
     return sheet.animations[key];
   } else {
     throw new Error();
