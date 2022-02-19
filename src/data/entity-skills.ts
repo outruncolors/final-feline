@@ -1,5 +1,5 @@
 export const entitySkills: Record<EntityName, string[]> = {
-  dramanaut: ["seriouspost", "metapost", "longpost"],
+  dramanaut: ["seriouspost", "bussy-blasta", "longpost"],
   copamancer: ["spam", "flame", "flood"],
   seethesayer: ["upvote", "award", "gem"],
   dilationist: ["bait", "troll", "follow"],

@@ -12,12 +12,13 @@ export const allSkills: AllSkills = {
     },
   },
 
-  metapost: {
+  "bussy-blasta": {
     id: 1,
-    name: "metapost",
-    description:
-      "Summons a series of 2-4 self-referential posts that randomly target enemies for physical damage.",
+    name: "bussy-blasta",
+    description: "",
     cost: 5,
+    loopCount: 3,
+    loopSpeed: 0.2,
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -202,6 +203,8 @@ export const allSkills: AllSkills = {
     description:
       "Deals immense physical damage, lowers HP by damage dealt for duration of battle.",
     cost: 5,
+    offset: [-64, 0],
+    loopSpeed: 0.2,
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
