@@ -56,5 +56,5 @@ const populateTeams = async (app: PIXI.Application, screen: PIXI.Container) => {
 
   screen.addChild(battleContainer);
 
-  entityA.cast("flood", entityB);
+  entityA.cast("award", entityB);
 };

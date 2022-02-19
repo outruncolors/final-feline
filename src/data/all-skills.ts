@@ -89,6 +89,8 @@ export const allSkills: AllSkills = {
     description:
       "Grants a valuable award to an ally, increasing all of their stats.",
     cost: 5,
+    loopCount: 3,
+    loopSpeed: 0.2,
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -122,6 +124,7 @@ export const allSkills: AllSkills = {
     name: "troll",
     description: "Causes the chosen target to often miss when attacking.",
     cost: 5,
+    offset: [0, 64],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -163,6 +166,7 @@ export const allSkills: AllSkills = {
     name: "report",
     description: "Renders the target unable to use skills.",
     cost: 5,
+    offset: [0, 32],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },

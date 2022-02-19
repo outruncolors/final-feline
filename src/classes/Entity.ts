@@ -163,7 +163,7 @@ export class Entity {
           const skillEntry = allSkills[skill];
           const animation = new PIXI.AnimatedSprite(loadSkillAnimation(skill));
           animation.loop = false;
-          animation.animationSpeed = 0.1;
+          animation.animationSpeed = skillEntry.loopSpeed ?? 0.1;
           animation.scale.set(5);
 
           if (skillEntry.offset) {
@@ -172,15 +172,23 @@ export class Entity {
             animation.position.y += y;
           }
 
-          animation.play();
-          target.container?.addChild(animation);
-
           animation.onComplete = () => {
-            target.hideEffects();
-            target.container?.removeChild(animation);
-            animation.destroy();
-            target.damageBy(10);
+            if (counter > 0) {
+              counter--;
+              animation.gotoAndPlay(0);
+            } else {
+              target.hideEffects();
+              target.container?.removeChild(animation);
+              animation.destroy();
+              target.damageBy(10);
+            }
           };
+
+          let counter = skillEntry.loopCount ?? 1;
+          counter--;
+          animation.play();
+
+          target.container?.addChild(animation);
         }, 1200);
       }
     });
