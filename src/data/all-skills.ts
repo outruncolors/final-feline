@@ -41,6 +41,7 @@ export const allSkills: AllSkills = {
       "Attacks the enemy team with a serious of non-sequiturs, dealing physical damage.",
     multi: true,
     cost: 5,
+    offset: [-156, 0],
     effect(user: EntityType, targets: EntityType[]) {
       // Pass
     },
@@ -173,6 +174,7 @@ export const allSkills: AllSkills = {
     description:
       "Deals moderate physical damage ad increases damage from other sources by a moderate amount.",
     cost: 5,
+    offset: [-20, 0],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },

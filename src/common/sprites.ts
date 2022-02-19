@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import { AllSkills } from "../data";
 
 export const getLocationSprite = (locationName: string) => {
   const sheet =
@@ -48,5 +49,19 @@ export const loadEntityAnimations = (job: EntityName) => {
       defending,
       dying,
     };
+  } else {
+    throw new Error();
+  }
+};
+
+export const loadSkillAnimation = (skillName: keyof AllSkills) => {
+  const sheet =
+    PIXI.Loader.shared.resources[`/assets/sprites.json`].spritesheet;
+
+  if (sheet) {
+    const key = `skills/${skillName}/skill_${skillName}`;
+    return sheet.animations[key];
+  } else {
+    throw new Error();
   }
 };

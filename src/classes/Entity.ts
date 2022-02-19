@@ -4,6 +4,7 @@ import {
   config,
   loadEntityAnimations,
   basicTextStyle,
+  loadSkillAnimation,
 } from "../common";
 import { AllSkills, allSkills, entitySkills, entityStats } from "../data";
 import Chance from "chance";
@@ -159,8 +160,24 @@ export class Entity {
           target.targettedAura!.visible = true;
           target.targettedOverlay!.visible = true;
 
+          const skillEntry = allSkills[skill];
+          const animation = new PIXI.AnimatedSprite(loadSkillAnimation(skill));
+          animation.loop = false;
+          animation.animationSpeed = 0.1;
+          animation.scale.set(5);
+
+          if (skillEntry.offset) {
+            const [x, y] = skillEntry.offset;
+            animation.position.x += x;
+            animation.position.y += y;
+          }
+
+          animation.play();
+          target.container?.addChild(animation);
+
           setTimeout(() => {
             target.hideEffects();
+            target.damageBy(10);
           }, 1200);
         }, 1200);
       }

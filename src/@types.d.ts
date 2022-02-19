@@ -34,6 +34,7 @@ declare interface EntitySkill {
   friendly?: boolean;
   multi?: boolean;
   cost: number;
+  offset?: [number, number];
   effect: (
     user: any,
     target: any
