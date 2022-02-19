@@ -176,6 +176,8 @@ export class Entity {
           target.container?.addChild(animation);
 
           setTimeout(() => {
+            target.container?.removeChild(animation);
+            animation.destroy();
             target.hideEffects();
             target.damageBy(10);
           }, 1200);
