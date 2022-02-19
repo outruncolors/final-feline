@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { AllSkills } from "../data";
+import { AllSkills, AllEffects } from "../data";
 
 export const getLocationSprite = (locationName: string) => {
   const sheet =
@@ -60,6 +60,18 @@ export const loadSkillAnimation = (skillName: keyof AllSkills) => {
 
   if (sheet) {
     const key = `skills/${skillName}/skill_${skillName}`;
+    return sheet.animations[key];
+  } else {
+    throw new Error();
+  }
+};
+
+export const loadEffectAnimation = (effectName: keyof AllEffects) => {
+  const sheet =
+    PIXI.Loader.shared.resources[`/assets/sprites.json`].spritesheet;
+
+  if (sheet) {
+    const key = `effects/${effectName}/skill_${effectName}`;
     return sheet.animations[key];
   } else {
     throw new Error();

@@ -37,6 +37,7 @@ declare interface EntitySkill {
   loopCount?: number;
   loopSpeed?: number;
   offset?: [number, number];
+  inflicts?: [string, number];
   effect: (
     user: any,
     target: any
@@ -47,4 +48,12 @@ declare interface WorldLocation {
   id: number;
   name: string;
   accessible?: boolean;
+}
+
+declare interface Effect {
+  id: number;
+  name: string;
+  description: string;
+  loopSpeed?: number;
+  offset?: [number, number];
 }

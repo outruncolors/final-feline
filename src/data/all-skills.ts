@@ -19,6 +19,7 @@ export const allSkills: AllSkills = {
     cost: 5,
     loopCount: 3,
     loopSpeed: 0.2,
+    inflicts: ["charmed", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -79,6 +80,7 @@ export const allSkills: AllSkills = {
       "Expresses appreciation for an ally, increasing their speed and recovery.",
     cost: 5,
     friendly: true,
+    inflicts: ["upvoted", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -92,6 +94,7 @@ export const allSkills: AllSkills = {
     cost: 5,
     loopCount: 3,
     loopSpeed: 0.2,
+    inflicts: ["upvoted", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -105,6 +108,7 @@ export const allSkills: AllSkills = {
     cost: 5,
     friendly: true,
     multi: true,
+    inflicts: ["upvoted", 100],
     effect(user: EntityType, targets: EntityType) {
       // Pass
     },
@@ -115,6 +119,7 @@ export const allSkills: AllSkills = {
     name: "bait",
     description: "Causes the chosen target to only be able to target the user.",
     cost: 5,
+    inflicts: ["baited", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -126,6 +131,7 @@ export const allSkills: AllSkills = {
     description: "Causes the chosen target to often miss when attacking.",
     cost: 5,
     offset: [0, 64],
+    inflicts: ["trolled", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -139,6 +145,7 @@ export const allSkills: AllSkills = {
     cost: 5,
     loopCount: 7,
     loopSpeed: 0.5,
+    inflicts: ["followed", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -149,6 +156,7 @@ export const allSkills: AllSkills = {
     name: "downvote",
     description: "Lowers all of a chosen target's stats by a moderate amount.",
     cost: 5,
+    inflicts: ["downvoted", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -159,6 +167,7 @@ export const allSkills: AllSkills = {
     name: "block",
     description: "Prevents the target from targetting the user.",
     cost: 5,
+    inflicts: ["blocked", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -170,6 +179,7 @@ export const allSkills: AllSkills = {
     description: "Renders the target unable to use skills.",
     cost: 5,
     offset: [0, 32],
+    inflicts: ["reported", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -182,6 +192,7 @@ export const allSkills: AllSkills = {
       "Deals moderate physical damage ad increases damage from other sources by a moderate amount.",
     cost: 5,
     offset: [-20, 0],
+    inflicts: ["pinned", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -192,6 +203,7 @@ export const allSkills: AllSkills = {
     name: "delete",
     description: "Deals immense physical damage, lowers enemy ATB to 0.",
     cost: 5,
+    inflicts: ["deleted", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
@@ -205,6 +217,7 @@ export const allSkills: AllSkills = {
     cost: 5,
     offset: [-64, 0],
     loopSpeed: 0.2,
+    inflicts: ["shadowbanned", 100],
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
