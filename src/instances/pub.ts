@@ -3,18 +3,19 @@ import { sound } from "@pixi/sound";
 import Chance from "chance";
 import { NavigateFunction } from "react-router-dom";
 import { config, getLocationSprite } from "../common";
-import { Entity } from "../classes";
+import { Entity, ScreenMessage } from "../classes";
 
 const CHANCE = new Chance();
 
-export const initializePub = (
+export const initializePub = async (
   app: PIXI.Application,
   screen: PIXI.Container,
   navigator: NavigateFunction
 ) => {
   addImage(app, screen);
   playBackgroundMusic();
-  populatePub(app, screen);
+  await populatePub(app, screen);
+  showMessages(app, screen);
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
@@ -66,4 +67,10 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
   populationWrapper.position.y = app.view.height - populationWrapper.height;
 
   screen.addChild(populationWrapper);
+};
+
+const showMessages = (app: PIXI.Application, screen: PIXI.Container) => {
+  const message = new ScreenMessage(screen, "Hello world.");
+
+  screen.addChild(message.container);
 };

@@ -6,3 +6,6 @@ export const ENTITY_SCALE = 5;
 
 export const PUB_POPULATION_MINIMUM = 3;
 export const PUB_POPULATION_MAXIMUM = 8;
+
+export const MESSAGE_BOX_PADDING = 4;
+export const SCREEN_MESSAGE_BOX_MARGIN = 64;
