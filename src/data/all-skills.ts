@@ -136,6 +136,8 @@ export const allSkills: AllSkills = {
     description:
       "Automatically performs an attack on the target whenever the target takes their turn.",
     cost: 5,
+    loopCount: 7,
+    loopSpeed: 0.5,
     effect(user: EntityType, target: EntityType) {
       // Pass
     },
