@@ -386,7 +386,6 @@ export class Entity {
       overlay.width = 192;
       overlay.height = this.container.height;
       overlay.position.y -= 170;
-
       return overlay;
     } else {
       throw new Error();
