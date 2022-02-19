@@ -175,12 +175,12 @@ export class Entity {
           animation.play();
           target.container?.addChild(animation);
 
-          setTimeout(() => {
+          animation.onComplete = () => {
+            target.hideEffects();
             target.container?.removeChild(animation);
             animation.destroy();
-            target.hideEffects();
             target.damageBy(10);
-          }, 1200);
+          };
         }, 1200);
       }
     });
