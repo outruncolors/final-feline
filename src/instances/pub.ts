@@ -70,7 +70,7 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
 };
 
 const showMessages = (app: PIXI.Application, screen: PIXI.Container) => {
-  const message = new ScreenMessage(screen, "Hello world.");
+  const message = new ScreenMessage(screen, "Hello world.", { duration: 180 });
 
   screen.addChild(message.container);
 };

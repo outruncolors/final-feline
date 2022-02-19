@@ -4,7 +4,10 @@ import { basicTextStyle, config } from "../common";
 interface MessageOptions {
   minWidth?: number;
   minHeight?: number;
+  duration?: number;
 }
+
+type FlashStatus = "in" | "none" | "out" | "done";
 
 export class Message {
   container: PIXI.Container;
@@ -12,6 +15,9 @@ export class Message {
   boxWrapper: null | PIXI.Sprite = null;
   box: null | PIXI.Sprite = null;
   options: MessageOptions = {};
+  flashCounter = 0;
+  flashStatus: FlashStatus = "none";
+  ticker: null | PIXI.Ticker = null;
 
   constructor(_text: string, _options: MessageOptions = {}) {
     this.container = new PIXI.Container();
@@ -27,6 +33,10 @@ export class Message {
     this.container.addChild(this.text);
 
     this.adjustBox();
+
+    if (this.options.duration) {
+      this.flash();
+    }
   }
 
   private buildBox() {
@@ -66,6 +76,44 @@ export class Message {
       );
       this.boxWrapper.width = this.box.width + config.MESSAGE_BOX_PADDING * 2;
       this.boxWrapper.height = this.box.height + config.MESSAGE_BOX_PADDING * 2;
+    }
+  }
+
+  private flash() {
+    this.ticker = PIXI.Ticker.shared.add(this.update.bind(this));
+
+    this.flashStatus = "in";
+    this.container.alpha = 0;
+  }
+
+  private update() {
+    if (this.flashStatus === "in") {
+      this.flashCounter++;
+      this.container.alpha += 0.1;
+
+      if (this.flashCounter === 10) {
+        this.flashCounter = 0;
+        this.container.alpha = 1;
+        this.flashStatus = "none";
+      }
+    } else if (this.flashStatus === "none") {
+      this.flashCounter++;
+
+      const duration = this.options.duration ?? 180;
+
+      if (this.flashCounter >= duration) {
+        this.flashCounter = 0;
+        this.flashStatus = "out";
+      }
+    } else if (this.flashStatus === "out") {
+      this.flashCounter++;
+      this.container.alpha -= 0.1;
+
+      if (this.flashCounter === 10) {
+        this.flashCounter = 0;
+        this.container.alpha = 0;
+        this.flashStatus = "done";
+      }
     }
   }
 }
