@@ -156,7 +156,7 @@ export class Entity {
   public cast(skill: keyof AllSkills, target: Entity) {
     const castMessage = new BattleMessage(
       this.screen,
-      `${this.name} cast ${skill}!`,
+      `${this.name} cast ${skill}`,
       {
         onFlashEnd: () => {
           this.screen.removeChild(castMessage.container);
@@ -267,7 +267,7 @@ export class Entity {
 
       const afflictedMessage = new BattleMessage(
         this.screen,
-        `${this.name} was ${effect}!`,
+        `${this.name} was ${effect}`,
         {
           onFlashEnd: () => {
             this.screen.removeChild(afflictedMessage.container);

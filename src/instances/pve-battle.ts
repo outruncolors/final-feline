@@ -57,7 +57,7 @@ const populateTeams = async (app: PIXI.Application, screen: PIXI.Container) => {
 
   screen.addChild(battleContainer);
 
-  entityA.cast("report", entityB);
+  entityA.cast("subscribe", entityA);
 };
 
 const startBattle = (app: PIXI.Application, screen: PIXI.Container) => {

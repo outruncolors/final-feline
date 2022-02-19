@@ -26,7 +26,7 @@ export class Message {
 
     this.buildBox();
 
-    this.text = new PIXI.Text(_text, basicTextStyle);
+    this.text = new PIXI.Text(_text.toUpperCase(), basicTextStyle);
     this.text.position.set(
       config.MESSAGE_BOX_PADDING * 6,
       config.MESSAGE_BOX_PADDING * 5

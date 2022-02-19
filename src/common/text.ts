@@ -6,6 +6,7 @@ const basicText = {
   dropShadow: true,
   dropShadowColor: colors.grey,
   fill: colors.white,
+  letterSpacing: 4,
 };
 export const basicTextStyle = new PIXI.TextStyle(basicText);
 

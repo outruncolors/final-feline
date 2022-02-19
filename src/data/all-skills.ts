@@ -1,12 +1,15 @@
 import type { EntityType } from "../classes";
 
 export const allSkills: AllSkills = {
-  seriouspost: {
+  subscribe: {
     id: 0,
-    name: "seriouspost",
+    name: "subscribe",
     description:
       "Summons a post on a chosen target, dealing physical damage. Has a chance to slow.",
     cost: 5,
+    inflicts: ["subscribed", 100],
+    offset: [16, 0],
+    loopSpeed: 0.2,
     effect(user: EntityType, target: EntityType) {
       // Pass
     },

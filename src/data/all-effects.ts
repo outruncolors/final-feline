@@ -44,6 +44,11 @@ export const allEffects: AllEffects = {
     name: "shadowbanned",
     description: "",
   },
+  subscribed: {
+    id: 11,
+    name: "subscribed",
+    description: "",
+  },
   trolled: {
     id: 9,
     name: "trolled",
