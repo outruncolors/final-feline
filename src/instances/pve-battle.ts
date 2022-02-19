@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import { NavigateFunction } from "react-router-dom";
 import { getLocationSprite } from "../common";
-import { Entity } from "../classes";
+import { Battle, Entity } from "../classes";
 
 export const initializePvEBattle =
   (location: string) =>
@@ -14,6 +14,7 @@ export const initializePvEBattle =
     addImage(location, app, screen);
     playBackgroundMusic();
     populateTeams(app, screen);
+    startBattle(app, screen);
   };
 
 const addImage = (
@@ -56,6 +57,9 @@ const populateTeams = async (app: PIXI.Application, screen: PIXI.Container) => {
 
   screen.addChild(battleContainer);
 
-  entityA.cast("bussy-blasta", entityB);
-  setTimeout(() => entityA.cast("shadowban", entityB), 7000);
+  entityA.cast("report", entityB);
+};
+
+const startBattle = (app: PIXI.Application, screen: PIXI.Container) => {
+  const battle = new Battle();
 };
