@@ -5,6 +5,7 @@ interface MessageOptions {
   minWidth?: number;
   minHeight?: number;
   duration?: number;
+  progressive?: boolean;
   onFlashEnd?: () => void;
 }
 
@@ -20,6 +21,12 @@ export class Message {
   flashStatus: FlashStatus = "none";
   ticker: null | PIXI.Ticker = null;
 
+  // P r o g r e s s i v e
+  progressive: boolean;
+  displayedText = "";
+  fullText = "";
+  textCounter = 0;
+
   constructor(_text: string, _options: MessageOptions = {}) {
     this.container = new PIXI.Container();
     this.options = { ...this.options, ..._options };
@@ -34,6 +41,13 @@ export class Message {
     this.container.addChild(this.text);
 
     this.adjustBox();
+
+    this.progressive = Boolean(this.options.progressive);
+
+    if (this.progressive) {
+      this.fullText = _text;
+      this.text.text = "";
+    }
 
     if (this.options.duration) {
       this.flash();
@@ -120,6 +134,25 @@ export class Message {
         }
       }
     }
+
+    if (this.progressive && this.displayedText !== this.fullText) {
+      this.textCounter++;
+
+      if (this.textCounter === config.MESSAGE_BOX_PROGRESSIVE_DISPLAY_RATE) {
+        this.textCounter = 0;
+
+        for (let i = 0; i < this.fullText.length; i++) {
+          const letterA = this.displayedText[i];
+          const letterB = this.fullText[i];
+
+          if (letterA !== letterB) {
+            this.displayedText = `${this.displayedText}${letterB}`;
+            this.text.text = this.displayedText;
+            break;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -134,6 +167,7 @@ export class BattleMessage extends Message {
   ) {
     const options = {
       duration: 180,
+      progressive: true,
       ..._options,
     };
     super(_text, options);

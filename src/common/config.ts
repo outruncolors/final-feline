@@ -9,3 +9,4 @@ export const PUB_POPULATION_MAXIMUM = 8;
 
 export const MESSAGE_BOX_PADDING = 4;
 export const SCREEN_MESSAGE_BOX_MARGIN = 64;
+export const MESSAGE_BOX_PROGRESSIVE_DISPLAY_RATE = 3; // A letter every x frames
