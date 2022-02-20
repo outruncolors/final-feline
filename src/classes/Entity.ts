@@ -15,7 +15,7 @@ import {
   entitySkills,
   entityStats,
 } from "../data";
-import { BattleMessage } from "./Message";
+import { BattleMessage, Message } from "./Message";
 
 const CHANCE = new Chance();
 const ticker = PIXI.Ticker.shared;
@@ -23,6 +23,7 @@ const ticker = PIXI.Ticker.shared;
 export class Entity {
   id = CHANCE.guid();
   name: "" | EntityName = "";
+  goesBy = CHANCE.name();
   screen: PIXI.Container;
   stage = 1;
   loaded = false;
@@ -594,4 +595,45 @@ export class Entity {
   }
 }
 
-export type EntityType = typeof Entity;
+export class PubEntity extends Entity {
+  public async load() {
+    super.load();
+
+    if (this.container) {
+      const handleInteraction = () => {
+        if (this.container) {
+          const message = new Message(`${this.goesBy},\n\t\t${this.name}`);
+          message.container.position.set(64, -128); // FIXME
+          this.container.addChild(message.container);
+
+          const removeMessage = () => {
+            if (this.container) {
+              this.container.removeChild(message.container);
+
+              message.container.destroy();
+
+              this.screen.interactive = false; // FIXME
+              this.screen.removeListener("mousedown", removeMessage);
+              this.screen.removeListener("touchstart", removeMessage);
+              this.container.on("mousedown", handleInteraction);
+              this.container.on("touchstart", handleInteraction);
+            }
+          };
+
+          this.screen.interactive = true;
+          this.screen.on("mousedown", removeMessage);
+          this.screen.on("touchstart", removeMessage);
+        }
+      };
+
+      this.container.cursor = "pointer";
+      this.container.interactive = true;
+      this.container.on("mousedown", handleInteraction);
+      this.container.on("touchstart", handleInteraction);
+    }
+  }
+}
+
+export class BattleEntity extends Entity {
+  // Display HP, MP, ATB, Finale, etc
+}

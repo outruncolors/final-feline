@@ -3,7 +3,7 @@ import { sound } from "@pixi/sound";
 import Chance from "chance";
 import { NavigateFunction } from "react-router-dom";
 import { config, getLocationSprite } from "../common";
-import { Entity, Message, ScreenMessage, BattleMessage } from "../classes";
+import { PubEntity, BattleMessage } from "../classes";
 
 const CHANCE = new Chance();
 
@@ -39,7 +39,7 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
     max: config.PUB_POPULATION_MAXIMUM,
   });
   const populationWrapper = new PIXI.Container();
-  const entities: Entity[] = [];
+  const entities: PubEntity[] = [];
   const possibleEntities = [
     "dramanaut",
     "copamancer",
@@ -49,7 +49,7 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
   ] as EntityName[];
 
   for (let i = 0; i < populationCount; i++) {
-    const entity = new Entity(CHANCE.pickone(possibleEntities), screen);
+    const entity = new PubEntity(CHANCE.pickone(possibleEntities), screen);
     entities.push(entity);
     await entity.load();
 

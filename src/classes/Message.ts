@@ -96,12 +96,15 @@ export class Message {
 
   private flash() {
     this.ticker = PIXI.Ticker.shared.add(this.update.bind(this));
-
     this.flashStatus = "in";
     this.container.alpha = 0;
   }
 
   private update() {
+    const progressiveDone =
+      !this.progressive ||
+      (this.progressive && this.displayedText === this.fullText);
+
     if (this.flashStatus === "in") {
       this.flashCounter++;
       this.container.alpha += 0.1;
@@ -112,19 +115,21 @@ export class Message {
         this.flashStatus = "none";
       }
     } else if (this.flashStatus === "none") {
-      this.flashCounter++;
+      if (progressiveDone) {
+        this.flashCounter++;
 
-      const duration = this.options.duration ?? 180;
+        const duration = this.options.duration ?? 180;
 
-      if (this.flashCounter >= duration) {
-        this.flashCounter = 0;
-        this.flashStatus = "out";
+        if (this.flashCounter >= duration) {
+          this.flashCounter = 0;
+          this.flashStatus = "out";
+        }
       }
     } else if (this.flashStatus === "out") {
       this.flashCounter++;
       this.container.alpha -= 0.1;
 
-      if (this.flashCounter === 10) {
+      if (this.flashCounter === 60) {
         this.flashCounter = 0;
         this.container.alpha = 0;
         this.flashStatus = "done";
@@ -135,7 +140,7 @@ export class Message {
       }
     }
 
-    if (this.progressive && this.displayedText !== this.fullText) {
+    if (this.progressive && !progressiveDone) {
       this.textCounter++;
 
       if (this.textCounter === config.MESSAGE_BOX_PROGRESSIVE_DISPLAY_RATE) {
@@ -178,7 +183,7 @@ export class BattleMessage extends Message {
 
   private adjustPosition() {
     this.container.position.set(
-      this.screen.width / 2 - this.container.width / 2,
+      this.screen.width / 2 - this.container.width / 1.5,
       config.SCREEN_MESSAGE_BOX_MARGIN
     );
   }
