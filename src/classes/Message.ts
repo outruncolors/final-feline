@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js";
 import { InteractionEvent } from "pixi.js";
-import { basicTextStyle, colors, config, loadSprite } from "../common";
+import { basicTextStyle, colors, config } from "../common";
 
-interface MessageOptions {
+export interface MessageOptions {
   minWidth?: number;
   minHeight?: number;
   duration?: number;
@@ -198,15 +198,36 @@ export class BattleMessage extends Message {
 // A type of message which stretches along the bottom of the screen.
 export class ScreenMessage extends Message {
   screen: PIXI.Container;
+  shared: Message;
+  hasAvatar: boolean;
 
   constructor(
     screen: PIXI.Container,
     _text: string,
-    _options: MessageOptions = {}
+    _options: MessageOptions & { hasAvatar?: boolean } = {}
   ) {
     super(_text, _options);
     this.screen = screen;
+    this.shared = new Message("", {
+      minWidth: document.body.clientWidth - 8,
+      minHeight: 235,
+    });
+    this.hasAvatar = Boolean(_options.hasAvatar);
+
     this.adjustPosition();
+  }
+
+  public change(to: string) {
+    this.text.text = to;
+
+    if (this.hasAvatar) {
+      this.text.position.x = 128;
+    }
+  }
+
+  public clear() {
+    this.hasAvatar = false;
+    this.text.text = "";
   }
 
   private adjustPosition() {

@@ -17,6 +17,7 @@ import {
   entityStats,
 } from "../data";
 import { BattleMessage, InteractiveMessage } from "./Message";
+import { ScreenMessage } from ".";
 
 const CHANCE = new Chance();
 const ticker = PIXI.Ticker.shared;
@@ -35,6 +36,7 @@ export class Entity {
   maxStats: null | Record<StatName, number> = null;
   baseSkills: EntitySkill[] = [];
   meandering = false;
+  shouldStopMeandering = false;
 
   // Sprite Effects
   castShadow: null | PIXI.Graphics = null;
@@ -253,6 +255,10 @@ export class Entity {
     this.meandering = true;
   }
 
+  public stopMeandering() {
+    this.shouldStopMeandering = true;
+  }
+
   public inflict(effect: keyof AllEffects) {
     if (!this.afflictions.includes(effect)) {
       this.afflictions.push(effect);
@@ -335,7 +341,13 @@ export class Entity {
     } else if (this.movingDirection === "back") {
       this.moveBackward();
     } else if (this.meandering) {
-      this.startMeandering();
+      if (this.shouldStopMeandering) {
+        this.stopMeandering();
+        this.meandering = false;
+        this.shouldStopMeandering = false;
+      } else {
+        this.startMeandering();
+      }
     }
 
     if (this.castingAura?.visible) {
@@ -595,6 +607,17 @@ export class Entity {
 }
 
 export class PubEntity extends Entity {
+  controller: ScreenMessage;
+
+  constructor(
+    _name: JobKind,
+    _screen: PIXI.Container,
+    _controller: ScreenMessage
+  ) {
+    super(_name, _screen);
+    this.controller = _controller;
+  }
+
   public async load() {
     super.load();
 
@@ -620,6 +643,9 @@ export class PubEntity extends Entity {
               this.screen.removeListener("touchstart", removeMessage);
               this.container.on("mousedown", handleInteraction);
               this.container.on("touchstart", handleInteraction);
+
+              this.controller.clear();
+              this.meander();
             }
           };
 
@@ -629,7 +655,10 @@ export class PubEntity extends Entity {
 
           message.addActions({
             title: "Chat",
-            onInteraction: (event) => event.stopPropagation(),
+            onInteraction: (event) => {
+              event.stopPropagation();
+              this.handleChat();
+            },
           });
         }
       };
@@ -640,6 +669,12 @@ export class PubEntity extends Entity {
       this.container.on("touchstart", handleInteraction);
     }
   }
+
+  private handleChat = () => {
+    const stuff = CHANCE.sentence({ words: 4 }).split(". ").join(".\n");
+    this.stopMeandering();
+    this.controller.change(stuff);
+  };
 }
 
 export class BattleEntity extends Entity {

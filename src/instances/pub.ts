@@ -3,7 +3,7 @@ import { sound } from "@pixi/sound";
 import Chance from "chance";
 import { NavigateFunction } from "react-router-dom";
 import { config, loadLocation } from "../common";
-import { PubEntity, BattleMessage } from "../classes";
+import { ScreenMessage, PubEntity, BattleMessage } from "../classes";
 
 const CHANCE = new Chance();
 
@@ -14,13 +14,31 @@ export const initializePub = async (
 ) => {
   addImage(app, screen);
   playBackgroundMusic();
-  await populatePub(app, screen);
+
+  const screenMessage = new ScreenMessage(screen, "", {
+    hasAvatar: true,
+    minWidth: screen.width - 31,
+    minHeight: 235,
+  });
+  screen.parent.addChild(screenMessage.container);
+  screenMessage.container.position.x -= 64;
+  screenMessage.container.position.y = screen.height;
+
+  // Move me.
+  const avatar = new PIXI.Sprite(PIXI.Texture.WHITE);
+  avatar.width = 64;
+  avatar.height = 64;
+
+  screenMessage.container.addChild(avatar);
+
+  await populatePub(app, screen, screenMessage);
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
   const sprite = loadLocation("pub");
 
   if (sprite) {
+    sprite.height = app.view.height - 235;
     screen.addChild(sprite);
   }
 };
@@ -33,7 +51,11 @@ const playBackgroundMusic = async () => {
   });
 };
 
-const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
+const populatePub = async (
+  app: PIXI.Application,
+  screen: PIXI.Container,
+  controller: ScreenMessage
+) => {
   const populationCount = CHANCE.integer({
     min: config.PUB_POPULATION_MINIMUM,
     max: config.PUB_POPULATION_MAXIMUM,
@@ -49,7 +71,11 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
   ] as JobKind[];
 
   for (let i = 0; i < populationCount; i++) {
-    const entity = new PubEntity(CHANCE.pickone(possibleEntities), screen);
+    const entity = new PubEntity(
+      CHANCE.pickone(possibleEntities),
+      screen,
+      controller
+    );
     entities.push(entity);
     await entity.load();
 
@@ -63,7 +89,8 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
     populationWrapper.addChild(container);
   }
 
-  populationWrapper.position.y = app.view.height - populationWrapper.height;
+  populationWrapper.position.y =
+    app.view.height - populationWrapper.height - 235 - 5;
 
   screen.addChild(populationWrapper);
 
