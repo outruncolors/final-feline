@@ -5,8 +5,6 @@ export const loadVisualAsset = (which: string, animated = false) => {
   const sheet =
     PIXI.Loader.shared.resources[`/assets/sprites.json`].spritesheet;
 
-  console.log("sheet", sheet);
-
   if (sheet) {
     if (animated) {
       return new PIXI.AnimatedSprite(sheet.animations[which]);
@@ -32,8 +30,17 @@ export const loadLocation = (location: string) => {
   return sprite;
 };
 
+export const loadFoeAnimation = (foe: string) => {
+  const animation = loadAnimation(`foes/${foe}/foes_${foe}`);
+  animation.scale.set(5);
+  return animation;
+};
+
+export const loadExtraAnimation = (extra: string) =>
+  loadAnimation(`extra/${extra}/extra_${extra}`);
+
 export const loadAfflictionAnimation = (affliction: keyof AllEffects) =>
-  loadSprite(
+  loadAnimation(
     `effects/${affliction}/effect_${affliction}`
   ) as PIXI.AnimatedSprite;
 
