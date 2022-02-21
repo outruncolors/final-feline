@@ -68,7 +68,7 @@ const populatePub = async (
     "dilationist",
     "maldician",
     "seethesayer",
-  ] as JobKind[];
+  ];
 
   for (let i = 0; i < populationCount; i++) {
     const entity = new PubEntity(

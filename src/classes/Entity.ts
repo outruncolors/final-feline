@@ -8,6 +8,7 @@ import {
   basicTextStyle,
   loadSkillAnimation,
   getRomanNumeralFor,
+  loadFoeAnimations,
 } from "../common";
 import {
   AllEffects,
@@ -24,10 +25,11 @@ const ticker = PIXI.Ticker.shared;
 
 export class Entity {
   id = CHANCE.guid();
-  name: "" | JobKind = "";
+  name: string;
   goesBy = CHANCE.name();
   screen: PIXI.Container;
   stage = 1;
+  loader: EntityAnimationLoader;
   loaded = false;
   container: null | PIXI.Container = null;
   animations: null | EntityAnimations = null;
@@ -65,9 +67,14 @@ export class Entity {
   // Clips
   onFinishAnimation: () => void = () => {};
 
-  constructor(_name: JobKind, _screen: PIXI.Container) {
+  constructor(
+    _name: string,
+    _screen: PIXI.Container,
+    _loader: EntityAnimationLoader
+  ) {
     this.name = _name;
     this.screen = _screen;
+    this.loader = _loader;
   }
 
   // Public
@@ -76,9 +83,7 @@ export class Entity {
   }
 
   public async load() {
-    const name = this.name as JobKind;
-    this.animations = loadJobAnimations(name)!;
-
+    this.animations = this.loader(this.name);
     this.loaded = true;
 
     ticker.add(this.update.bind(this));
@@ -90,7 +95,7 @@ export class Entity {
     this.addTargettedAura();
 
     // Add Stats
-    const stats = entityStats[name];
+    const stats = entityStats[this.name];
     this.baseStats = stats;
     this.currentStats = this.maxStats = Object.entries(stats).reduce(
       (prev, next) => {
@@ -117,7 +122,7 @@ export class Entity {
     this.maxStats.ATB = 100;
 
     // Add Skills
-    for (const skillName of entitySkills[name]) {
+    for (const skillName of entitySkills[this.name]) {
       const skill = allSkills[skillName];
 
       if (skill) {
@@ -606,11 +611,18 @@ export class Entity {
   }
 }
 
-export class PubEntity extends Entity {
+// === Player ===
+export class PlayableEntity extends Entity {
+  constructor(_name: string, _screen: PIXI.Container) {
+    super(_name, _screen, loadJobAnimations);
+  }
+}
+
+export class PubEntity extends PlayableEntity {
   controller: ScreenMessage;
 
   constructor(
-    _name: JobKind,
+    _name: string,
     _screen: PIXI.Container,
     _controller: ScreenMessage
   ) {
@@ -677,6 +689,13 @@ export class PubEntity extends Entity {
   };
 }
 
-export class BattleEntity extends Entity {
+export class BattleEntity extends PlayableEntity {
   // Display HP, MP, ATB, Finale, etc
+}
+
+// === Foe ===
+export class FoeEntity extends Entity {
+  constructor(_name: string, _screen: PIXI.Container) {
+    super(_name, _screen, loadFoeAnimations);
+  }
 }

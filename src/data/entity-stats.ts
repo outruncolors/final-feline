@@ -1,4 +1,12 @@
-export const entityStats: Record<JobKind, EntityStats> = {
+import { allFoes } from "./all-foes";
+
+const fromFoes = Object.entries(allFoes).reduce((prev, next) => {
+  const [name, { stats }] = next;
+  prev[name] = stats;
+  return prev;
+}, {} as Record<string, EntityStats>);
+
+export const entityStats: Record<string, EntityStats> = {
   dramanaut: {
     STR: [7, 14, 21],
     AGI: [5, 10, 15],
@@ -53,4 +61,5 @@ export const entityStats: Record<JobKind, EntityStats> = {
     MP: [12, 24, 36],
     ATB: 40,
   },
+  ...fromFoes,
 };

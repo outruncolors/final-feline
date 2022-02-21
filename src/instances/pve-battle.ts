@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import { NavigateFunction } from "react-router-dom";
-import { loadLocation, loadFoeAnimation, loadFoeAnimations } from "../common";
-import { Battle, Entity } from "../classes";
+import { loadLocation, loadFoeAnimations } from "../common";
+import { Battle, Entity, FoeEntity } from "../classes";
 
 export const initializePvEBattle =
   (location: string) =>
@@ -54,10 +54,19 @@ const populateTeams = async (app: PIXI.Application, screen: PIXI.Container) => {
   // entityA.cast("subscribe", entityA);
 };
 
-const startBattle = (app: PIXI.Application, screen: PIXI.Container) => {
+const startBattle = async (app: PIXI.Application, screen: PIXI.Container) => {
   const battle = new Battle();
 
-  const derp = loadFoeAnimations("lolcow");
-  derp.walking.play();
-  screen.addChild(derp.container);
+  // const derp = loadFoeAnimations("lolcow");
+  // screen.addChild(derp.container);
+
+  const foo = new FoeEntity("lolcow", screen);
+  await foo.load();
+
+  if (foo.loaded) {
+    screen.addChild(foo.container!);
+  }
+
+  foo.container!.y += 300;
+  foo.cast("report", foo);
 };

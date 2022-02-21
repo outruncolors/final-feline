@@ -1,11 +1,3 @@
-declare type JobKind =
-  | "dramanaut"
-  | "copamancer"
-  | "seethesayer"
-  | "dilationist"
-  | "maldician"
-  | "janninator";
-
 declare interface EntityAnimations {
   container: PIXI.Container;
   standing: PIXI.AnimatedSprite;
@@ -14,6 +6,8 @@ declare interface EntityAnimations {
   defending: PIXI.AnimatedSprite;
   dying: PIXI.AnimatedSprite;
 }
+
+declare type EntityAnimationLoader = (key: string) => EntityAnimations;
 
 declare interface EntityStats {
   STR: number[];

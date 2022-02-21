@@ -31,12 +31,6 @@ export const loadLocation = (location: string) => {
   return sprite;
 };
 
-export const loadFoeAnimation = (foe: string) => {
-  const animation = loadAnimation(`foes/${foe}/foes_${foe}`);
-  animation.scale.set(5);
-  return animation;
-};
-
 export const loadExtraAnimation = (extra: string) =>
   loadAnimation(`extra/${extra}/extra_${extra}`);
 
@@ -48,7 +42,9 @@ export const loadAfflictionAnimation = (affliction: keyof AllEffects) =>
 export const loadSkillAnimation = (skill: keyof AllSkills) =>
   loadAnimation(`skills/${skill}/skill_${skill}`);
 
-export const loadJobAnimations = (job: JobKind) => {
+// === Entities ===
+
+export const loadJobAnimations = (job: string): EntityAnimations => {
   const container = new PIXI.Container();
   const withPrefix = (name: string) => `jobs/${job}/${job}_${name}`;
   const [standing, walking, attacking, defending, dying] = [
@@ -78,25 +74,36 @@ export const loadJobAnimations = (job: JobKind) => {
   };
 };
 
-export const loadFoeAnimations = (foe: keyof AllFoes) => {
+export const loadFoeAnimations = (foe: keyof AllFoes): EntityAnimations => {
   const container = new PIXI.Container();
-  const animation = loadAnimation(`foes/${foe}/foes_${foe}`);
-  const [idle] = animation.textures;
+  const activeAnimation = loadAnimation(`foes/${foe}/foes_${foe}`);
+  const [idle] = activeAnimation.textures;
   const idleAnimation = new PIXI.AnimatedSprite([idle] as Array<
     PIXI.Texture<Resource>
   >);
 
-  idleAnimation.scale.set(5);
-  container.addChild(idleAnimation);
+  const [standing, walking, attacking, defending, dying] = [
+    idleAnimation,
+    activeAnimation,
+    activeAnimation,
+    idleAnimation,
+    idleAnimation,
+  ];
 
-  animation.visible = false;
-  container.addChild(animation);
+  for (const animation of [standing, walking, attacking, defending, dying]) {
+    animation.scale.set(5);
+    animation.animationSpeed = 0.05;
+    animation.visible = false;
+    container.addChild(animation);
+  }
+
+  standing.visible = true;
 
   return {
     container,
     standing: idleAnimation,
-    walking: animation,
-    attacking: animation,
+    walking: activeAnimation,
+    attacking: activeAnimation,
     defending: idleAnimation,
     dying: idleAnimation,
   };
