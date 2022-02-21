@@ -1,6 +1,8 @@
 import * as PIXI from "pixi.js";
 import Chance from "chance";
 import {
+  EntityAnimations,
+  EntityAnimationLoader,
   colors,
   config,
   loadJobAnimations,
@@ -10,16 +12,27 @@ import {
   getRomanNumeralFor,
   loadFoeAnimations,
 } from "../common";
-import { AllEffects, AllSkills, allSkills, allEntities } from "../data";
+import {
+  AfflictionKind,
+  entities,
+  EntityKind,
+  EntityStats,
+  SkillKind,
+  skills,
+  Skill,
+  FoeKind,
+} from "../data";
 import { BattleMessage, InteractiveMessage } from "./Message";
 import { ScreenMessage } from ".";
 
 const CHANCE = new Chance();
 const ticker = PIXI.Ticker.shared;
 
+export type EntityStatsKind = keyof EntityStats;
+
 export class Entity {
   id = CHANCE.guid();
-  name: string;
+  name: EntityKind;
   goesBy = CHANCE.name();
   screen: PIXI.Container;
   stage = 1;
@@ -28,9 +41,9 @@ export class Entity {
   container: null | PIXI.Container = null;
   animations: null | EntityAnimations = null;
   baseStats: null | EntityStats = null;
-  currentStats: null | Record<StatName, number> = null;
-  maxStats: null | Record<StatName, number> = null;
-  baseSkills: EntitySkill[] = [];
+  currentStats: null | Record<EntityStatsKind, number> = null;
+  maxStats: null | Record<EntityStatsKind, number> = null;
+  baseSkills: SkillKind[] = [];
   meandering = false;
   shouldStopMeandering = false;
 
@@ -62,7 +75,7 @@ export class Entity {
   onFinishAnimation: () => void = () => {};
 
   constructor(
-    _name: string,
+    _name: EntityKind,
     _screen: PIXI.Container,
     _loader: EntityAnimationLoader
   ) {
@@ -89,18 +102,13 @@ export class Entity {
     this.addTargettedAura();
 
     // Add Stats
-    const { stats } = allEntities[this.name];
+    const { stats } = entities[this.name];
     this.baseStats = stats;
     this.currentStats = this.maxStats = Object.entries(stats).reduce(
       (prev, next) => {
         const [stat, value] = next;
-
-        if (stat === "ATB") {
-          prev[stat] = value;
-        } else {
-          prev[stat as StatName] = value[this.stage];
-        }
-
+        prev[stat as EntityStatsKind] =
+          typeof value === "number" ? value : value[this.stage];
         return prev;
       },
       {
@@ -111,16 +119,16 @@ export class Entity {
         HP: 0,
         MP: 0,
         ATB: 0,
-      } as Record<StatName, number>
+      } as Record<EntityStatsKind, number>
     );
     this.maxStats.ATB = 100;
 
     // Add Skills
-    for (const skillName of allEntities[this.name].skills) {
-      const skill = allSkills[skillName];
+    for (const skillName of entities[this.name].skills) {
+      const skill = skills[skillName];
 
       if (skill) {
-        this.baseSkills.push(skill);
+        this.baseSkills.push(skillName);
       } else {
         throw new Error(`Invalid skill ${skillName} missing entry.`);
       }
@@ -156,7 +164,7 @@ export class Entity {
     defend.loop = false;
   }
 
-  public cast(skill: keyof AllSkills, target: Entity) {
+  public cast(skill: SkillKind, target: Entity) {
     const castMessage = new BattleMessage(
       this.screen,
       `${this.name} cast ${skill}`,
@@ -188,7 +196,7 @@ export class Entity {
           target.targettedAura!.visible = true;
           target.targettedOverlay!.visible = true;
 
-          const skillEntry = allSkills[skill];
+          const skillEntry = skills[skill] as Skill;
           const animation = loadSkillAnimation(skill) as PIXI.AnimatedSprite;
           animation.loop = false;
           animation.animationSpeed = skillEntry.loopSpeed ?? 0.1;
@@ -210,8 +218,8 @@ export class Entity {
               animation.destroy();
               target.damageBy(10);
 
-              if (skillEntry.inflicts) {
-                const [affliction, chanceToInflict] = skillEntry.inflicts;
+              if (skillEntry.affliction) {
+                const [affliction, chanceToInflict] = skillEntry.affliction;
                 const willInflict = CHANCE.bool({
                   likelihood: chanceToInflict,
                 });
@@ -258,11 +266,11 @@ export class Entity {
     this.shouldStopMeandering = true;
   }
 
-  public inflict(effect: keyof AllEffects) {
-    if (!this.afflictions.includes(effect)) {
-      this.afflictions.push(effect);
+  public inflict(affliction: AfflictionKind) {
+    if (!this.afflictions.includes(affliction)) {
+      this.afflictions.push(affliction);
 
-      const afflictionAnimation = loadAfflictionAnimation(effect);
+      const afflictionAnimation = loadAfflictionAnimation(affliction);
       afflictionAnimation.position.x += 64 * this.afflictions.length - 1;
       afflictionAnimation.scale.set(2);
       afflictionAnimation.animationSpeed = 0.05;
@@ -272,7 +280,7 @@ export class Entity {
 
       const afflictedMessage = new BattleMessage(
         this.screen,
-        `${this.name} was ${effect}`,
+        `${this.name} was ${affliction}`,
         {
           onFlashEnd: () => {
             this.screen.removeChild(afflictedMessage.container);
@@ -305,7 +313,7 @@ export class Entity {
     }
   }
 
-  private showAnimation(animation: keyof EntityAnimations) {
+  private showAnimation(animation: keyof Omit<EntityAnimations, "container">) {
     if (this.animations) {
       const entry = this.animations[animation];
 
@@ -579,7 +587,7 @@ export class Entity {
 
   // Clips
   public perform(
-    animation: keyof EntityAnimations,
+    animation: keyof Omit<EntityAnimations, "container">,
     duration = 1250,
     onSteppedForward: () => void = () => {},
     onSteppedBackward: () => void = () => {}
@@ -607,7 +615,7 @@ export class Entity {
 
 // === Player ===
 export class PlayableEntity extends Entity {
-  constructor(_name: string, _screen: PIXI.Container) {
+  constructor(_name: EntityKind, _screen: PIXI.Container) {
     super(_name, _screen, loadJobAnimations);
   }
 }
@@ -616,7 +624,7 @@ export class PubEntity extends PlayableEntity {
   controller: ScreenMessage;
 
   constructor(
-    _name: string,
+    _name: EntityKind,
     _screen: PIXI.Container,
     _controller: ScreenMessage
   ) {
@@ -689,7 +697,7 @@ export class BattleEntity extends PlayableEntity {
 
 // === Foe ===
 export class FoeEntity extends Entity {
-  constructor(_name: string, _screen: PIXI.Container) {
+  constructor(_name: FoeKind, _screen: PIXI.Container) {
     super(_name, _screen, loadFoeAnimations);
   }
 }

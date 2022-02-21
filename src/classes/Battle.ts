@@ -2,22 +2,22 @@ import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import Chance from "chance";
 import { loadLocationSprite } from "../common";
-import { allLocations } from "../data";
+import { Location, LocationKind, locations } from "../data";
 import { Entity } from "./Entity";
 
 const CHANCE = new Chance();
 
 export class Battle {
-  location: WorldLocation;
+  location: Location;
   screen: PIXI.Container;
   playableParty: Entity[];
 
   constructor(
-    _location: string,
+    _location: LocationKind,
     _screen: PIXI.Container,
     _playableParty: Entity[]
   ) {
-    this.location = allLocations[_location];
+    this.location = (locations as Record<LocationKind, Location>)[_location];
     this.screen = _screen;
     this.playableParty = _playableParty;
   }
@@ -46,7 +46,9 @@ export class Battle {
 
 export class RandomBattle extends Battle {
   constructor(_screen: PIXI.Container) {
-    const randomLocation = CHANCE.pickone(Object.keys(allLocations));
+    const randomLocation = CHANCE.pickone(
+      Object.keys(locations) as LocationKind[]
+    );
 
     // MOVEME
     const playableParty: Entity[] = [];

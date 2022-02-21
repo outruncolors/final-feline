@@ -1,4 +1,10 @@
-export const allLocations: AllLocations = {
+export interface Location {
+  id: number;
+  name: LocationKind;
+  accessible?: boolean;
+}
+
+export const locations = {
   arena: {
     id: 0,
     name: "arena",
@@ -48,4 +54,4 @@ export const allLocations: AllLocations = {
   },
 };
 
-export type AllLocations = Record<string, WorldLocation>;
+export type LocationKind = keyof typeof locations;

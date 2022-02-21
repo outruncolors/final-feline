@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import { Resource } from "pixi.js";
-import { AllSkills, AllEffects, AllFoes } from "../data";
+import { AfflictionKind, SkillKind, LocationKind, EntityKind } from "../data";
 
 export const loadVisualAsset = (which: string, animated = false) => {
   const sheet =
@@ -20,31 +20,44 @@ export const loadVisualAsset = (which: string, animated = false) => {
 export const loadSprite = (sprite: string) =>
   loadVisualAsset(sprite) as PIXI.Sprite;
 
+export interface EntityAnimations {
+  container: PIXI.Container;
+  standing: PIXI.AnimatedSprite;
+  walking: PIXI.AnimatedSprite;
+  attacking: PIXI.AnimatedSprite;
+  defending: PIXI.AnimatedSprite;
+  dying: PIXI.AnimatedSprite;
+}
+
+export type EntityAnimationLoader = (key: EntityKind) => EntityAnimations;
+
 export const loadAnimation = (animation: string) =>
   loadVisualAsset(animation, true) as PIXI.AnimatedSprite;
 
 /* = = C O M P O S I T I O N S = = */
-
-export const loadLocationSprite = (location: string) => {
+export const loadLocationSprite = (location: LocationKind) => {
   const sprite = loadSprite(`locations/${location}`);
   sprite.scale.set(4, 3);
   return sprite;
 };
 
-export const loadExtraAnimation = (extra: string) =>
-  loadAnimation(`extra/${extra}/extra_${extra}`);
+export const loadExtraSprite = (extra: string) =>
+  loadSprite(`extras/extra_${extra}`);
 
-export const loadAfflictionAnimation = (affliction: keyof AllEffects) =>
+export const loadExtraAnimation = (extra: string) =>
+  loadAnimation(`extras/${extra}/extra_${extra}`);
+
+export const loadAfflictionAnimation = (affliction: AfflictionKind) =>
   loadAnimation(
-    `effects/${affliction}/effect_${affliction}`
+    `afflictions/${affliction}/affliction_${affliction}`
   ) as PIXI.AnimatedSprite;
 
-export const loadSkillAnimation = (skill: keyof AllSkills) =>
+export const loadSkillAnimation = (skill: SkillKind) =>
   loadAnimation(`skills/${skill}/skill_${skill}`);
 
 // === Entities ===
 
-export const loadJobAnimations = (job: string): EntityAnimations => {
+export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
   const container = new PIXI.Container();
   const withPrefix = (name: string) => `jobs/${job}/${job}_${name}`;
   const [standing, walking, attacking, defending, dying] = [
@@ -74,7 +87,7 @@ export const loadJobAnimations = (job: string): EntityAnimations => {
   };
 };
 
-export const loadFoeAnimations = (foe: keyof AllFoes): EntityAnimations => {
+export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
   const container = new PIXI.Container();
   const activeAnimation = loadAnimation(`foes/${foe}/foes_${foe}`);
   const [idle] = activeAnimation.textures;

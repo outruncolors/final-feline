@@ -1,12 +1,15 @@
+import type { EntityStats } from "./entities";
+import type { SkillKind } from "./skills";
+
 export interface Job {
   id: number;
   name: string;
   description: string;
   stats: EntityStats;
-  skills: string[];
+  skills: SkillKind[];
 }
 
-export const allJobs: Record<string, Job> = {
+export const jobs = {
   dramanaut: {
     id: 0,
     name: "Dramanaut",
@@ -20,7 +23,7 @@ export const allJobs: Record<string, Job> = {
       MP: [8, 16, 24],
       ATB: 50,
     },
-    skills: ["subscribe", "bussy-blasta", "longpost"],
+    skills: ["subscribe", "bussy-blasta", "longpost"] as SkillKind[],
   },
   copamancer: {
     id: 1,
@@ -35,7 +38,7 @@ export const allJobs: Record<string, Job> = {
       MP: [21, 42, 63],
       ATB: 60,
     },
-    skills: ["spam", "flame", "flood"],
+    skills: ["spam", "flame", "flood"] as SkillKind[],
   },
   seethesayer: {
     id: 2,
@@ -50,7 +53,7 @@ export const allJobs: Record<string, Job> = {
       MP: [18, 36, 54],
       ATB: 50,
     },
-    skills: ["upvote", "award", "gem"],
+    skills: ["upvote", "award", "gem"] as SkillKind[],
   },
   dilationist: {
     id: 3,
@@ -65,7 +68,7 @@ export const allJobs: Record<string, Job> = {
       MP: [10, 15, 20],
       ATB: 70,
     },
-    skills: ["bait", "troll", "follow"],
+    skills: ["bait", "troll", "follow"] as SkillKind[],
   },
   maldician: {
     id: 4,
@@ -80,8 +83,8 @@ export const allJobs: Record<string, Job> = {
       MP: [28, 56, 84],
       ATB: 40,
     },
-    skills: ["downvote", "block", "report"],
+    skills: ["downvote", "block", "report"] as SkillKind[],
   },
 };
 
-export type AllJobs = typeof allJobs;
+export type JobKind = keyof typeof jobs;

@@ -4,6 +4,7 @@ import Chance from "chance";
 import { NavigateFunction } from "react-router-dom";
 import { config, loadLocationSprite } from "../common";
 import { ScreenMessage, PubEntity, BattleMessage } from "../classes";
+import { EntityKind } from "../data";
 
 const CHANCE = new Chance();
 
@@ -62,13 +63,7 @@ const populatePub = async (
   });
   const populationWrapper = new PIXI.Container();
   const entities: PubEntity[] = [];
-  const possibleEntities = [
-    "dramanaut",
-    "copamancer",
-    "dilationist",
-    "maldician",
-    "seethesayer",
-  ];
+  const possibleEntities = Object.keys(entities) as EntityKind[];
 
   for (let i = 0; i < populationCount; i++) {
     const entity = new PubEntity(
@@ -77,6 +72,7 @@ const populatePub = async (
       controller
     );
     entities.push(entity);
+
     await entity.load();
 
     entity.meander();

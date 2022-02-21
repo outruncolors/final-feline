@@ -1,12 +1,15 @@
+import type { EntityStats } from "./entities";
+import type { SkillKind } from "./skills";
+
 export interface Foe {
   id: number;
   name: string;
   description: string;
   stats: EntityStats;
-  skills: string[];
+  skills: SkillKind[];
 }
 
-export const allFoes: Record<string, Foe> = {
+export const foes = {
   lolcow: {
     id: 0,
     name: "Lolcow",
@@ -20,7 +23,7 @@ export const allFoes: Record<string, Foe> = {
       MP: [8, 16, 24],
       ATB: 50,
     },
-    skills: ["downvote"],
+    skills: ["downvote"] as SkillKind[],
   },
   mimic: {
     id: 1,
@@ -35,7 +38,7 @@ export const allFoes: Record<string, Foe> = {
       MP: [8, 16, 24],
       ATB: 50,
     },
-    skills: ["downvote"],
+    skills: ["downvote"] as SkillKind[],
   },
   npcat: {
     id: 2,
@@ -50,7 +53,7 @@ export const allFoes: Record<string, Foe> = {
       MP: [8, 16, 24],
       ATB: 50,
     },
-    skills: ["downvote"],
+    skills: ["downvote"] as SkillKind[],
   },
   soylamander: {
     id: 3,
@@ -65,7 +68,7 @@ export const allFoes: Record<string, Foe> = {
       MP: [8, 16, 24],
       ATB: 50,
     },
-    skills: ["downvote"],
+    skills: ["downvote"] as SkillKind[],
   },
   soynail: {
     id: 4,
@@ -80,7 +83,7 @@ export const allFoes: Record<string, Foe> = {
       MP: [8, 16, 24],
       ATB: 50,
     },
-    skills: ["downvote"],
+    skills: ["downvote"] as SkillKind[],
   },
   soynake: {
     id: 5,
@@ -95,7 +98,7 @@ export const allFoes: Record<string, Foe> = {
       MP: [8, 16, 24],
       ATB: 50,
     },
-    skills: ["downvote"],
+    skills: ["downvote"] as SkillKind[],
   },
   soyvyrn: {
     id: 6,
@@ -110,8 +113,8 @@ export const allFoes: Record<string, Foe> = {
       MP: [8, 16, 24],
       ATB: 50,
     },
-    skills: ["downvote"],
+    skills: ["downvote"] as SkillKind[],
   },
 };
 
-export type AllFoes = typeof allFoes;
+export type FoeKind = keyof typeof foes;
