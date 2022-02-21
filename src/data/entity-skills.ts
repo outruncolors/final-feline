@@ -1,4 +1,4 @@
-export const entitySkills: Record<EntityName, string[]> = {
+export const entitySkills: Record<JobKind, string[]> = {
   dramanaut: ["subscribe", "bussy-blasta", "longpost"],
   copamancer: ["spam", "flame", "flood"],
   seethesayer: ["upvote", "award", "gem"],

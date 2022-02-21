@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import { NavigateFunction } from "react-router-dom";
-import { getLocationSprite } from "../common";
+import { loadLocation } from "../common";
 import { Battle, Entity } from "../classes";
 
 export const initializePvEBattle =
@@ -22,7 +22,7 @@ const addImage = (
   app: PIXI.Application,
   screen: PIXI.Container
 ) => {
-  const sprite = getLocationSprite(location);
+  const sprite = loadLocation(location);
 
   if (sprite) {
     screen.addChild(sprite);

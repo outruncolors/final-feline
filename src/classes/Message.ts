@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
-import { basicTextStyle, config } from "../common";
+import { InteractionEvent } from "pixi.js";
+import { basicTextStyle, colors, config, loadSprite } from "../common";
 
 interface MessageOptions {
   minWidth?: number;
@@ -10,6 +11,11 @@ interface MessageOptions {
 }
 
 type FlashStatus = "in" | "none" | "out" | "done";
+
+interface MessageAction {
+  title: string;
+  onInteraction(e: InteractionEvent): void;
+}
 
 export class Message {
   container: PIXI.Container;
@@ -33,7 +39,7 @@ export class Message {
 
     this.buildBox();
 
-    this.text = new PIXI.Text(_text.toUpperCase(), basicTextStyle);
+    this.text = new PIXI.Text(_text, basicTextStyle);
     this.text.position.set(
       config.MESSAGE_BOX_PADDING * 6,
       config.MESSAGE_BOX_PADDING * 5
@@ -210,5 +216,49 @@ export class ScreenMessage extends Message {
         this.container.height -
         config.SCREEN_MESSAGE_BOX_MARGIN * 2
     );
+  }
+}
+
+export class InteractiveMessage extends Message {
+  public addActions(...actions: MessageAction[]) {
+    const actionWrapper = new PIXI.Container();
+
+    for (const { title, onInteraction } of actions) {
+      const action = new PIXI.Text(title, basicTextStyle);
+      action.style.fontSize = 24;
+      action.interactive = true;
+      action.cursor = "pointer";
+      action.on("mousedown", onInteraction);
+      action.on("touchstart", onInteraction);
+      action.on("mouseover", () => {
+        action.tint = colors.yellow;
+      });
+      action.on("mouseout", () => {
+        action.tint = colors.white;
+      });
+
+      let distance = config.MESSAGE_BOX_PADDING * 2;
+      for (let _child of actionWrapper.children) {
+        const child = _child as PIXI.Text;
+        distance += child.width + config.MESSAGE_BOX_PADDING * 4;
+      }
+
+      action.position.x = distance;
+      actionWrapper.addChild(action);
+    }
+
+    const [whiteBox, blueBox] = this.container.children as [
+      PIXI.Sprite,
+      PIXI.Sprite
+    ];
+
+    whiteBox.height += actionWrapper.height;
+    blueBox.height += actionWrapper.height;
+    actionWrapper.position.set(
+      config.MESSAGE_BOX_PADDING * 4,
+      this.container.height - actionWrapper.height - config.MESSAGE_BOX_PADDING
+    );
+    this.container.addChild(actionWrapper);
+    this.container.cursor = "auto";
   }
 }

@@ -26,3 +26,6 @@ export const makeHighlightable = (text: PIXI.Text) => {
     text.tint = colors.white;
   });
 };
+
+export const getRomanNumeralFor = (arabic: number) =>
+  ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"][arabic - 1];

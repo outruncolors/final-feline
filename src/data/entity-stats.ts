@@ -1,4 +1,4 @@
-export const entityStats: Record<EntityName, EntityStats> = {
+export const entityStats: Record<JobKind, EntityStats> = {
   dramanaut: {
     STR: [7, 14, 21],
     AGI: [5, 10, 15],

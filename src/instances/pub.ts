@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import Chance from "chance";
 import { NavigateFunction } from "react-router-dom";
-import { config, getLocationSprite } from "../common";
+import { config, loadLocation } from "../common";
 import { PubEntity, BattleMessage } from "../classes";
 
 const CHANCE = new Chance();
@@ -18,7 +18,7 @@ export const initializePub = async (
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
-  const sprite = getLocationSprite("pub");
+  const sprite = loadLocation("pub");
 
   if (sprite) {
     screen.addChild(sprite);
@@ -46,7 +46,7 @@ const populatePub = async (app: PIXI.Application, screen: PIXI.Container) => {
     "dilationist",
     "maldician",
     "seethesayer",
-  ] as EntityName[];
+  ] as JobKind[];
 
   for (let i = 0; i < populationCount; i++) {
     const entity = new PubEntity(CHANCE.pickone(possibleEntities), screen);

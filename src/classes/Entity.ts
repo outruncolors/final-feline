@@ -3,10 +3,11 @@ import Chance from "chance";
 import {
   colors,
   config,
-  loadEntityAnimations,
+  loadJobAnimations,
+  loadAfflictionAnimation,
   basicTextStyle,
   loadSkillAnimation,
-  loadEffectAnimation,
+  getRomanNumeralFor,
 } from "../common";
 import {
   AllEffects,
@@ -15,14 +16,14 @@ import {
   entitySkills,
   entityStats,
 } from "../data";
-import { BattleMessage, Message } from "./Message";
+import { BattleMessage, InteractiveMessage } from "./Message";
 
 const CHANCE = new Chance();
 const ticker = PIXI.Ticker.shared;
 
 export class Entity {
   id = CHANCE.guid();
-  name: "" | EntityName = "";
+  name: "" | JobKind = "";
   goesBy = CHANCE.name();
   screen: PIXI.Container;
   stage = 1;
@@ -62,7 +63,7 @@ export class Entity {
   // Clips
   onFinishAnimation: () => void = () => {};
 
-  constructor(_name: EntityName, _screen: PIXI.Container) {
+  constructor(_name: JobKind, _screen: PIXI.Container) {
     this.name = _name;
     this.screen = _screen;
   }
@@ -73,8 +74,8 @@ export class Entity {
   }
 
   public async load() {
-    const name = this.name as EntityName;
-    this.animations = loadEntityAnimations(name)!;
+    const name = this.name as JobKind;
+    this.animations = loadJobAnimations(name)!;
 
     this.loaded = true;
 
@@ -187,7 +188,7 @@ export class Entity {
           target.targettedOverlay!.visible = true;
 
           const skillEntry = allSkills[skill];
-          const animation = new PIXI.AnimatedSprite(loadSkillAnimation(skill));
+          const animation = loadSkillAnimation(skill) as PIXI.AnimatedSprite;
           animation.loop = false;
           animation.animationSpeed = skillEntry.loopSpeed ?? 0.1;
           animation.scale.set(5);
@@ -256,9 +257,7 @@ export class Entity {
     if (!this.afflictions.includes(effect)) {
       this.afflictions.push(effect);
 
-      const afflictionAnimation = new PIXI.AnimatedSprite(
-        loadEffectAnimation(effect)
-      );
+      const afflictionAnimation = loadAfflictionAnimation(effect);
       afflictionAnimation.position.x += 64 * this.afflictions.length - 1;
       afflictionAnimation.scale.set(2);
       afflictionAnimation.animationSpeed = 0.05;
@@ -602,7 +601,11 @@ export class PubEntity extends Entity {
     if (this.container) {
       const handleInteraction = () => {
         if (this.container) {
-          const message = new Message(`${this.goesBy},\n\t\t${this.name}`);
+          const message = new InteractiveMessage(
+            `${this.goesBy},\n\t\t${CHANCE.capitalize(
+              this.name
+            )} ${getRomanNumeralFor(this.stage)}`
+          );
           message.container.position.set(64, -128); // FIXME
           this.container.addChild(message.container);
 
@@ -623,6 +626,11 @@ export class PubEntity extends Entity {
           this.screen.interactive = true;
           this.screen.on("mousedown", removeMessage);
           this.screen.on("touchstart", removeMessage);
+
+          message.addActions({
+            title: "Chat",
+            onInteraction: (event) => event.stopPropagation(),
+          });
         }
       };
 

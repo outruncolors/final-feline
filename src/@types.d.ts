@@ -1,4 +1,4 @@
-declare type EntityName =
+declare type JobKind =
   | "dramanaut"
   | "copamancer"
   | "seethesayer"
