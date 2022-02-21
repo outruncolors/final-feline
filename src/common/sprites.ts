@@ -25,7 +25,7 @@ export const loadAnimation = (animation: string) =>
 
 /* = = C O M P O S I T I O N S = = */
 
-export const loadLocation = (location: string) => {
+export const loadLocationSprite = (location: string) => {
   const sprite = loadSprite(`locations/${location}`);
   sprite.scale.set(4, 3);
   return sprite;

@@ -4,12 +4,12 @@ import { NavigateFunction } from "react-router-dom";
 import {
   basicTextStyle,
   config,
-  loadLocation,
+  loadLocationSprite,
   makeHighlightable,
   padding,
   titleTextStyle,
 } from "../common";
-import { locations } from "../data";
+import { allLocations } from "../data";
 
 export const initializeWorldMap = (
   app: PIXI.Application,
@@ -35,8 +35,9 @@ const addOptions = (
   navigator: NavigateFunction
 ) => {
   const optionWrapper = new PIXI.Container();
-  const options = locations
-    .sort((a, b) => a.name.localeCompare(b.name))
+  const options = Object.keys(allLocations)
+    .sort((a, b) => a.localeCompare(b))
+    .map((key) => allLocations[key])
     .filter(({ name }) => name !== "world-map");
 
   let optionIndex = 0;
@@ -80,7 +81,7 @@ const handleSelectOption = (
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
-  const sprite = loadLocation("world-map");
+  const sprite = loadLocationSprite("world-map");
 
   if (sprite) {
     sprite.scale.set(0.9);

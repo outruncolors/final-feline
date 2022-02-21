@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import Chance from "chance";
 import { NavigateFunction } from "react-router-dom";
-import { config, loadLocation } from "../common";
+import { config, loadLocationSprite } from "../common";
 import { ScreenMessage, PubEntity, BattleMessage } from "../classes";
 
 const CHANCE = new Chance();
@@ -35,7 +35,7 @@ export const initializePub = async (
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
-  const sprite = loadLocation("pub");
+  const sprite = loadLocationSprite("pub");
 
   if (sprite) {
     sprite.height = app.view.height - 235;
