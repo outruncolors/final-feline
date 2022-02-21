@@ -10,13 +10,7 @@ import {
   getRomanNumeralFor,
   loadFoeAnimations,
 } from "../common";
-import {
-  AllEffects,
-  AllSkills,
-  allSkills,
-  entitySkills,
-  entityStats,
-} from "../data";
+import { AllEffects, AllSkills, allSkills, allEntities } from "../data";
 import { BattleMessage, InteractiveMessage } from "./Message";
 import { ScreenMessage } from ".";
 
@@ -95,7 +89,7 @@ export class Entity {
     this.addTargettedAura();
 
     // Add Stats
-    const stats = entityStats[this.name];
+    const { stats } = allEntities[this.name];
     this.baseStats = stats;
     this.currentStats = this.maxStats = Object.entries(stats).reduce(
       (prev, next) => {
@@ -122,7 +116,7 @@ export class Entity {
     this.maxStats.ATB = 100;
 
     // Add Skills
-    for (const skillName of entitySkills[this.name]) {
+    for (const skillName of allEntities[this.name].skills) {
       const skill = allSkills[skillName];
 
       if (skill) {

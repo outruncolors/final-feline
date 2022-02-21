@@ -18,7 +18,7 @@ const startBattle = async (
   location: string
 ) => {
   const battle = location
-    ? new Battle(location, screen)
+    ? new Battle(location, screen, [])
     : new RandomBattle(screen);
 
   await battle.load();
