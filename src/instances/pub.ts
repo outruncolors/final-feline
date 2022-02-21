@@ -4,7 +4,7 @@ import Chance from "chance";
 import { NavigateFunction } from "react-router-dom";
 import { config, loadLocationSprite } from "../common";
 import { ScreenMessage, PubEntity, BattleMessage } from "../classes";
-import { EntityKind } from "../data";
+import { JobKind, jobs } from "../data";
 
 const CHANCE = new Chance();
 
@@ -21,7 +21,9 @@ export const initializePub = async (
     minWidth: screen.width - 31,
     minHeight: 235,
   });
+
   screen.parent.addChild(screenMessage.container);
+
   screenMessage.container.position.x -= 64;
   screenMessage.container.position.y = screen.height;
 
@@ -62,8 +64,8 @@ const populatePub = async (
     max: config.PUB_POPULATION_MAXIMUM,
   });
   const populationWrapper = new PIXI.Container();
-  const entities: PubEntity[] = [];
-  const possibleEntities = Object.keys(entities) as EntityKind[];
+  const possibleEntities = Object.keys(jobs) as JobKind[];
+  const pubEntities: PubEntity[] = [];
 
   for (let i = 0; i < populationCount; i++) {
     const entity = new PubEntity(
@@ -71,7 +73,7 @@ const populatePub = async (
       screen,
       controller
     );
-    entities.push(entity);
+    pubEntities.push(entity);
 
     await entity.load();
 

@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import { InteractionEvent } from "pixi.js";
-import { basicTextStyle, colors, config } from "../common";
+import { basicTextStyle, colors, config, loadExtraSprite } from "../common";
 
 export interface MessageOptions {
   minWidth?: number;
@@ -61,24 +61,18 @@ export class Message {
   }
 
   private buildBox() {
-    const sheet =
-      PIXI.Loader.shared.resources[`/assets/sprites.json`].spritesheet;
+    const boxWrapper = new PIXI.Sprite(PIXI.Texture.WHITE);
+    const message = loadExtraSprite("message");
 
-    if (sheet) {
-      const boxWrapper = new PIXI.Sprite(PIXI.Texture.WHITE);
-      const box = new PIXI.Sprite(sheet.textures.message);
-      boxWrapper.width = box.width + config.MESSAGE_BOX_PADDING * 2;
-      boxWrapper.height = box.height + config.MESSAGE_BOX_PADDING * 2;
-      box.position.set(config.MESSAGE_BOX_PADDING);
+    boxWrapper.width = message.width + config.MESSAGE_BOX_PADDING * 2;
+    boxWrapper.height = message.height + config.MESSAGE_BOX_PADDING * 2;
+    message.position.set(config.MESSAGE_BOX_PADDING);
 
-      this.container.addChild(boxWrapper);
-      this.container.addChild(box);
+    this.container.addChild(boxWrapper);
+    this.container.addChild(message);
 
-      this.boxWrapper = boxWrapper;
-      this.box = box;
-    } else {
-      throw new Error();
-    }
+    this.boxWrapper = boxWrapper;
+    this.box = message;
   }
 
   private adjustBox() {
