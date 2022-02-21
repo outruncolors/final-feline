@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
-import { AllSkills, AllEffects } from "../data";
+import { Resource } from "pixi.js";
+import { AllSkills, AllEffects, AllFoes } from "../data";
 
 export const loadVisualAsset = (which: string, animated = false) => {
   const sheet =
@@ -60,7 +61,7 @@ export const loadJobAnimations = (job: JobKind) => {
 
   for (const animation of [standing, walking, attacking, defending, dying]) {
     animation.scale.set(5);
-    (animation as PIXI.AnimatedSprite).animationSpeed = 0.05;
+    animation.animationSpeed = 0.05;
     animation.visible = false;
     container.addChild(animation);
   }
@@ -74,5 +75,29 @@ export const loadJobAnimations = (job: JobKind) => {
     attacking,
     defending,
     dying,
+  };
+};
+
+export const loadFoeAnimations = (foe: keyof AllFoes) => {
+  const container = new PIXI.Container();
+  const animation = loadAnimation(`foes/${foe}/foes_${foe}`);
+  const [idle] = animation.textures;
+  const idleAnimation = new PIXI.AnimatedSprite([idle] as Array<
+    PIXI.Texture<Resource>
+  >);
+
+  idleAnimation.scale.set(5);
+  container.addChild(idleAnimation);
+
+  animation.visible = false;
+  container.addChild(animation);
+
+  return {
+    container,
+    standing: idleAnimation,
+    walking: animation,
+    attacking: animation,
+    defending: idleAnimation,
+    dying: idleAnimation,
   };
 };
