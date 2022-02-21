@@ -18,9 +18,11 @@ const startBattle = async (
   screen: PIXI.Container,
   location: "" | LocationKind
 ) => {
-  const battle = location
-    ? new Battle(location, screen, [])
-    : new RandomBattle(screen);
+  // const battle = location
+  //   ? new Battle(location, screen, [])
+  //   : new RandomBattle(screen);
+
+  const battle = new RandomBattle(screen);
 
   await battle.load();
 };

@@ -22,7 +22,7 @@ import {
   Skill,
   FoeKind,
 } from "../data";
-import { BattleMessage, InteractiveMessage } from "./Message";
+import { BattleMessage, InteractiveMessage, Message } from "./Message";
 import { ScreenMessage } from ".";
 
 const CHANCE = new Chance();
@@ -90,8 +90,9 @@ export class Entity {
   }
 
   public async load() {
+    console.log("a");
     this.animations = this.loader(this.name);
-    this.loaded = true;
+    console.log("b");
 
     ticker.add(this.update.bind(this));
 
@@ -133,6 +134,8 @@ export class Entity {
         throw new Error(`Invalid skill ${skillName} missing entry.`);
       }
     }
+
+    this.loaded = true;
   }
 
   public damageBy(amount: number) {
@@ -692,7 +695,19 @@ export class PubEntity extends PlayableEntity {
 }
 
 export class BattleEntity extends PlayableEntity {
+  vitalBox: null | PIXI.Container = null;
+
   // Display HP, MP, ATB, Finale, etc
+  public async load() {
+    await super.load();
+
+    this.vitalBox = new PIXI.Container();
+
+    const message = new Message("hi");
+    // message.container.position.y -= message.container.height;
+    this.vitalBox.addChild(message.container);
+    this.container!.addChild(this.vitalBox);
+  }
 }
 
 // === Foe ===

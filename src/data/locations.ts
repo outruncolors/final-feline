@@ -48,10 +48,6 @@ export const locations = {
     id: 9,
     name: "valley",
   },
-  "world-map": {
-    id: 10,
-    name: "world-map",
-  },
 };
 
 export type LocationKind = keyof typeof locations;

@@ -4,7 +4,7 @@ import { NavigateFunction } from "react-router-dom";
 import {
   basicTextStyle,
   config,
-  loadLocationSprite,
+  loadExtraSprite,
   makeHighlightable,
   padding,
   titleTextStyle,
@@ -81,7 +81,7 @@ const handleSelectOption = (
 };
 
 const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
-  const sprite = loadLocationSprite("world-map");
+  const sprite = loadExtraSprite("world-map");
 
   if (sprite) {
     sprite.scale.set(0.9);
