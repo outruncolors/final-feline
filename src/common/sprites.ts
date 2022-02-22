@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import { Resource } from "pixi.js";
+import { config } from ".";
 import { AfflictionKind, SkillKind, LocationKind, EntityKind } from "../data";
 
 export const loadVisualAsset = (which: string, animated = false) => {
@@ -61,8 +62,8 @@ export const loadCastingAnimations = () => {
   );
 
   for (const animation of [behind, front, under]) {
-    animation.animationSpeed = 0.2;
-    animation.scale.set(5);
+    animation.animationSpeed = config.FASTER_ANIMATION_SPEED;
+    animation.scale.set(config.ENTITY_SCALE);
   }
 
   return {
@@ -86,8 +87,8 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
   ].map((name) => loadAnimation(withPrefix(name)));
 
   for (const animation of [standing, walking, attacking, defending, dying]) {
-    animation.scale.set(5);
-    animation.animationSpeed = 0.05;
+    animation.scale.set(config.ENTITY_SCALE);
+    animation.animationSpeed = config.SLOWED_ANIMATION_SPEED;
     animation.visible = false;
     container.addChild(animation);
   }
@@ -121,8 +122,8 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
   ];
 
   for (const animation of [standing, walking, attacking, defending, dying]) {
-    animation.scale.set(5);
-    animation.animationSpeed = 0.05;
+    animation.scale.set(config.ENTITY_SCALE);
+    animation.animationSpeed = config.SLOWED_ANIMATION_SPEED;
     animation.visible = false;
     container.addChild(animation);
   }

@@ -201,8 +201,8 @@ export class Entity {
           const skillEntry = skills[skill] as Skill;
           const animation = loadSkillAnimation(skill) as PIXI.AnimatedSprite;
           animation.loop = false;
-          animation.animationSpeed = skillEntry.loopSpeed ?? 0.1;
-          animation.scale.set(5);
+          animation.animationSpeed = skillEntry.loopSpeed ?? config.STANDARD_ANIMATION_SPEED;
+          animation.scale.set(config.ENTITY_SCALE);
 
           if (skillEntry.offset) {
             const [x, y] = skillEntry.offset;
@@ -274,8 +274,8 @@ export class Entity {
 
       const afflictionAnimation = loadAfflictionAnimation(affliction);
       afflictionAnimation.position.x += 64 * this.afflictions.length - 1;
-      afflictionAnimation.scale.set(2);
-      afflictionAnimation.animationSpeed = 0.05;
+      afflictionAnimation.scale.set(config.AFFLICTION_SCALE);
+      afflictionAnimation.animationSpeed = config.SLOWED_ANIMATION_SPEED;
       afflictionAnimation.play();
       this.afflictionAnimations.push(afflictionAnimation);
       this.container?.addChild(afflictionAnimation);
@@ -311,7 +311,7 @@ export class Entity {
     }
 
     if (this.castShadow) {
-      this.castShadow.width = 25 * config.ENTITY_SCALE;
+      this.castShadow.width = config.CAST_SHADOW_WIDTH_UP * config.ENTITY_SCALE;
     }
   }
 
@@ -335,7 +335,7 @@ export class Entity {
     dying.loop = false;
     dying.onComplete = () => {
       if (this.castShadow) {
-        this.castShadow.width = 60 * config.ENTITY_SCALE;
+        this.castShadow.width = config.CAST_SHADOW_WIDTH_DOWN * config.ENTITY_SCALE;
       }
     };
   }
