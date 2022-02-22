@@ -55,6 +55,23 @@ export const loadAfflictionAnimation = (affliction: AfflictionKind) =>
 export const loadSkillAnimation = (skill: SkillKind) =>
   loadAnimation(`skills/${skill}/skill_${skill}`);
 
+export const loadCastingAnimations = () => {
+  const [behind, front, under] = ["behind", "front", "under"].map((place) =>
+    loadAnimation(`extras/casting-${place}/extra_casting-${place}`)
+  );
+
+  for (const animation of [behind, front, under]) {
+    animation.animationSpeed = 0.2;
+    animation.scale.set(5);
+  }
+
+  return {
+    behind,
+    front,
+    under,
+  };
+};
+
 // === Entities ===
 
 export const loadJobAnimations = (job: EntityKind): EntityAnimations => {

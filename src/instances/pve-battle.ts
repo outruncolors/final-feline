@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
 import { NavigateFunction } from "react-router-dom";
-import { Battle, RandomBattle } from "../classes";
+import { RandomBattle } from "../classes";
 import { LocationKind } from "../data";
 
 export const initializePvEBattle =
@@ -18,11 +18,6 @@ const startBattle = async (
   screen: PIXI.Container,
   location: "" | LocationKind
 ) => {
-  // const battle = location
-  //   ? new Battle(location, screen, [])
-  //   : new RandomBattle(screen);
-
   const battle = new RandomBattle(screen);
-
   await battle.load();
 };

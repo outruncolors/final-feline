@@ -11,6 +11,7 @@ import {
   loadSkillAnimation,
   getRomanNumeralFor,
   loadFoeAnimations,
+  loadCastingAnimations,
 } from "../common";
 import {
   AfflictionKind,
@@ -49,12 +50,6 @@ export class Entity {
 
   // Sprite Effects
   castShadow: null | PIXI.Graphics = null;
-  castingAura: null | PIXI.Graphics = null;
-  castingOverlay: null | PIXI.Graphics = null;
-  castingFlashCount = 0;
-  targettedAura: null | PIXI.Graphics = null;
-  targettedOverlay: null | PIXI.Graphics = null;
-  targettedFlashCount = 0;
 
   // Afflictions
   afflictions: string[] = [];
@@ -90,17 +85,13 @@ export class Entity {
   }
 
   public async load() {
-    console.log("a");
     this.animations = this.loader(this.name);
-    console.log("b");
 
     ticker.add(this.update.bind(this));
 
     this.container = this.animations!.container;
 
     this.addShadow();
-    this.addCastingAura();
-    this.addTargettedAura();
 
     // Add Stats
     const { stats } = entities[this.name];
@@ -136,6 +127,8 @@ export class Entity {
     }
 
     this.loaded = true;
+
+    this.cast("delete", this);
   }
 
   public damageBy(amount: number) {
@@ -180,24 +173,30 @@ export class Entity {
     );
     this.screen.addChild(castMessage.container);
 
+    const { behind, front, under } = loadCastingAnimations();
+
     this.perform("attacking", 2500, () => {
-      if (
-        this.container &&
-        this.castingAura &&
-        this.castingOverlay &&
-        target.targettedAura &&
-        target.targettedOverlay
-      ) {
+      if (this.container) {
         this.hideEffects();
-        this.castingAura.visible = true;
-        this.castingOverlay.visible = true;
+
+        this.container.addChildAt(behind, 0);
+        this.container.addChildAt(under, 1);
+        this.container.addChild(front);
+
+        for (const castingAnimation of [behind, front, under]) {
+          castingAnimation.loop = false;
+          castingAnimation.play();
+          castingAnimation.onComplete = () => {
+            castingAnimation.destroy();
+          };
+        }
 
         setTimeout(() => {
           this.hideEffects();
 
           target.hideEffects();
-          target.targettedAura!.visible = true;
-          target.targettedOverlay!.visible = true;
+          // target.targettedAura!.visible = true;
+          // target.targettedOverlay!.visible = true;
 
           const skillEntry = skills[skill] as Skill;
           const animation = loadSkillAnimation(skill) as PIXI.AnimatedSprite;
@@ -359,14 +358,6 @@ export class Entity {
         this.startMeandering();
       }
     }
-
-    if (this.castingAura?.visible) {
-      this.flashCastingAura();
-    }
-
-    if (this.targettedAura?.visible) {
-      this.flashTargettedAura();
-    }
   }
 
   private displayDamageTaken(amount: number) {
@@ -426,13 +417,7 @@ export class Entity {
   // Effects
   private hideEffects() {
     if (this.container) {
-      for (const effect of [
-        this.castShadow,
-        this.castingAura,
-        this.castingOverlay,
-        this.targettedAura,
-        this.targettedOverlay,
-      ]) {
+      for (const effect of [this.castShadow]) {
         if (effect) {
           effect.alpha = 0.3;
           effect.visible = false;
@@ -465,84 +450,12 @@ export class Entity {
     }
   }
 
-  private addOverlay(fill: number) {
-    if (this.container) {
-      const overlay = this.addEffect(fill, PIXI.BLEND_MODES.COLOR_DODGE);
-      overlay.alpha = 0.5;
-      overlay.width = 192;
-      overlay.height = this.container.height;
-      overlay.position.y -= 170;
-      return overlay;
-    } else {
-      throw new Error();
-    }
-  }
-
   private addShadow() {
     if (this.container) {
       const circle = this.addEffect(colors.grey, PIXI.BLEND_MODES.MULTIPLY);
       circle.alpha = 0.75;
       this.castShadow = circle;
       this.container.addChildAt(this.castShadow, 0);
-    }
-  }
-
-  private addCastingAura() {
-    if (this.container) {
-      this.castingAura = this.addEffect(colors.white, PIXI.BLEND_MODES.ADD);
-      this.castingAura.visible = false;
-      this.container.addChildAt(this.castingAura, 0);
-
-      this.castingOverlay = this.addOverlay(colors.white);
-      this.castingOverlay.visible = false;
-      this.container.addChild(this.castingOverlay);
-    }
-  }
-
-  private addTargettedAura() {
-    if (this.container) {
-      this.targettedAura = this.addEffect(
-        colors.red,
-        PIXI.BLEND_MODES.COLOR_BURN
-      );
-      this.targettedAura.visible = false;
-      this.container.addChildAt(this.targettedAura, 0);
-
-      this.targettedOverlay = this.addOverlay(colors.red);
-      this.targettedOverlay.visible = false;
-      this.container.addChild(this.targettedOverlay);
-    }
-  }
-
-  private flashCastingAura() {
-    if (this.castingOverlay?.visible) {
-      this.castingFlashCount++;
-
-      if (this.castingFlashCount % 7 === 0) {
-        this.castingOverlay.alpha += 0.1;
-
-        if (this.castingOverlay.alpha >= 0.6) {
-          this.castingOverlay.alpha = 0.3;
-        }
-
-        this.castingFlashCount = 0;
-      }
-    }
-  }
-
-  private flashTargettedAura() {
-    if (this.targettedOverlay?.visible) {
-      this.castingFlashCount++;
-
-      if (this.castingFlashCount % 7 === 0) {
-        this.targettedOverlay.alpha += 0.1;
-
-        if (this.targettedOverlay.alpha >= 0.6) {
-          this.targettedOverlay.alpha = 0.3;
-        }
-
-        this.castingFlashCount = 0;
-      }
     }
   }
 
