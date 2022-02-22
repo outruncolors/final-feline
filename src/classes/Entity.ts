@@ -128,8 +128,6 @@ export class Entity {
     }
 
     this.loaded = true;
-
-    this.cast("delete", this);
   }
 
   public damageBy(amount: number) {
@@ -614,6 +612,12 @@ export class BattleEntity extends PlayableEntity {
   vitalBox: null | PIXI.AnimatedSprite = null;
   vitalBoxOver: null | PIXI.AnimatedSprite = null;
 
+  // Stats
+  hpBar: null | PIXI.Graphics = null;
+  mpBar: null | PIXI.Graphics = null;
+  atbBar: null | PIXI.Graphics = null;
+  finaleBar: null | PIXI.Graphics = null;
+
   // Display HP, MP, ATB, Finale, etc
   public async load() {
     await super.load();
@@ -621,12 +625,12 @@ export class BattleEntity extends PlayableEntity {
     const container = this.container!;
     this.vitalBox = loadExtraAnimation("vitals");
     this.vitalBox.position.x += 32;
-    this.vitalBox.position.y -= 48;
+    this.vitalBox.position.y -= 38;
     container.addChildAt(this.vitalBox, 0);
 
     this.vitalBoxOver = loadExtraAnimation("vitals-over");
     this.vitalBoxOver.position.x += 32;
-    this.vitalBoxOver.position.y -= 48;
+    this.vitalBoxOver.position.y -= 38;
     container.addChild(this.vitalBoxOver);
 
     this.vitalBox.play();
@@ -639,8 +643,85 @@ export class BattleEntity extends PlayableEntity {
 
     container.on("mousedown", this.showVitals);
     container.on("touchstart", this.showVitals);
+
+    this.addHPBar();
+    this.addMPBar();
+    this.addATBBar();
+    this.addFinaleBar();
   }
 
+  // A D D
+  private addHPBar() {
+    const hpBar = (this.hpBar = new PIXI.Graphics());
+    hpBar.beginFill(colors.hp);
+    hpBar.drawRect(
+      config.ENTITY_VITAL_BAR_X_OFFSET,
+      config.ENTITY_VITAL_BAR_Y_OFFSET,
+      config.ENTITY_VITAL_BAR_WIDTH,
+      config.ENTITY_VITAL_BAR_HEIGHT
+    );
+    hpBar.endFill();
+
+    this.vitalBoxOver!.addChild(hpBar);
+  }
+
+  private addMPBar() {
+    const mpBar = (this.mpBar = new PIXI.Graphics());
+    mpBar.beginFill(colors.mp);
+    mpBar.drawRect(
+      config.ENTITY_VITAL_BAR_X_OFFSET,
+      config.ENTITY_VITAL_BAR_Y_OFFSET + config.ENTITY_VITAL_BAR_Y_DISTANCE * 1,
+      config.ENTITY_VITAL_BAR_WIDTH,
+      config.ENTITY_VITAL_BAR_HEIGHT
+    );
+    mpBar.endFill();
+
+    this.vitalBoxOver!.addChild(mpBar);
+  }
+
+  private addATBBar() {
+    const atbBar = (this.atbBar = new PIXI.Graphics());
+    atbBar.beginFill(colors.atb);
+    atbBar.drawRect(
+      config.ENTITY_VITAL_BAR_X_OFFSET,
+      config.ENTITY_VITAL_BAR_Y_OFFSET + config.ENTITY_VITAL_BAR_Y_DISTANCE * 2,
+      config.ENTITY_VITAL_BAR_WIDTH,
+      config.ENTITY_ATB_BAR_HEIGHT
+    );
+    atbBar.endFill();
+
+    this.vitalBoxOver!.addChild(atbBar);
+  }
+
+  private addFinaleBar() {
+    const finaleBar = (this.finaleBar = new PIXI.Graphics());
+    finaleBar.beginFill(colors.finale);
+    finaleBar.drawRect(
+      config.ENTITY_VITAL_BAR_X_OFFSET + config.ENTITY_VITAL_BAR_WIDTH + 1,
+      config.ENTITY_FINALE_BAR_HEIGHT,
+      config.ENTITY_FINALE_BAR_WIDTH,
+      config.ENTITY_FINALE_BAR_HEIGHT
+    );
+    finaleBar.endFill();
+
+    this.vitalBoxOver!.addChild(finaleBar);
+  }
+
+  // U P D A T E
+  private updateHPBar() {
+    if (this.currentStats && this.maxStats) {
+      const { HP } = this.currentStats;
+      const { HP: maxHP } = this.maxStats;
+    }
+  }
+
+  private updateMPBar() {}
+
+  private updateATBBar() {}
+
+  private updateFinaleBar() {}
+
+  // V I T A L S
   private showVitals = () => {
     if (
       this.container &&

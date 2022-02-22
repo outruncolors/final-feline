@@ -3,6 +3,14 @@ export const GAME_TITLE = "FINAL FELINE";
 export const ENTITY_MOVING_DISTANCE = 256;
 export const ENTITY_WALKING_VELOCITY = 2;
 export const ENTITY_SCALE = 4;
+export const ENTITY_VITAL_BAR_WIDTH = 17;
+export const ENTITY_VITAL_BAR_HEIGHT = 5;
+export const ENTITY_ATB_BAR_HEIGHT = 4;
+export const ENTITY_FINALE_BAR_WIDTH = 3;
+export const ENTITY_FINALE_BAR_HEIGHT = 19;
+export const ENTITY_VITAL_BAR_X_OFFSET = 48;
+export const ENTITY_VITAL_BAR_Y_OFFSET = 19;
+export const ENTITY_VITAL_BAR_Y_DISTANCE = 6;
 
 export const PUB_POPULATION_MINIMUM = 3;
 export const PUB_POPULATION_MAXIMUM = 8;
@@ -19,3 +27,6 @@ export const AFFLICTION_SCALE = 2;
 
 export const CAST_SHADOW_WIDTH_UP = 25;
 export const CAST_SHADOW_WIDTH_DOWN = 60;
+
+export const BATTLE_TOP_MARGIN = 256; 
+export const BATTLE_CHARACTER_SEPARATION = 64;

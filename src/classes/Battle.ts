@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import Chance from "chance";
-import { loadLocationSprite } from "../common";
+import { config, loadLocationSprite } from "../common";
 import { Location, LocationKind, JobKind, jobs, locations } from "../data";
 import { BattleEntity } from "./Entity";
 
@@ -31,12 +31,16 @@ export class Battle {
   }
 
   private async loadAnimations() {
-    for (const entity of this.playableParty) {
-      await entity.load();
+    const leftSide = new PIXI.Container();
 
-      this.container.addChild(entity.container!);
+    for (let i = 0; i < this.playableParty.length; i++) {
+      const entity = this.playableParty[i];
+      await entity.load();
+      entity.container!.position.y += config.BATTLE_TOP_MARGIN + i * config.BATTLE_CHARACTER_SEPARATION * config.ENTITY_SCALE;
+      leftSide.addChild(entity.container!);
     }
 
+    this.container.addChild(leftSide);
     this.screen.addChild(this.container);
   }
 
@@ -65,6 +69,7 @@ export class RandomBattle extends Battle {
 
     // MOVEME
     const playableParty: BattleEntity[] = [
+      new BattleEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
       new BattleEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
     ];
 
