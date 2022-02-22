@@ -51,6 +51,7 @@ export const loadExtraSprite = (extra: string) => {
 export const loadExtraAnimation = (extra: string) => {
   const animation = loadAnimation(`extras/${extra}/extra_${extra}`);
   animation.scale.set(config.ENTITY_SCALE);
+  animation.animationSpeed = config.STANDARD_ANIMATION_SPEED;
   return animation;
 };
 

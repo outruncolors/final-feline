@@ -24,7 +24,7 @@ import {
   Skill,
   FoeKind,
 } from "../data";
-import { BattleMessage, InteractiveMessage, Message } from "./Message";
+import { BattleMessage, InteractiveMessage } from "./Message";
 import { ScreenMessage } from ".";
 
 const CHANCE = new Chance();
@@ -611,7 +611,8 @@ export class PubEntity extends PlayableEntity {
 }
 
 export class BattleEntity extends PlayableEntity {
-  vitalBox: null | PIXI.Container = null;
+  vitalBox: null | PIXI.AnimatedSprite = null;
+  vitalBoxOver: null | PIXI.AnimatedSprite = null;
 
   // Display HP, MP, ATB, Finale, etc
   public async load() {
@@ -619,10 +620,58 @@ export class BattleEntity extends PlayableEntity {
 
     const container = this.container!;
     this.vitalBox = loadExtraAnimation("vitals");
-    this.vitalBox.position.x += 64;
-    this.vitalBox.position.y += container.height;
-    this.container!.addChild(this.vitalBox);
+    this.vitalBox.position.x += 32;
+    this.vitalBox.position.y -= 48;
+    container.addChildAt(this.vitalBox, 0);
+
+    this.vitalBoxOver = loadExtraAnimation("vitals-over");
+    this.vitalBoxOver.position.x += 32;
+    this.vitalBoxOver.position.y -= 48;
+    container.addChild(this.vitalBoxOver);
+
+    this.vitalBox.play();
+    this.vitalBoxOver.play();
+    this.vitalBox.visible = false;
+    this.vitalBoxOver.visible = false;
+
+    container.interactive = true;
+    container.cursor = "pointer";
+
+    container.on("mousedown", this.showVitals);
+    container.on("touchstart", this.showVitals);
   }
+
+  private showVitals = () => {
+    if (
+      this.container &&
+      this.animations &&
+      this.vitalBox &&
+      this.vitalBoxOver
+    ) {
+      this.vitalBox.visible = true;
+      this.vitalBoxOver.visible = true;
+
+      this.container.parent.parent.interactive = true;
+      this.container.parent.parent.on("mousedown", this.hideVitals);
+      this.container.parent.parent.on("touchstart", this.hideVitals);
+    }
+  };
+
+  private hideVitals = () => {
+    if (
+      this.animations &&
+      this.container &&
+      this.vitalBox &&
+      this.vitalBoxOver
+    ) {
+      this.vitalBox.visible = false;
+      this.vitalBoxOver.visible = false;
+
+      this.container.parent.parent.interactive = false;
+      this.container.parent.parent.off("mousedown", this.hideVitals);
+      this.container.parent.parent.off("touchstart", this.hideVitals);
+    }
+  };
 }
 
 // === Foe ===
