@@ -42,16 +42,20 @@ export const loadLocationSprite = (location: LocationKind) => {
   return sprite;
 };
 
-export const loadExtraSprite = (extra: string) =>
-  loadSprite(`extras/extra_${extra}`);
+export const loadExtraSprite = (extra: string) => {
+  const sprite = loadSprite(`extras/extra_${extra}`);
+  sprite.scale.set(config.ENTITY_SCALE);
+  return sprite;
+};
 
-export const loadExtraAnimation = (extra: string) =>
-  loadAnimation(`extras/${extra}/extra_${extra}`);
+export const loadExtraAnimation = (extra: string) => {
+  const animation = loadAnimation(`extras/${extra}/extra_${extra}`);
+  animation.scale.set(config.ENTITY_SCALE);
+  return animation;
+};
 
 export const loadAfflictionAnimation = (affliction: AfflictionKind) =>
-  loadAnimation(
-    `afflictions/${affliction}/affliction_${affliction}`
-  ) as PIXI.AnimatedSprite;
+  loadAnimation(`afflictions/${affliction}/affliction_${affliction}`);
 
 export const loadSkillAnimation = (skill: SkillKind) =>
   loadAnimation(`skills/${skill}/skill_${skill}`);

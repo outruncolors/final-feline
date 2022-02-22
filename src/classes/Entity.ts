@@ -12,6 +12,7 @@ import {
   getRomanNumeralFor,
   loadFoeAnimations,
   loadCastingAnimations,
+  loadExtraAnimation,
 } from "../common";
 import {
   AfflictionKind,
@@ -201,7 +202,8 @@ export class Entity {
           const skillEntry = skills[skill] as Skill;
           const animation = loadSkillAnimation(skill) as PIXI.AnimatedSprite;
           animation.loop = false;
-          animation.animationSpeed = skillEntry.loopSpeed ?? config.STANDARD_ANIMATION_SPEED;
+          animation.animationSpeed =
+            skillEntry.loopSpeed ?? config.STANDARD_ANIMATION_SPEED;
           animation.scale.set(config.ENTITY_SCALE);
 
           if (skillEntry.offset) {
@@ -335,7 +337,8 @@ export class Entity {
     dying.loop = false;
     dying.onComplete = () => {
       if (this.castShadow) {
-        this.castShadow.width = config.CAST_SHADOW_WIDTH_DOWN * config.ENTITY_SCALE;
+        this.castShadow.width =
+          config.CAST_SHADOW_WIDTH_DOWN * config.ENTITY_SCALE;
       }
     };
   }
@@ -614,11 +617,10 @@ export class BattleEntity extends PlayableEntity {
   public async load() {
     await super.load();
 
-    this.vitalBox = new PIXI.Container();
-
-    const message = new Message("hi");
-    // message.container.position.y -= message.container.height;
-    this.vitalBox.addChild(message.container);
+    const container = this.container!;
+    this.vitalBox = loadExtraAnimation("vitals");
+    this.vitalBox.position.x += 64;
+    this.vitalBox.position.y += container.height;
     this.container!.addChild(this.vitalBox);
   }
 }
