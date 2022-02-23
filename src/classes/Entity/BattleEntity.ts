@@ -11,6 +11,7 @@ import {
   loadJobAnimations,
   loadSkillAnimation,
   tints,
+  titleTextStyle,
 } from "../../common";
 import {
   AfflictionKind,
@@ -29,6 +30,7 @@ const CHANCE = new Chance();
 export class BattleEntity extends Entity {
   vitalBox: null | PIXI.AnimatedSprite = null;
   vitalBoxOver: null | PIXI.AnimatedSprite = null;
+  vitalsTextContainer: null | PIXI.Container = null;
   currentStats: null | Record<EntityStatsKind, number> = null;
   maxStats: null | Record<EntityStatsKind, number> = null;
   lastVitalStats = {
@@ -324,6 +326,58 @@ export class BattleEntity extends Entity {
     container.cursor = "pointer";
     container.on("mousedown", () => setTimeout(this.showVitals));
     container.on("touchstart", () => setTimeout(this.showVitals));
+
+    setTimeout(() => {
+      if (this.container) {
+        this.vitalsTextContainer = new PIXI.Container();
+        this.vitalsTextContainer.name = "Vital Text";
+        this.vitalsTextContainer.visible = false;
+        this.container.addChild(this.vitalsTextContainer);
+
+        this.vitalsTextContainer.position.set(66, 110);
+
+        const stage = new PIXI.Text(this.stage.toString(), {
+          ...basicTextStyle,
+          strokeThickness: 3,
+          fontWeight: "bolder",
+          fontSize: 40,
+          dropShadow: false,
+        });
+        this.vitalsTextContainer.addChild(stage);
+
+        const shortened = this.goesBy
+          .split(" ")
+          .map((each, i) => (i === 0 ? `${each[0]}.` : each))
+          .join(" ");
+        const goesBy = new PIXI.Text(shortened.toUpperCase(), {
+          ...basicTextStyle,
+          fontSize: 16,
+          fontWeight: "600",
+          fill: colors.black,
+          stroke: colors.white,
+          strokeThickness: 3,
+          letterSpacing: 0.2,
+          dropShadow: false,
+        });
+        goesBy.position.x += 70;
+        goesBy.position.y += 5;
+        this.vitalsTextContainer.addChild(goesBy);
+
+        const job = new PIXI.Text(this.name.toUpperCase(), {
+          ...basicTextStyle,
+          fontSize: 12,
+          fontWeight: "bolder",
+          fill: colors.black,
+          stroke: colors.white,
+          strokeThickness: 3,
+          letterSpacing: 0.1,
+          dropShadow: false,
+        });
+        job.position.x += 70;
+        job.position.y += 36;
+        this.vitalsTextContainer.addChild(job);
+      }
+    });
   }
 
   private addHPBar() {
@@ -481,10 +535,12 @@ export class BattleEntity extends Entity {
       this.container &&
       this.animations &&
       this.vitalBox &&
-      this.vitalBoxOver
+      this.vitalBoxOver &&
+      this.vitalsTextContainer
     ) {
       this.vitalBox.visible = true;
       this.vitalBoxOver.visible = true;
+      this.vitalsTextContainer.visible = true;
 
       this.screen.interactive = true;
       this.screen.on("mousedown", this.hideVitals);
@@ -497,10 +553,12 @@ export class BattleEntity extends Entity {
       this.animations &&
       this.container &&
       this.vitalBox &&
-      this.vitalBoxOver
+      this.vitalBoxOver &&
+      this.vitalsTextContainer
     ) {
       this.vitalBox.visible = false;
       this.vitalBoxOver.visible = false;
+      this.vitalsTextContainer.visible = false;
 
       this.screen.interactive = false;
       this.screen.off("mousedown", this.hideVitals);
