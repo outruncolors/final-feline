@@ -11,6 +11,7 @@ export const ENTITY_FINALE_BAR_HEIGHT = 19;
 export const ENTITY_VITAL_BAR_X_OFFSET = 48;
 export const ENTITY_VITAL_BAR_Y_OFFSET = 19;
 export const ENTITY_VITAL_BAR_Y_DISTANCE = 6;
+export const ENTITY_READY_FLASH_SPEED = 0.05;
 
 export const PUB_POPULATION_MINIMUM = 3;
 export const PUB_POPULATION_MAXIMUM = 8;
@@ -28,5 +29,5 @@ export const AFFLICTION_SCALE = 2;
 export const CAST_SHADOW_WIDTH_UP = 25;
 export const CAST_SHADOW_WIDTH_DOWN = 60;
 
-export const BATTLE_TOP_MARGIN = 256; 
+export const BATTLE_TOP_MARGIN = 256;
 export const BATTLE_CHARACTER_SEPARATION = 64;

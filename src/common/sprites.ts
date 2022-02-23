@@ -23,7 +23,10 @@ export const loadSprite = (sprite: string) =>
 
 export interface EntityAnimations {
   container: PIXI.Container;
-  effects: Record<string, () => void>;
+  effects: {
+    ready: (percent: number) => number;
+    unready: () => void;
+  };
   animations: {
     standing: PIXI.AnimatedSprite;
     walking: PIXI.AnimatedSprite;
@@ -93,12 +96,25 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
     "defend",
     "down",
   ].map((name) => loadAnimation(withPrefix(name)));
+  const readyStates = ["stand", "walk", "attack", "defend", "down"].map(
+    (name) => loadAnimation(withPrefix(name))
+  );
 
+  let i = 0;
   for (const animation of [standing, walking, attacking, defending, dying]) {
     animation.scale.set(config.ENTITY_SCALE);
     animation.animationSpeed = config.SLOWED_ANIMATION_SPEED;
     animation.visible = false;
     container.addChild(animation);
+
+    const readyState = readyStates[i];
+    readyState.alpha = 0.5;
+    readyState.tint = 0x000000;
+    readyState.blendMode = PIXI.BLEND_MODES.ERASE;
+    readyState.visible = false;
+    animation.addChild(readyState);
+
+    i++;
   }
 
   standing.visible = true;
@@ -113,7 +129,23 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
       dying,
     },
     effects: {
-      ready: () => {},
+      ready: (percent: number) => {
+        for (const readyState of readyStates) {
+          readyState.visible = true;
+          readyState.alpha = Math.max(
+            0,
+            Math.min(readyState.alpha + percent, 1)
+          );
+        }
+
+        return readyStates[0].alpha;
+      },
+      unready: () => {
+        for (const readyState of readyStates) {
+          readyState.visible = false;
+          readyState.alpha = 0;
+        }
+      },
     },
   };
 };
@@ -145,7 +177,10 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
 
   return {
     container,
-    effects: {},
+    effects: {
+      ready: () => 0,
+      unready: () => {},
+    },
     animations: {
       standing: idleAnimation,
       walking: activeAnimation,

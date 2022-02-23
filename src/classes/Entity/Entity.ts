@@ -100,7 +100,7 @@ export class Entity {
 
   public hideAllAnimations() {
     if (this.animations) {
-      const { container, ...animations } = this.animations;
+      const { animations } = this.animations;
 
       for (const animation of Object.values(animations)) {
         animation.stop();

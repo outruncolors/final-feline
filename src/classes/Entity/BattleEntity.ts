@@ -48,9 +48,14 @@ export class BattleEntity extends Entity {
   damageTakenText: null | PIXI.Text = null;
   damageTakenTextVelocity = 0;
   damageTakenFlashCount = 0;
+  readyFlashDirection: "in" | "out" = "in";
 
   public get isDead() {
     return Boolean(this.currentStats?.HP === 0);
+  }
+
+  public get isReady() {
+    return this.lastVitalStats.ATB === 100;
   }
 
   public async load() {
@@ -66,7 +71,6 @@ export class BattleEntity extends Entity {
     this.syncStats();
   }
 
-  // U P D A T E
   public update() {
     super.update();
 
@@ -80,6 +84,14 @@ export class BattleEntity extends Entity {
 
     if (this.displayingDamageTaken) {
       this.liftDamageTaken();
+    }
+
+    if (this.animations) {
+      if (this.isReady && !this.vitalBox?.visible) {
+        this.flashReady();
+      } else {
+        this.animations.effects.unready();
+      }
     }
   }
 
@@ -99,7 +111,6 @@ export class BattleEntity extends Entity {
     }
   }
 
-  // S T A T S
   private getFormattedStats = () =>
     Object.entries(this.baseStats ?? {}).reduce(
       (prev, next) => {
@@ -119,7 +130,6 @@ export class BattleEntity extends Entity {
       } as Record<EntityStatsKind, number>
     );
 
-  // A C T I O N S
   public attack() {
     const attack = this.showAnimation("attacking");
     attack.loop = false;
@@ -262,8 +272,6 @@ export class BattleEntity extends Entity {
     }
   }
 
-  // M O V E M E N T
-
   public perform(
     animation: keyof EntityAnimations["animations"],
     duration = 1250,
@@ -290,7 +298,6 @@ export class BattleEntity extends Entity {
     this.stepUp();
   }
 
-  // A D D
   private addVitals() {
     const container = this.container!;
     this.vitalBox = loadExtraAnimation("vitals");
@@ -369,7 +376,7 @@ export class BattleEntity extends Entity {
     this.atbBar = new PIXI.Graphics();
 
     const percent = this.lastVitalStats.ATB / 100;
-    const color = percent === 1 ? colors.yellow : colors.atb;
+    const color = this.isReady ? colors.yellow : colors.atb;
 
     this.atbBar.beginFill(color);
     this.atbBar.drawRect(
@@ -410,7 +417,6 @@ export class BattleEntity extends Entity {
     this.vitalBox!.addChild(this.finaleBar);
   }
 
-  // E F F E C T S
   private displayDamageTaken(amount: number) {
     if (this.container) {
       const damagedBy = amount * -1;
@@ -465,7 +471,6 @@ export class BattleEntity extends Entity {
     }
   }
 
-  // V I T A L S
   private showVitals = () => {
     if (
       this.container &&
@@ -497,4 +502,24 @@ export class BattleEntity extends Entity {
       this.screen.off("touchstart", this.hideVitals);
     }
   };
+
+  private flashReady() {
+    if (this.animations) {
+      if (this.readyFlashDirection === "in") {
+        const isFullyIn =
+          this.animations.effects.ready(config.ENTITY_READY_FLASH_SPEED) >= 0.7;
+
+        if (isFullyIn) {
+          this.readyFlashDirection = "out";
+        }
+      } else {
+        const isFullyOut =
+          this.animations.effects.ready(-config.ENTITY_READY_FLASH_SPEED) === 0;
+
+        if (isFullyOut) {
+          this.readyFlashDirection = "in";
+        }
+      }
+    }
+  }
 }
