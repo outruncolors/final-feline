@@ -639,6 +639,8 @@ export class BattleEntity extends PlayableEntity {
     this.vitalBoxOver = loadExtraAnimation("vitals-over");
     this.vitalBoxOver.position.x += 32;
     this.vitalBoxOver.position.y -= 38;
+    this.vitalBoxOver.interactive = true;
+
     container.addChild(this.vitalBoxOver);
 
     this.vitalBox.play();
@@ -649,8 +651,8 @@ export class BattleEntity extends PlayableEntity {
     container.interactive = true;
     container.cursor = "pointer";
 
-    container.on("mousedown", this.showVitals);
-    container.on("touchstart", this.showVitals);
+    container.on("mousedown", () => setTimeout(this.showVitals));
+    container.on("touchstart", () => setTimeout(this.showVitals));
 
     this.addHPBar();
     this.addMPBar();
@@ -768,9 +770,9 @@ export class BattleEntity extends PlayableEntity {
       this.vitalBox.visible = true;
       this.vitalBoxOver.visible = true;
 
-      this.container.parent.parent.interactive = true;
-      this.container.parent.parent.on("mousedown", this.hideVitals);
-      this.container.parent.parent.on("touchstart", this.hideVitals);
+      this.screen.interactive = true;
+      this.screen.on("mousedown", this.hideVitals);
+      this.screen.on("touchstart", this.hideVitals);
     }
   };
 
@@ -784,9 +786,9 @@ export class BattleEntity extends PlayableEntity {
       this.vitalBox.visible = false;
       this.vitalBoxOver.visible = false;
 
-      this.container.parent.parent.interactive = false;
-      this.container.parent.parent.off("mousedown", this.hideVitals);
-      this.container.parent.parent.off("touchstart", this.hideVitals);
+      this.screen.interactive = false;
+      this.screen.off("mousedown", this.hideVitals);
+      this.screen.off("touchstart", this.hideVitals);
     }
   };
 }
