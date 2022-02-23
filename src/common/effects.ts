@@ -28,8 +28,8 @@ export const useInstance = (
   useEffect(() => {
     if (container && !app.current) {
       app.current = new PIXI.Application({
-        width: container.scrollWidth,
-        height: container.scrollHeight,
+        width: 1920,
+        height: 1080,
       });
 
       container.appendChild(app.current.view);

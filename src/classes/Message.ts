@@ -242,7 +242,7 @@ export class InteractiveMessage extends Message {
       const action = new PIXI.Text(title, basicTextStyle);
       action.style.fontSize = 24;
       action.interactive = true;
-      action.cursor = "pointer";
+      action.buttonMode = true;
       action.on("mousedown", onInteraction);
       action.on("touchstart", onInteraction);
       action.on("mouseover", () => {

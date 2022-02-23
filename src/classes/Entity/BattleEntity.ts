@@ -10,8 +10,6 @@ import {
   loadExtraAnimation,
   loadJobAnimations,
   loadSkillAnimation,
-  tints,
-  titleTextStyle,
 } from "../../common";
 import {
   AfflictionKind,
@@ -21,6 +19,7 @@ import {
   skills,
 } from "../../data";
 import { BattleMessage } from "../Message";
+import { BattleMenu } from "../Menu";
 import { Entity } from "./Entity";
 
 export type EntityStatsKind = keyof EntityStats;
@@ -63,17 +62,39 @@ export class BattleEntity extends Entity {
     return Boolean(this.lastVitalStats.FIN === 100);
   }
 
+  private get formattedStats() {
+    return Object.entries(this.baseStats ?? {}).reduce(
+      (prev, next) => {
+        const [stat, value] = next;
+        prev[stat as EntityStatsKind] =
+          typeof value === "number" ? value : value[this.stage];
+        return prev;
+      },
+      {
+        STR: 0,
+        AGI: 0,
+        MAG: 0,
+        STA: 0,
+        HP: 0,
+        MP: 0,
+        ATB: 0,
+      } as Record<EntityStatsKind, number>
+    );
+  }
+
   public async load() {
     this.setLoader(loadJobAnimations);
 
     await super.load();
 
-    this.currentStats = this.getFormattedStats();
-    this.maxStats = this.getFormattedStats();
+    this.currentStats = { ...this.formattedStats };
+    this.maxStats = { ...this.formattedStats };
     this.maxStats.ATB = 100;
+    this.maxStats.FIN = 100;
 
     this.addVitals();
     this.syncStats();
+    this.addBattleMenu();
   }
 
   public update() {
@@ -115,25 +136,6 @@ export class BattleEntity extends Entity {
       this.addFINBar();
     }
   }
-
-  private getFormattedStats = () =>
-    Object.entries(this.baseStats ?? {}).reduce(
-      (prev, next) => {
-        const [stat, value] = next;
-        prev[stat as EntityStatsKind] =
-          typeof value === "number" ? value : value[this.stage];
-        return prev;
-      },
-      {
-        STR: 0,
-        AGI: 0,
-        MAG: 0,
-        STA: 0,
-        HP: 0,
-        MP: 0,
-        ATB: 0,
-      } as Record<EntityStatsKind, number>
-    );
 
   public attack() {
     const attack = this.showAnimation("attacking");
@@ -304,80 +306,32 @@ export class BattleEntity extends Entity {
   }
 
   private addVitals() {
-    const container = this.container!;
-    this.vitalBox = loadExtraAnimation("vitals");
-    this.vitalBox.position.x += 32;
-    this.vitalBox.position.y -= 38;
-    container.addChildAt(this.vitalBox, 0);
-
-    this.vitalBoxOver = loadExtraAnimation("vitals-over");
-    this.vitalBoxOver.position.x += 32;
-    this.vitalBoxOver.position.y -= 38;
-    this.vitalBoxOver.interactive = true;
-
-    container.addChild(this.vitalBoxOver);
-
-    this.vitalBox.play();
-    this.vitalBoxOver.play();
-    this.vitalBox.visible = false;
-    this.vitalBoxOver.visible = false;
-
-    container.interactive = true;
-    container.cursor = "pointer";
-    container.on("mousedown", () => setTimeout(this.showVitals));
-    container.on("touchstart", () => setTimeout(this.showVitals));
-
-    setTimeout(() => {
-      if (this.container) {
-        this.vitalsTextContainer = new PIXI.Container();
-        this.vitalsTextContainer.name = "Vital Text";
-        this.vitalsTextContainer.visible = false;
-        this.container.addChild(this.vitalsTextContainer);
-
-        this.vitalsTextContainer.position.set(66, 110);
-
-        const stage = new PIXI.Text(this.stage.toString(), {
-          ...basicTextStyle,
-          strokeThickness: 3,
-          fontWeight: "bolder",
-          fontSize: 40,
-          dropShadow: false,
-        });
-        this.vitalsTextContainer.addChild(stage);
-
-        const shortened = this.goesBy
-          .split(" ")
-          .map((each, i) => (i === 0 ? `${each[0]}.` : each))
-          .join(" ");
-        const goesBy = new PIXI.Text(shortened.toUpperCase(), {
-          ...basicTextStyle,
-          fontSize: 16,
-          fontWeight: "600",
-          fill: colors.black,
-          stroke: colors.white,
-          strokeThickness: 3,
-          letterSpacing: 0.2,
-          dropShadow: false,
-        });
-        goesBy.position.x += 70;
-        goesBy.position.y += 5;
-        this.vitalsTextContainer.addChild(goesBy);
-
-        const job = new PIXI.Text(this.name.toUpperCase(), {
-          ...basicTextStyle,
-          fontSize: 12,
-          fontWeight: "bolder",
-          fill: colors.black,
-          stroke: colors.white,
-          strokeThickness: 3,
-          letterSpacing: 0.1,
-          dropShadow: false,
-        });
-        job.position.x += 70;
-        job.position.y += 36;
-        this.vitalsTextContainer.addChild(job);
-      }
-    });
+    if (this.container) {
+      this.vitalBox = loadExtraAnimation("vitals");
+      this.vitalBox.position.x += 32;
+      this.vitalBox.position.y -= 38;
+      this.container.addChildAt(this.vitalBox, 0);
+  
+      this.vitalBoxOver = loadExtraAnimation("vitals-over");
+      this.vitalBoxOver.position.x += 32;
+      this.vitalBoxOver.position.y -= 38;
+      this.vitalBoxOver.interactive = true;
+  
+      this.container.addChild(this.vitalBoxOver);
+  
+      this.vitalBox.play();
+      this.vitalBoxOver.play();
+      this.vitalBox.visible = false;
+      this.vitalBoxOver.visible = false;
+  
+      this.container.interactive = true;
+      this.container.buttonMode = true;
+      this.container.on("mousedown", () => setTimeout(this.showVitals));
+      this.container.on("touchstart", () => setTimeout(this.showVitals));
+  
+      setTimeout(this.addVitalsText.bind(this));
+    }
+    
   }
 
   private addHPBar() {
@@ -474,6 +428,65 @@ export class BattleEntity extends Entity {
     );
     this.finaleBar.endFill();
     this.vitalBox!.addChild(this.finaleBar);
+  }
+
+  private addVitalsText() {
+    if (this.container) {
+      this.vitalsTextContainer = new PIXI.Container();
+      this.vitalsTextContainer.name = "Vital Text";
+      this.vitalsTextContainer.visible = false;
+      this.container.addChild(this.vitalsTextContainer);
+
+      this.vitalsTextContainer.position.set(66, 110);
+
+      const stage = new PIXI.Text(this.stage.toString(), {
+        ...basicTextStyle,
+        strokeThickness: 3,
+        fontWeight: "bolder",
+        fontSize: 40,
+        dropShadow: false,
+      });
+      this.vitalsTextContainer.addChild(stage);
+
+      const shortened = this.goesBy
+        .split(" ")
+        .map((each, i) => (i === 0 ? `${each[0]}.` : each))
+        .join(" ");
+      const goesBy = new PIXI.Text(shortened.toUpperCase(), {
+        ...basicTextStyle,
+        fontSize: 16,
+        fontWeight: "600",
+        fill: colors.white,
+        stroke: colors.black,
+        strokeThickness: 3,
+        letterSpacing: 0.2,
+        dropShadow: false,
+      });
+      goesBy.position.x += 66;
+      goesBy.position.y += 5;
+      this.vitalsTextContainer.addChild(goesBy);
+
+      const job = new PIXI.Text(this.name.toUpperCase(), {
+        ...basicTextStyle,
+        fontSize: 12,
+        fontWeight: "bolder",
+        fill: colors.white,
+        stroke: colors.black,
+        strokeThickness: 3,
+        letterSpacing: 0.1,
+        dropShadow: false,
+      });
+      job.position.x += 66;
+      job.position.y += 36;
+      this.vitalsTextContainer.addChild(job);
+    }
+  }
+
+  private addBattleMenu() {
+    if (this.container) {
+      const battleMenu = new BattleMenu(this.screen);
+      this.container.addChild(battleMenu.container);
+    }
   }
 
   private displayDamageTaken(amount: number) {

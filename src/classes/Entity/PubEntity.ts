@@ -68,8 +68,8 @@ export class PubEntity extends Entity {
         }
       };
 
-      this.container.cursor = "pointer";
       this.container.interactive = true;
+      this.container.buttonMode = true;
       this.container.on("mousedown", handleInteraction);
       this.container.on("touchstart", handleInteraction);
     }

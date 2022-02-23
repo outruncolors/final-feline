@@ -18,7 +18,7 @@ export const titleTextStyle = new PIXI.TextStyle({
 
 export const makeHighlightable = (text: PIXI.Text) => {
   text.interactive = true;
-  text.cursor = "pointer";
+  text.buttonMode = true;
   text.on("mouseover", () => {
     text.tint = colors.yellow;
   });
