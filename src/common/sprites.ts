@@ -1,7 +1,11 @@
 import * as PIXI from "pixi.js";
+import Chance from "chance";
 import { Resource } from "pixi.js";
-import { config } from ".";
+import * as config from "./config";
+import { colors } from "./colors";
 import { AfflictionKind, SkillKind, LocationKind, EntityKind } from "../data";
+
+const CHANCE = new Chance();
 
 export const loadVisualAsset = (which: string, animated = false) => {
   const sheet =
@@ -24,7 +28,7 @@ export const loadSprite = (sprite: string) =>
 export interface EntityAnimations {
   container: PIXI.Container;
   effects: {
-    ready: (percent: number) => number;
+    ready: (percent: number, hasFinaleReady: boolean) => number;
     unready: () => void;
   };
   animations: {
@@ -108,8 +112,8 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
     container.addChild(animation);
 
     const readyState = readyStates[i];
-    readyState.alpha = 0.5;
-    readyState.tint = 0x000000;
+    readyState.alpha = 0;
+    readyState.tint = colors.black;
     readyState.blendMode = PIXI.BLEND_MODES.ERASE;
     readyState.visible = false;
     animation.addChild(readyState);
@@ -129,13 +133,22 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
       dying,
     },
     effects: {
-      ready: (percent: number) => {
+      ready: (percent: number, hasFinale = false) => {
         for (const readyState of readyStates) {
           readyState.visible = true;
           readyState.alpha = Math.max(
             0,
             Math.min(readyState.alpha + percent, 1)
           );
+
+          if (hasFinale) {
+            readyState.tint = CHANCE.pickone([
+              colors.red,
+              colors.yellow,
+              colors.blue,
+            ]);
+            readyState.blendMode = PIXI.BLEND_MODES.OVERLAY;
+          }
         }
 
         return readyStates[0].alpha;
@@ -144,6 +157,8 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
         for (const readyState of readyStates) {
           readyState.visible = false;
           readyState.alpha = 0;
+          readyState.tint = colors.black;
+          readyState.blendMode = PIXI.BLEND_MODES.ERASE;
         }
       },
     },

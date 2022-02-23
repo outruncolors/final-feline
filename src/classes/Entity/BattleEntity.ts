@@ -1,6 +1,5 @@
 import Chance from "chance";
 import * as PIXI from "pixi.js";
-import cloneDeep from "lodash.clonedeep";
 import {
   basicTextStyle,
   colors,
@@ -55,7 +54,11 @@ export class BattleEntity extends Entity {
   }
 
   public get isReady() {
-    return this.lastVitalStats.ATB === 100;
+    return Boolean(this.lastVitalStats.ATB === 100);
+  }
+
+  public get hasFinaleReady() {
+    return Boolean(this.lastVitalStats.FIN === 100);
   }
 
   public async load() {
@@ -404,7 +407,9 @@ export class BattleEntity extends Entity {
     );
     const distance = config.ENTITY_FINALE_BAR_HEIGHT - height;
     const color =
-      percent === 1 ? CHANCE.pickone(Object.values(tints)) : colors.fin;
+      percent === 1
+        ? CHANCE.pickone([colors.red, colors.yellow, colors.blue])
+        : colors.fin;
 
     this.finaleBar.beginFill(color);
     this.finaleBar.drawRect(
@@ -507,14 +512,20 @@ export class BattleEntity extends Entity {
     if (this.animations) {
       if (this.readyFlashDirection === "in") {
         const isFullyIn =
-          this.animations.effects.ready(config.ENTITY_READY_FLASH_SPEED) >= 0.7;
+          this.animations.effects.ready(
+            config.ENTITY_READY_FLASH_SPEED,
+            this.hasFinaleReady
+          ) >= 0.7;
 
         if (isFullyIn) {
           this.readyFlashDirection = "out";
         }
       } else {
         const isFullyOut =
-          this.animations.effects.ready(-config.ENTITY_READY_FLASH_SPEED) === 0;
+          this.animations.effects.ready(
+            -config.ENTITY_READY_FLASH_SPEED,
+            this.hasFinaleReady
+          ) === 0;
 
         if (isFullyOut) {
           this.readyFlashDirection = "in";
