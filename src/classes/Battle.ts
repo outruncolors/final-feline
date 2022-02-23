@@ -36,7 +36,9 @@ export class Battle {
     for (let i = 0; i < this.playableParty.length; i++) {
       const entity = this.playableParty[i];
       await entity.load();
-      entity.container!.position.y += config.BATTLE_TOP_MARGIN + i * config.BATTLE_CHARACTER_SEPARATION * config.ENTITY_SCALE;
+      entity.container!.position.y +=
+        config.BATTLE_TOP_MARGIN +
+        i * config.BATTLE_CHARACTER_SEPARATION * config.ENTITY_SCALE;
       leftSide.addChild(entity.container!);
     }
 
@@ -68,10 +70,12 @@ export class RandomBattle extends Battle {
     );
 
     // MOVEME
-    const playableParty: BattleEntity[] = [
+    const [a, b] = [
       new BattleEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
       new BattleEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
     ];
+
+    const playableParty: BattleEntity[] = [a, b];
 
     super(randomLocation, _screen, playableParty);
   }

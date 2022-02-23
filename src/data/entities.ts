@@ -16,4 +16,5 @@ export interface EntityStats {
   HP: number[];
   MP: number[];
   ATB: number;
+  FIN: number;
 }

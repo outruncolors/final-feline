@@ -24,9 +24,7 @@ import {
   Skill,
   FoeKind,
 } from "../data";
-import { BattleMessage, InteractiveMessage } from "./Message";
-import { ScreenMessage } from ".";
-import { ENTITY_VITAL_BAR_WIDTH, ENTITY_VITAL_BAR_X_OFFSET } from "../common/config";
+import { BattleMessage, InteractiveMessage, ScreenMessage } from "./Message";
 
 const CHANCE = new Chance();
 const ticker = PIXI.Ticker.shared;
@@ -295,6 +293,53 @@ export class Entity {
     }
   }
 
+  public update() {
+    if (this.displayingDamageTaken) {
+      this.liftDamageTaken();
+    }
+
+    if (this.movingDirection === "forward") {
+      this.moveForward();
+    } else if (this.movingDirection === "back") {
+      this.moveBackward();
+    } else if (this.meandering) {
+      if (this.shouldStopMeandering) {
+        this.stopMeandering();
+        this.meandering = false;
+        this.shouldStopMeandering = false;
+      } else {
+        this.startMeandering();
+      }
+    }
+  }
+
+  // Clips
+  public perform(
+    animation: keyof Omit<EntityAnimations, "container">,
+    duration = 1250,
+    onSteppedForward: () => void = () => {},
+    onSteppedBackward: () => void = () => {}
+  ) {
+    this.onFinishAnimation = () => {
+      const anim = this.showAnimation(animation) as PIXI.AnimatedSprite;
+      anim.onLoop = () => {
+        anim.stop();
+        onSteppedForward();
+      };
+
+      setTimeout(() => {
+        this.onFinishAnimation = () => {
+          onSteppedBackward();
+          this.onFinishAnimation = () => {};
+        };
+
+        this.stepBack();
+      }, duration);
+    };
+
+    this.stepUp();
+  }
+
   // Private
   private hideAllAnimations() {
     if (this.animations) {
@@ -340,26 +385,6 @@ export class Entity {
           config.CAST_SHADOW_WIDTH_DOWN * config.ENTITY_SCALE;
       }
     };
-  }
-
-  private update() {
-    if (this.displayingDamageTaken) {
-      this.liftDamageTaken();
-    }
-
-    if (this.movingDirection === "forward") {
-      this.moveForward();
-    } else if (this.movingDirection === "back") {
-      this.moveBackward();
-    } else if (this.meandering) {
-      if (this.shouldStopMeandering) {
-        this.stopMeandering();
-        this.meandering = false;
-        this.shouldStopMeandering = false;
-      } else {
-        this.startMeandering();
-      }
-    }
   }
 
   private displayDamageTaken(amount: number) {
@@ -502,33 +527,6 @@ export class Entity {
       method();
     }
   }
-
-  // Clips
-  public perform(
-    animation: keyof Omit<EntityAnimations, "container">,
-    duration = 1250,
-    onSteppedForward: () => void = () => {},
-    onSteppedBackward: () => void = () => {}
-  ) {
-    this.onFinishAnimation = () => {
-      const anim = this.showAnimation(animation) as PIXI.AnimatedSprite;
-      anim.onLoop = () => {
-        anim.stop();
-        onSteppedForward();
-      };
-
-      setTimeout(() => {
-        this.onFinishAnimation = () => {
-          onSteppedBackward();
-          this.onFinishAnimation = () => {};
-        };
-
-        this.stepBack();
-      }, duration);
-    };
-
-    this.stepUp();
-  }
 }
 
 // === Player ===
@@ -614,7 +612,14 @@ export class BattleEntity extends PlayableEntity {
   vitalBoxOver: null | PIXI.AnimatedSprite = null;
 
   // Stats
+  lastStats = {
+    HP: 0,
+    MP: 0,
+    ATB: 0,
+    FIN: 0,
+  };
   hpBar: null | PIXI.Graphics = null;
+  lastHp = 0;
   mpBar: null | PIXI.Graphics = null;
   atbBar: null | PIXI.Graphics = null;
   finaleBar: null | PIXI.Graphics = null;
@@ -622,6 +627,8 @@ export class BattleEntity extends PlayableEntity {
   // Display HP, MP, ATB, Finale, etc
   public async load() {
     await super.load();
+
+    this.syncStats();
 
     const container = this.container!;
     this.vitalBox = loadExtraAnimation("vitals");
@@ -648,23 +655,55 @@ export class BattleEntity extends PlayableEntity {
     this.addHPBar();
     this.addMPBar();
     this.addATBBar();
-    this.addFinaleBar();
+    this.addFINBar();
+  }
+
+  // U P D A T E
+  public update() {
+    super.update();
+
+    const stats = this.currentStats;
+
+    if (stats) {
+      const hpMismatch = this.lastStats.HP !== stats.HP;
+      const mpMismatch = this.lastStats.MP !== stats.MP;
+      const atbMismatch = this.lastStats.ATB !== stats.ATB;
+      const finMismatch = this.lastStats.FIN !== stats.FIN;
+
+      if (hpMismatch || mpMismatch || atbMismatch || finMismatch) {
+        this.syncStats();
+
+        this.addHPBar();
+        this.addMPBar();
+        this.addATBBar();
+        this.addFINBar();
+      }
+    }
+  }
+
+  private syncStats() {
+    const stats = this.currentStats;
+
+    if (stats) {
+      this.lastStats.HP = stats.HP;
+      this.lastStats.MP = stats.MP;
+      this.lastStats.ATB = stats.ATB;
+      this.lastStats.FIN = stats.FIN;
+    }
   }
 
   // A D D
   private addHPBar() {
-    const hadHpBar = Boolean(this.hpBar);
-
     if (this.hpBar) {
       this.hpBar.clear();
-    } else {
-      this.hpBar = new PIXI.Graphics()
+      this.vitalBox!.removeChild(this.hpBar);
     }
 
-    const { HP } = this.currentStats!;
-    const { HP: maxHP } = this.maxStats!;
-    const percent = HP / maxHP;
-    
+    this.hpBar = new PIXI.Graphics();
+
+    const maxHP = this.baseStats!.HP[1];
+    const percent = this.lastHp / maxHP;
+
     this.hpBar.beginFill(colors.red);
     this.hpBar.drawRect(
       config.ENTITY_VITAL_BAR_X_OFFSET,
@@ -673,10 +712,7 @@ export class BattleEntity extends PlayableEntity {
       config.ENTITY_VITAL_BAR_HEIGHT
     );
     this.hpBar.endFill();
-    
-    if (!hadHpBar) {
-      this.vitalBox!.addChild(this.hpBar);
-    }
+    this.vitalBox!.addChild(this.hpBar);
   }
 
   private addMPBar() {
@@ -707,7 +743,7 @@ export class BattleEntity extends PlayableEntity {
     this.vitalBoxOver!.addChild(atbBar);
   }
 
-  private addFinaleBar() {
+  private addFINBar() {
     const finaleBar = (this.finaleBar = new PIXI.Graphics());
     finaleBar.beginFill(colors.finale);
     finaleBar.drawRect(
@@ -720,13 +756,6 @@ export class BattleEntity extends PlayableEntity {
 
     this.vitalBoxOver!.addChild(finaleBar);
   }
-
-  // U P D A T E
-  private updateMPBar() {}
-
-  private updateATBBar() {}
-
-  private updateFinaleBar() {}
 
   // V I T A L S
   private showVitals = () => {
