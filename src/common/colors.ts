@@ -15,6 +15,8 @@ export type Color = keyof typeof colors;
 colors.hp = colors.red;
 colors.mp = colors.blue;
 colors.atb = colors.white;
-colors.finale = colors.yellow;
+colors.fin = colors.yellow;
 
-export { colors }
+const { white, grey, black, ...tints } = colors;
+
+export { colors, tints };
