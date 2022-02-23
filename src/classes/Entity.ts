@@ -26,6 +26,7 @@ import {
 } from "../data";
 import { BattleMessage, InteractiveMessage } from "./Message";
 import { ScreenMessage } from ".";
+import { ENTITY_VITAL_BAR_WIDTH, ENTITY_VITAL_BAR_X_OFFSET } from "../common/config";
 
 const CHANCE = new Chance();
 const ticker = PIXI.Ticker.shared;
@@ -652,17 +653,30 @@ export class BattleEntity extends PlayableEntity {
 
   // A D D
   private addHPBar() {
-    const hpBar = (this.hpBar = new PIXI.Graphics());
-    hpBar.beginFill(colors.hp);
-    hpBar.drawRect(
+    const hadHpBar = Boolean(this.hpBar);
+
+    if (this.hpBar) {
+      this.hpBar.clear();
+    } else {
+      this.hpBar = new PIXI.Graphics()
+    }
+
+    const { HP } = this.currentStats!;
+    const { HP: maxHP } = this.maxStats!;
+    const percent = HP / maxHP;
+    
+    this.hpBar.beginFill(colors.red);
+    this.hpBar.drawRect(
       config.ENTITY_VITAL_BAR_X_OFFSET,
       config.ENTITY_VITAL_BAR_Y_OFFSET,
-      config.ENTITY_VITAL_BAR_WIDTH,
+      config.ENTITY_VITAL_BAR_WIDTH * percent,
       config.ENTITY_VITAL_BAR_HEIGHT
     );
-    hpBar.endFill();
-
-    this.vitalBoxOver!.addChild(hpBar);
+    this.hpBar.endFill();
+    
+    if (!hadHpBar) {
+      this.vitalBox!.addChild(this.hpBar);
+    }
   }
 
   private addMPBar() {
@@ -708,13 +722,6 @@ export class BattleEntity extends PlayableEntity {
   }
 
   // U P D A T E
-  private updateHPBar() {
-    if (this.currentStats && this.maxStats) {
-      const { HP } = this.currentStats;
-      const { HP: maxHP } = this.maxStats;
-    }
-  }
-
   private updateMPBar() {}
 
   private updateATBBar() {}
