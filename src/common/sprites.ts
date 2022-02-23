@@ -23,11 +23,14 @@ export const loadSprite = (sprite: string) =>
 
 export interface EntityAnimations {
   container: PIXI.Container;
-  standing: PIXI.AnimatedSprite;
-  walking: PIXI.AnimatedSprite;
-  attacking: PIXI.AnimatedSprite;
-  defending: PIXI.AnimatedSprite;
-  dying: PIXI.AnimatedSprite;
+  effects: Record<string, () => void>;
+  animations: {
+    standing: PIXI.AnimatedSprite;
+    walking: PIXI.AnimatedSprite;
+    attacking: PIXI.AnimatedSprite;
+    defending: PIXI.AnimatedSprite;
+    dying: PIXI.AnimatedSprite;
+  };
 }
 
 export type EntityAnimationLoader = (key: EntityKind) => EntityAnimations;
@@ -102,11 +105,16 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
 
   return {
     container,
-    standing,
-    walking,
-    attacking,
-    defending,
-    dying,
+    animations: {
+      standing,
+      walking,
+      attacking,
+      defending,
+      dying,
+    },
+    effects: {
+      ready: () => {},
+    },
   };
 };
 
@@ -137,10 +145,13 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
 
   return {
     container,
-    standing: idleAnimation,
-    walking: activeAnimation,
-    attacking: activeAnimation,
-    defending: idleAnimation,
-    dying: idleAnimation,
+    effects: {},
+    animations: {
+      standing: idleAnimation,
+      walking: activeAnimation,
+      attacking: activeAnimation,
+      defending: idleAnimation,
+      dying: idleAnimation,
+    },
   };
 };

@@ -118,9 +118,9 @@ export class Entity {
     }
   }
 
-  public showAnimation(animation: keyof Omit<EntityAnimations, "container">) {
+  public showAnimation(animation: keyof EntityAnimations["animations"]) {
     if (this.animations) {
-      const entry = this.animations[animation];
+      const entry = this.animations.animations[animation];
 
       this.hideAllAnimations();
 

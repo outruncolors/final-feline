@@ -1,5 +1,6 @@
 import Chance from "chance";
 import * as PIXI from "pixi.js";
+import cloneDeep from "lodash.clonedeep";
 import {
   basicTextStyle,
   colors,
@@ -260,10 +261,11 @@ export class BattleEntity extends Entity {
       this.displayDamageTaken(amount);
     }
   }
+
   // M O V E M E N T
 
   public perform(
-    animation: keyof Omit<EntityAnimations, "container">,
+    animation: keyof EntityAnimations["animations"],
     duration = 1250,
     onSteppedForward: () => void = () => {},
     onSteppedBackward: () => void = () => {}
