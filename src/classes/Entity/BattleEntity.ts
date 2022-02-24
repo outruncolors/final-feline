@@ -555,7 +555,8 @@ export class BattleEntity extends Entity {
       this.vitalBox.visible = true;
       this.vitalBoxOver.visible = true;
       this.vitalsTextContainer.visible = true;
-      this.battleMenu.container.visible = true;
+      
+      this.battleMenu.show();
 
       this.screen.interactive = true;
       this.screen.on("mousedown", this.hideVitals);
@@ -575,7 +576,8 @@ export class BattleEntity extends Entity {
       this.vitalBox.visible = false;
       this.vitalBoxOver.visible = false;
       this.vitalsTextContainer.visible = false;
-      this.battleMenu.container.visible = false;
+      
+      this.battleMenu.hide();
 
       this.screen.interactive = false;
       this.screen.off("mousedown", this.hideVitals);
