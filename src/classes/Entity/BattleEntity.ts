@@ -49,6 +49,7 @@ export class BattleEntity extends Entity {
   damageTakenTextVelocity = 0;
   damageTakenFlashCount = 0;
   readyFlashDirection: "in" | "out" = "in";
+  battleMenu: null | BattleMenu = null;
 
   public get isDead() {
     return Boolean(this.currentStats?.HP === 0);
@@ -103,8 +104,8 @@ export class BattleEntity extends Entity {
     const stats = this.currentStats;
 
     if (stats) {
-      stats.FIN = Math.min(stats.FIN + 1, 100);
-      stats.ATB = Math.min(stats.ATB + 1, 100);
+      stats.FIN = Math.min(stats.FIN + 0.3, 100);
+      stats.ATB = Math.min(stats.ATB + 0.3, 100);
       this.syncStats();
     }
 
@@ -113,7 +114,7 @@ export class BattleEntity extends Entity {
     }
 
     if (this.animations) {
-      if (this.isReady && !this.vitalBox?.visible) {
+      if (this.isReady && !this.isDead &&  !this.vitalBox?.visible) {
         this.flashReady();
       } else {
         this.animations.effects.unready();
@@ -207,7 +208,7 @@ export class BattleEntity extends Entity {
               target.hideEffects();
               target.container?.removeChild(animation);
               animation.destroy();
-              target.damageBy(10);
+              target.damageBy(2000);
 
               if (skillEntry.affliction) {
                 const [affliction, chanceToInflict] = skillEntry.affliction;
@@ -484,8 +485,8 @@ export class BattleEntity extends Entity {
 
   private addBattleMenu() {
     if (this.container) {
-      const battleMenu = new BattleMenu(this.screen);
-      this.container.addChild(battleMenu.container);
+      this.battleMenu = new BattleMenu(this.screen);
+      this.container.addChild(this.battleMenu.container);
     }
   }
 
@@ -549,11 +550,13 @@ export class BattleEntity extends Entity {
       this.animations &&
       this.vitalBox &&
       this.vitalBoxOver &&
-      this.vitalsTextContainer
+      this.vitalsTextContainer &&
+      this.battleMenu
     ) {
       this.vitalBox.visible = true;
       this.vitalBoxOver.visible = true;
       this.vitalsTextContainer.visible = true;
+      this.battleMenu.container.visible = true;
 
       this.screen.interactive = true;
       this.screen.on("mousedown", this.hideVitals);
@@ -567,11 +570,13 @@ export class BattleEntity extends Entity {
       this.container &&
       this.vitalBox &&
       this.vitalBoxOver &&
-      this.vitalsTextContainer
+      this.vitalsTextContainer &&
+      this.battleMenu
     ) {
       this.vitalBox.visible = false;
       this.vitalBoxOver.visible = false;
       this.vitalsTextContainer.visible = false;
+      this.battleMenu.container.visible = false;
 
       this.screen.interactive = false;
       this.screen.off("mousedown", this.hideVitals);

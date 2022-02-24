@@ -75,8 +75,10 @@ export class RandomBattle extends Battle {
       new BattleEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
     ];
 
+    setTimeout(() => a.cast("flame", b), 5000);
+
     const playableParty: BattleEntity[] = [a, b];
 
-    super(randomLocation, _screen, playableParty);
+    super("google", _screen, playableParty);
   }
 }

@@ -2,6 +2,7 @@ export * from "./Arena";
 export * from "./Beach";
 export * from "./Cave";
 export * from "./Forest";
+export * from "./Google";
 export * from "./Housing";
 export * from "./Market";
 export * from "./Mountain";

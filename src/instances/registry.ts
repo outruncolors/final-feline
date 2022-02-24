@@ -12,4 +12,5 @@ export const registry = {
   "/forest": initializePvEBattle("forest"),
   "/mountain": initializePvEBattle("mountain"),
   "/valley": initializePvEBattle("valley"),
+  "/google": initializePvEBattle("google"),
 };

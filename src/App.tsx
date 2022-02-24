@@ -12,6 +12,7 @@ import {
   Shop,
   Valley,
   WorldMap,
+  Google
 } from "./routes";
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
         <Route path="/pub" element={<Pub />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/valley" element={<Valley />} />
+        <Route path="/google" element={<Google />} />
       </Routes>
     </Router>
   );
