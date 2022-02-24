@@ -3,6 +3,7 @@ import { InteractionEvent } from "pixi.js";
 import { basicTextStyle, colors, config, loadExtraSprite } from "../common";
 
 export interface MessageOptions {
+  fontSize?: number;
   minWidth?: number;
   minHeight?: number;
   duration?: number;
@@ -12,9 +13,10 @@ export interface MessageOptions {
 
 type FlashStatus = "in" | "none" | "out" | "done";
 
-interface MessageAction {
+export interface MessageAction {
   title: string;
   onInteraction(e: InteractionEvent): void;
+  fontSize?: number;
 }
 
 export class Message {
@@ -39,7 +41,10 @@ export class Message {
 
     this.buildBox();
 
-    this.text = new PIXI.Text(_text, basicTextStyle);
+    this.text = new PIXI.Text(_text, {
+      ...basicTextStyle,
+      fontSize: this.options.fontSize ?? 48
+    });
     this.text.position.set(
       config.MESSAGE_BOX_PADDING * 6,
       config.MESSAGE_BOX_PADDING * 5
@@ -238,9 +243,9 @@ export class InteractiveMessage extends Message {
   public addActions(...actions: MessageAction[]) {
     const actionWrapper = new PIXI.Container();
 
-    for (const { title, onInteraction } of actions) {
+    for (const { title, onInteraction, fontSize } of actions) {
       const action = new PIXI.Text(title, basicTextStyle);
-      action.style.fontSize = 24;
+      action.style.fontSize = fontSize ?? 24;
       action.interactive = true;
       action.buttonMode = true;
       action.on("mousedown", onInteraction);

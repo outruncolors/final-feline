@@ -114,7 +114,7 @@ export class BattleEntity extends Entity {
     }
 
     if (this.animations) {
-      if (this.isReady && !this.isDead &&  !this.vitalBox?.visible) {
+      if (this.isReady && !this.isDead && !this.vitalBox?.visible) {
         this.flashReady();
       } else {
         this.animations.effects.unready();
@@ -312,27 +312,26 @@ export class BattleEntity extends Entity {
       this.vitalBox.position.x += 32;
       this.vitalBox.position.y -= 38;
       this.container.addChildAt(this.vitalBox, 0);
-  
+
       this.vitalBoxOver = loadExtraAnimation("vitals-over");
       this.vitalBoxOver.position.x += 32;
       this.vitalBoxOver.position.y -= 38;
       this.vitalBoxOver.interactive = true;
-  
+
       this.container.addChild(this.vitalBoxOver);
-  
+
       this.vitalBox.play();
       this.vitalBoxOver.play();
       this.vitalBox.visible = false;
       this.vitalBoxOver.visible = false;
-  
+
       this.container.interactive = true;
       this.container.buttonMode = true;
       this.container.on("mousedown", () => setTimeout(this.showVitals));
       this.container.on("touchstart", () => setTimeout(this.showVitals));
-  
+
       setTimeout(this.addVitalsText.bind(this));
     }
-    
   }
 
   private addHPBar() {
@@ -486,7 +485,7 @@ export class BattleEntity extends Entity {
   private addBattleMenu() {
     if (this.container) {
       this.battleMenu = new BattleMenu(this.screen);
-      this.container.addChild(this.battleMenu.container);
+      this.container.addChild(this.battleMenu.wrapper);
     }
   }
 
