@@ -21,6 +21,7 @@ export class BattleMenu extends Menu {
   battle: Battle;
   items: ItemAndQuantity[];
   skillKind: null | SkillKind;
+  itemKind: null | ItemKind;
 
   constructor(
     _screen: PIXI.Container,
@@ -87,6 +88,7 @@ export class BattleMenu extends Menu {
     this.battle = _battle;
     this.items = _items;
     this.skillKind = null;
+    this.itemKind = null;
 
     this.wrapper = new PIXI.Container();
     this.container.setParent(this.wrapper);
@@ -101,7 +103,12 @@ export class BattleMenu extends Menu {
     );
     this.wrapper.addChildAt(this.castSubmenu.container, 0);
 
-    this.itemSubmenu = new ItemMenu(this.screen, this.entity, this.items);
+    this.itemSubmenu = new ItemMenu(
+      this.screen,
+      this.entity,
+      this.items,
+      this.targetForItem.bind(this)
+    );
     this.wrapper.addChildAt(this.itemSubmenu.container, 0);
 
     this.runSubmenu = new RunMenu(this.screen);
@@ -151,6 +158,20 @@ export class BattleMenu extends Menu {
     if (this.skillKind) {
       this.entity.cast(this.skillKind, target);
       this.skillKind = null;
+    }
+  }
+
+  private targetForItem(itemKind: ItemKind) {
+    if (this.targetSubmenu) {
+      this.itemKind = itemKind;
+      this.targetSubmenu.onSelectTarget = this.handleUseItem.bind(this);
+      this.setActiveSubmenu(this.targetSubmenu);
+    }
+  }
+
+  private handleUseItem(target: BattleEntity) {
+    if (this.itemKind) {
+      this.entity.useItem(this.itemKind, target);
     }
   }
 }

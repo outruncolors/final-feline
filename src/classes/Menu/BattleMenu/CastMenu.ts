@@ -1,9 +1,7 @@
 import * as PIXI from "pixi.js";
-import { Menu } from "../Menu";
-import { TargetMenu } from "./TargetMenu";
-import { Skill, SkillKind, skills } from "../../../data";
+import { SkillKind } from "../../../data";
 import type { BattleEntity } from "../../Entity";
-import type { BattleStatus } from "../../Battle";
+import { Menu } from "../Menu";
 
 export class CastMenu extends Menu {
   constructor(

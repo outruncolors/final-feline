@@ -15,6 +15,7 @@ import {
   AfflictionKind,
   EntityStats,
   ItemKind,
+  items,
   Skill,
   SkillKind,
   skills,
@@ -244,8 +245,44 @@ export class BattleEntity extends Entity {
   }
 
   public useItem(item: ItemKind, target: BattleEntity) {
-    alert(`Used item: ${item}`);
-    setTimeout(() => this.hideVitals(), 250);
+    const attacking = this.showAnimation("attacking");
+    attacking.loop = false;
+    attacking.onComplete = () => {
+      attacking.stop();
+      attacking.loop = true;
+    };
+
+    const itemEntry = items[item];
+
+    if (target.container && target.animations && itemEntry.emoji) {
+      const text = new PIXI.Text(itemEntry.emoji, {
+        fontSize: 64,
+      });
+
+      target.container.addChild(text);
+      text.position.x =
+        target.animations.animations.standing.width / 2 - text.height / 2;
+      text.position.y =
+        target.animations.animations.standing.height / 2 - text.height / 2;
+
+      let times = 0;
+      const shrinking = setInterval(() => {
+        if (target.container) {
+          if (times === 10) {
+            clearInterval(shrinking);
+            target.container?.removeChild(text);
+          } else {
+            text.style.fontSize =
+              parseInt((text.style.fontSize ?? 0).toString()) - 2;
+            times++;
+          }
+        }
+      }, 150);
+    }
+
+    setTimeout(() => {
+      this.hideVitals();
+    }, 250);
   }
 
   public inflict(affliction: AfflictionKind) {
