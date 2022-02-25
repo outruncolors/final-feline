@@ -5,17 +5,22 @@ import { DefendMenu } from "./DefendMenu";
 import { CastMenu } from "./CastMenu";
 import { ItemMenu } from "./ItemMenu";
 import { RunMenu } from "./RunMenu";
+import type { Battle, ItemAndQuantity } from "../../Battle";
+import type { BattleEntity } from "../../Entity";
 
 export class BattleMenu extends Menu {
   wrapper: PIXI.Container;
-  activeSubmenu: null | Menu;
   attackSubmenu: null | AttackMenu;
   defendSubmenu: null | DefendMenu;
   castSubmenu: null | CastMenu;
   itemSubmenu: null | ItemMenu;
   runSubmenu: null | RunMenu;
 
-  constructor(_screen: PIXI.Container) {
+  entity: BattleEntity;
+  battle: Battle;
+  items: ItemAndQuantity[];
+
+  constructor(_screen: PIXI.Container, _entity: BattleEntity, _battle: Battle, _items: ItemAndQuantity[]) {
     const menuConfig = {
       fontSize: 24,
       containerXOffset: 120,
@@ -69,7 +74,9 @@ export class BattleMenu extends Menu {
 
     super(_screen, menuConfig);
 
-    this.activeSubmenu = null;
+    this.entity = _entity;
+    this.battle = _battle;
+    this.items = _items;
 
     this.wrapper = new PIXI.Container();
     this.container.setParent(this.wrapper);
@@ -80,10 +87,10 @@ export class BattleMenu extends Menu {
     this.defendSubmenu = new DefendMenu(this.screen);
     this.wrapper.addChildAt(this.defendSubmenu.container, 0);
 
-    this.castSubmenu = new CastMenu(this.screen);
+    this.castSubmenu = new CastMenu(this.screen, this.entity);
     this.wrapper.addChildAt(this.castSubmenu.container, 0);
 
-    this.itemSubmenu = new ItemMenu(this.screen);
+    this.itemSubmenu = new ItemMenu(this.screen, this.entity, this.items);
     this.wrapper.addChildAt(this.itemSubmenu.container, 0);
 
     this.runSubmenu = new RunMenu(this.screen);

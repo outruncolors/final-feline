@@ -14,6 +14,7 @@ import {
 import {
   AfflictionKind,
   EntityStats,
+  ItemKind,
   Skill,
   SkillKind,
   skills,
@@ -21,12 +22,15 @@ import {
 import { BattleMessage } from "../Message";
 import { BattleMenu } from "../Menu";
 import { Entity } from "./Entity";
+import type { Battle, ItemAndQuantity } from "../Battle";
 
 export type EntityStatsKind = keyof EntityStats;
 
 const CHANCE = new Chance();
 
 export class BattleEntity extends Entity {
+  battle: null | Battle = null;
+  items: ItemAndQuantity[] = [];
   vitalBox: null | PIXI.AnimatedSprite = null;
   vitalBoxOver: null | PIXI.AnimatedSprite = null;
   vitalsTextContainer: null | PIXI.Container = null;
@@ -96,6 +100,11 @@ export class BattleEntity extends Entity {
     this.addVitals();
     this.syncStats();
     this.addBattleMenu();
+  }
+
+  public register(forBattle: Battle, withItems: ItemAndQuantity[]) {
+    this.battle = forBattle;
+    this.items = withItems;
   }
 
   public update() {
@@ -182,10 +191,7 @@ export class BattleEntity extends Entity {
 
         setTimeout(() => {
           this.hideEffects();
-
           target.hideEffects();
-          // target.targettedAura!.visible = true;
-          // target.targettedOverlay!.visible = true;
 
           const skillEntry = skills[skill] as Skill;
           const animation = loadSkillAnimation(skill) as PIXI.AnimatedSprite;
@@ -208,6 +214,8 @@ export class BattleEntity extends Entity {
               target.hideEffects();
               target.container?.removeChild(animation);
               animation.destroy();
+
+              // Use method to gauge strength algorithm.
               target.damageBy(2000);
 
               if (skillEntry.affliction) {
@@ -231,6 +239,11 @@ export class BattleEntity extends Entity {
         }, 1200);
       }
     });
+  }
+
+  public useItem(item: ItemKind, target: BattleEntity) {
+    alert(`Used item: ${item}`);
+    setTimeout(() => this.hideVitals(), 250)
   }
 
   public inflict(affliction: AfflictionKind) {
@@ -483,8 +496,13 @@ export class BattleEntity extends Entity {
   }
 
   private addBattleMenu() {
-    if (this.container) {
-      this.battleMenu = new BattleMenu(this.screen);
+    if (this.container && this.battle) {
+      this.battleMenu = new BattleMenu(
+        this.screen,
+        this,
+        this.battle,
+        this.items
+      );
       this.container.addChild(this.battleMenu.wrapper);
     }
   }
@@ -555,7 +573,7 @@ export class BattleEntity extends Entity {
       this.vitalBox.visible = true;
       this.vitalBoxOver.visible = true;
       this.vitalsTextContainer.visible = true;
-      
+
       this.battleMenu.show();
 
       this.screen.interactive = true;
@@ -576,7 +594,7 @@ export class BattleEntity extends Entity {
       this.vitalBox.visible = false;
       this.vitalBoxOver.visible = false;
       this.vitalsTextContainer.visible = false;
-      
+
       this.battleMenu.hide();
 
       this.screen.interactive = false;

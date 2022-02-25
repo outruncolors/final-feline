@@ -2,8 +2,27 @@ import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import Chance from "chance";
 import { config, loadLocationSprite } from "../common";
-import { Location, LocationKind, JobKind, jobs, locations } from "../data";
+import {
+  Location,
+  LocationKind,
+  JobKind,
+  ItemKind,
+  items,
+  jobs,
+  locations,
+} from "../data";
 import { BattleEntity } from "./Entity";
+
+export interface BattleStatus {
+  left: BattleSide[];
+  right: BattleSide[];
+  queue: BattleEntity[];
+}
+
+export interface BattleSide {
+  team: BattleEntity[];
+  items: ItemKind[];
+}
 
 const CHANCE = new Chance();
 
@@ -75,10 +94,18 @@ export class RandomBattle extends Battle {
       new BattleEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
     ];
 
-    setTimeout(() => a.cast("flame", b), 5000);
-
     const playableParty: BattleEntity[] = [a, b];
 
     super("google", _screen, playableParty);
+
+    const teamItems: ItemAndQuantity[] = [
+      ['apple', 2],
+    ];
+
+    
+    a.register(this, teamItems);
+    b.register(this, teamItems);
   }
 }
+
+export type ItemAndQuantity = [ItemKind, number];

@@ -1,8 +1,19 @@
 import * as PIXI from "pixi.js";
 import { Menu } from "../Menu";
+import { SkillKind, skills } from '../../../data';
+import type { BattleEntity } from "../../Entity";
 
 export class CastMenu extends Menu {
-  constructor(_screen: PIXI.Container) {
+  constructor(_screen: PIXI.Container, _entity: BattleEntity) {
+    const actions = _entity.baseSkills.map(value => skills[value]).map(skill => {
+      return {
+        title: skill.name,
+        onInteraction: () => {
+          _entity.cast(skill.name as SkillKind, _entity);
+        }
+      }
+    })
+
     const menuConfig = {
       fontSize: 14,
       prompt:
@@ -12,16 +23,7 @@ export class CastMenu extends Menu {
       boxYOffset: 3,
       width: 530,
       height: 60,
-      actions: [
-        {
-          title: "Skill A",
-          onInteraction: () => {},
-        },
-        {
-          title: "Skill B",
-          onInteraction: () => {},
-        },
-      ],
+      actions
     };
 
     super(_screen, menuConfig);
