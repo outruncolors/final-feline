@@ -10,9 +10,7 @@ export class TargetMenu extends Menu {
     const actions = _battleStatus.right.team
       .concat(_battleStatus.left.team)
       .map((entity) => ({
-        title: `${entity.goesBy}, ${entity.name} ${
-          entity.isFoe ? "(Foe)" : "(Friend)"
-        }`,
+        title: `${entity.goesBy} ${entity.isFoe ? "(Foe)" : "(Friend)"}`,
         onInteraction: () => this.onSelectTarget(entity),
       }));
 
