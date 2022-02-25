@@ -127,9 +127,15 @@ export class BattleEntity extends Entity {
     const stats = this.currentStats;
 
     if (stats) {
-      if (this.isRecovering) {
+      if (!this.isDead && this.isRecovering) {
         // stats.FIN = Math.min(stats.FIN + 0.3, 100);
         stats.ATB = Math.min(stats.ATB + 0.3, 100);
+      }
+
+      const isNowReady = this.lastVitalStats.ATB !== 100 && stats.ATB === 100;
+
+      if (!this.isDead && isNowReady) {
+        this.showAnimation('standing');
       }
 
       this.syncStats();
@@ -139,7 +145,7 @@ export class BattleEntity extends Entity {
       this.liftDamageTaken();
     }
 
-    if (this.animations) {
+    if (this.animations && !this.isFoe) {
       if (this.isReady && !this.isDead && !this.vitalBox?.visible) {
         this.flashReady();
       } else {
@@ -186,7 +192,7 @@ export class BattleEntity extends Entity {
     defend.loop = false;
     defend.onComplete = () => {
       this.isRecovering = true;
-    }
+    };
   }
 
   public cast(skill: SkillKind, target: BattleEntity) {
@@ -319,10 +325,6 @@ export class BattleEntity extends Entity {
         }
       }, 250);
     }
-
-    setTimeout(() => {
-      this.hideVitals();
-    }, 250);
   }
 
   public inflict(affliction: AfflictionKind) {
@@ -616,7 +618,8 @@ export class BattleEntity extends Entity {
         this.screen,
         this,
         this.battle,
-        this.items
+        this.items,
+        () => setTimeout(this.hideVitals.bind(this), 250)
       );
       this.container.addChild(this.battleMenu.wrapper);
     }

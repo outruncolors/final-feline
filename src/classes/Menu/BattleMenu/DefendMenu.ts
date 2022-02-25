@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { Menu } from "../Menu";
 
 export class DefendMenu extends Menu {
-  constructor(_screen: PIXI.Container) {
+  constructor(_screen: PIXI.Container, _onDefend: () => void) {
     const menuConfig = {
       fontSize: 14,
       prompt:
@@ -15,7 +15,7 @@ export class DefendMenu extends Menu {
       actions: [
         {
           title: "Defend",
-          onInteraction: () => {},
+          onInteraction: _onDefend
         },
       ],
     };

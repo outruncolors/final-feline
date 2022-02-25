@@ -23,11 +23,14 @@ export class BattleMenu extends Menu {
   skillKind: null | SkillKind;
   itemKind: null | ItemKind;
 
+  onUseAction: () => void;
+
   constructor(
     _screen: PIXI.Container,
     _entity: BattleEntity,
     _battle: Battle,
-    _items: ItemAndQuantity[]
+    _items: ItemAndQuantity[],
+    _onUseAction: () => void
   ) {
     const menuConfig = {
       fontSize: 24,
@@ -87,13 +90,17 @@ export class BattleMenu extends Menu {
     this.entity = _entity;
     this.battle = _battle;
     this.items = _items;
+    this.onUseAction = _onUseAction;
     this.skillKind = null;
     this.itemKind = null;
 
     this.wrapper = new PIXI.Container();
     this.container.setParent(this.wrapper);
 
-    this.defendSubmenu = new DefendMenu(this.screen);
+    this.defendSubmenu = new DefendMenu(
+      this.screen,
+      this.handleDefendAction.bind(this)
+    );
     this.wrapper.addChildAt(this.defendSubmenu.container, 0);
 
     this.castSubmenu = new CastMenu(
@@ -133,7 +140,7 @@ export class BattleMenu extends Menu {
 
   private setActiveSubmenu(submenu: Menu) {
     this.hideAllSubmenus();
-    setTimeout(() => submenu.show(), 250);
+    setTimeout(() => submenu.show(), 100);
   }
 
   private targetForAttack() {
@@ -145,6 +152,13 @@ export class BattleMenu extends Menu {
   private handleAttackAction(target: BattleEntity) {
     this.entity.attack(target);
     this.hideAllSubmenus();
+    this.onUseAction();
+  }
+
+  private handleDefendAction() {
+    this.entity.defend();
+    this.hideAllSubmenus();
+    this.onUseAction();
   }
 
   private targetForCast(skillKind: SkillKind) {
@@ -162,6 +176,7 @@ export class BattleMenu extends Menu {
     }
 
     this.hideAllSubmenus();
+    this.onUseAction();
   }
 
   private targetForItem(itemKind: ItemKind) {
@@ -178,5 +193,6 @@ export class BattleMenu extends Menu {
     }
 
     this.hideAllSubmenus();
+    this.onUseAction();
   }
 }
