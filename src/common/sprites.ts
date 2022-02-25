@@ -3,7 +3,13 @@ import Chance from "chance";
 import { Resource } from "pixi.js";
 import * as config from "./config";
 import { colors } from "./colors";
-import { AfflictionKind, SkillKind, LocationKind, EntityKind, ItemKind } from "../data";
+import {
+  AfflictionKind,
+  SkillKind,
+  LocationKind,
+  EntityKind,
+  ItemKind,
+} from "../data";
 
 const CHANCE = new Chance();
 
@@ -94,7 +100,7 @@ export const loadItemAnimation = (item: ItemKind) => {
   animation.animationSpeed = config.STANDARD_ANIMATION_SPEED;
 
   return animation;
-}
+};
 
 // === Entities ===
 
@@ -193,6 +199,7 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
     animation.scale.set(config.ENTITY_SCALE);
     animation.animationSpeed = config.SLOWED_ANIMATION_SPEED;
     animation.visible = false;
+
     container.addChild(animation);
   }
 

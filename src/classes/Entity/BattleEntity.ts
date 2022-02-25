@@ -4,10 +4,12 @@ import {
   basicTextStyle,
   colors,
   config,
+  EntityAnimationLoader,
   EntityAnimations,
   loadAfflictionAnimation,
   loadCastingAnimations,
   loadExtraAnimation,
+  loadFoeAnimations,
   loadItemAnimation,
   loadJobAnimations,
   loadSkillAnimation,
@@ -59,6 +61,7 @@ export class BattleEntity extends Entity {
   battleMenu: null | BattleMenu = null;
   isFoe: boolean;
   isRecovering = true;
+  loader: EntityAnimationLoader;
 
   public get isDead() {
     return Boolean(this.currentStats?.HP === 0);
@@ -95,15 +98,19 @@ export class BattleEntity extends Entity {
   public constructor(
     _name: EntityKind,
     _screen: PIXI.Container,
-    _relationship: "friend" | "foe" = "friend"
+    _relationship: "friend" | "foe" = "friend",
+    _loader: EntityAnimationLoader
   ) {
     super(_name, _screen);
     this.isFoe = _relationship === "foe";
+    this.loader = _loader;
+
+    if (this.isFoe) {
+      this.goesBy = this.name;
+    }
   }
 
   public async load() {
-    this.setLoader(loadJobAnimations);
-
     await super.load();
 
     this.currentStats = { ...this.formattedStats };
@@ -114,6 +121,10 @@ export class BattleEntity extends Entity {
     this.addVitals();
     this.syncStats();
     this.addBattleMenu();
+
+    if (this.isFoe) {
+      this.showAnimation("walking");
+    }
   }
 
   public register(forBattle: Battle, withItems: ItemAndQuantity[] = []) {
@@ -135,7 +146,11 @@ export class BattleEntity extends Entity {
       const isNowReady = this.lastVitalStats.ATB !== 100 && stats.ATB === 100;
 
       if (!this.isDead && isNowReady) {
-        this.showAnimation('standing');
+        if (this.isFoe) {
+          this.showAnimation("walking");
+        } else {
+          this.showAnimation("standing");
+        }
       }
 
       this.syncStats();
@@ -566,10 +581,12 @@ export class BattleEntity extends Entity {
       });
       this.vitalsTextContainer.addChild(stage);
 
-      const shortened = this.goesBy
-        .split(" ")
-        .map((each, i) => (i === 0 ? `${each[0]}.` : each))
-        .join(" ");
+      const shortened = this.isFoe
+        ? this.goesBy
+        : this.goesBy
+            .split(" ")
+            .map((each, i) => (i === 0 ? `${each[0]}.` : each))
+            .join(" ");
       const goesBy = new PIXI.Text(shortened.toUpperCase(), {
         ...basicTextStyle,
         fontSize: 16,
@@ -584,20 +601,6 @@ export class BattleEntity extends Entity {
       goesBy.position.y += 5;
       this.vitalsTextContainer.addChild(goesBy);
 
-      const job = new PIXI.Text(this.name.toUpperCase(), {
-        ...basicTextStyle,
-        fontSize: 12,
-        fontWeight: "bolder",
-        fill: colors.white,
-        stroke: colors.black,
-        strokeThickness: 3,
-        letterSpacing: 0.1,
-        dropShadow: false,
-      });
-      job.position.x += 66;
-      job.position.y += 36;
-      this.vitalsTextContainer.addChild(job);
-
       if (this.isFoe) {
         for (const container of [this.vitalBox, this.vitalBoxOver]) {
           if (container) {
@@ -608,6 +611,20 @@ export class BattleEntity extends Entity {
 
         this.vitalsTextContainer.scale.x *= -1;
         this.vitalsTextContainer.position.x += 390;
+      } else {
+        const job = new PIXI.Text(this.name.toUpperCase(), {
+          ...basicTextStyle,
+          fontSize: 12,
+          fontWeight: "bolder",
+          fill: colors.white,
+          stroke: colors.black,
+          strokeThickness: 3,
+          letterSpacing: 0.1,
+          dropShadow: false,
+        });
+        job.position.x += 66;
+        job.position.y += 36;
+        this.vitalsTextContainer.addChild(job);
       }
     }
   }
@@ -754,5 +771,17 @@ export class BattleEntity extends Entity {
         }
       }
     }
+  }
+}
+
+export class FriendEntity extends BattleEntity {
+  public constructor(_name: EntityKind, _screen: PIXI.Container) {
+    super(_name, _screen, "friend", loadJobAnimations);
+  }
+}
+
+export class FoeEntity extends BattleEntity {
+  public constructor(_name: EntityKind, _screen: PIXI.Container) {
+    super(_name, _screen, "foe", loadFoeAnimations);
   }
 }

@@ -7,11 +7,12 @@ import {
   LocationKind,
   JobKind,
   ItemKind,
-  items,
+  FoeKind,
+  foes,
   jobs,
   locations,
 } from "../data";
-import { BattleEntity } from "./Entity";
+import { BattleEntity, FriendEntity, FoeEntity } from "./Entity";
 
 export interface BattleStatus {
   left: BattleSide;
@@ -125,31 +126,22 @@ export class Battle {
 
 export class RandomBattle extends Battle {
   constructor(_screen: PIXI.Container) {
-    const randomLocation = CHANCE.pickone(
-      Object.keys(locations) as LocationKind[]
-    );
-
     // MOVEME
     const [a, b, c, d] = [
-      new BattleEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
-      new BattleEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
-      new BattleEntity(
-        CHANCE.pickone(Object.keys(jobs) as JobKind[]),
-        _screen,
-        "foe"
-      ),
-      new BattleEntity(
-        CHANCE.pickone(Object.keys(jobs) as JobKind[]),
-        _screen,
-        "foe"
-      ),
+      new FriendEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
+      new FriendEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
+      new FoeEntity(CHANCE.pickone(Object.keys(foes) as FoeKind[]), _screen),
+      new FoeEntity(CHANCE.pickone(Object.keys(foes) as FoeKind[]), _screen),
     ];
 
-    const playableParty: BattleEntity[] = [a, b];
-    const foes: BattleEntity[] = [c, d];
-    const usableItems: ItemAndQuantity[] = [["fapple", 1], ['rich-bitch-juice', 1]];
+    const playableParty: FriendEntity[] = [a, b];
+    const foeParty: FoeEntity[] = [c, d];
+    const usableItems: ItemAndQuantity[] = [
+      ["fapple", 1],
+      ["rich-bitch-juice", 1],
+    ];
 
-    super("google", _screen, usableItems, playableParty, foes);
+    super("google", _screen, usableItems, playableParty, foeParty);
 
     a.register(this, usableItems);
     b.register(this, usableItems);
