@@ -4,17 +4,14 @@ import type { BattleStatus } from "../../Battle";
 import { Menu } from "../Menu";
 
 export class TargetMenu extends Menu {
-  constructor(
-    _screen: PIXI.Container,
-    _battleStatus: BattleStatus,
-    _onSelectTarget: (entity: BattleEntity) => void
-  ) {
-    const actions = _battleStatus.left
-      .concat(_battleStatus.right)
-      .flatMap(({ team }) => [...team])
+  onSelectTarget: (entity: BattleEntity) => void;
+
+  constructor(_screen: PIXI.Container, _battleStatus: BattleStatus) {
+    const actions = _battleStatus.left.team
+      .concat(_battleStatus.right.team)
       .map((entity) => ({
-        title: entity.name,
-        onInteraction: () => _onSelectTarget(entity),
+        title: `${entity.goesBy},\n${entity.name}`,
+        onInteraction: () => this.onSelectTarget(entity),
       }));
 
     const menuConfig = {
@@ -30,5 +27,6 @@ export class TargetMenu extends Menu {
     };
 
     super(_screen, menuConfig);
+    this.onSelectTarget = () => {};
   }
 }

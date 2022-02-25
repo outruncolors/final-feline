@@ -147,10 +147,12 @@ export class BattleEntity extends Entity {
     }
   }
 
-  public attack() {
+  public attack(target: BattleEntity) {
     const attack = this.showAnimation("attacking");
     attack.loop = false;
-    this.perform("attacking");
+    this.perform("attacking", 2500, () => {
+      target.damageBy(10);
+    });
   }
 
   public defend() {
@@ -243,7 +245,7 @@ export class BattleEntity extends Entity {
 
   public useItem(item: ItemKind, target: BattleEntity) {
     alert(`Used item: ${item}`);
-    setTimeout(() => this.hideVitals(), 250)
+    setTimeout(() => this.hideVitals(), 250);
   }
 
   public inflict(affliction: AfflictionKind) {
@@ -301,6 +303,8 @@ export class BattleEntity extends Entity {
   ) {
     this.onFinishAnimation = () => {
       const anim = this.showAnimation(animation) as PIXI.AnimatedSprite;
+      anim.loop = true;
+
       anim.onLoop = () => {
         anim.stop();
         onSteppedForward();

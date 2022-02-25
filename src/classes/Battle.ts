@@ -14,15 +14,17 @@ import {
 import { BattleEntity } from "./Entity";
 
 export interface BattleStatus {
-  left: BattleSide[];
-  right: BattleSide[];
+  left: BattleSide;
+  right: BattleSide;
   queue: BattleEntity[];
 }
 
 export interface BattleSide {
   team: BattleEntity[];
-  items: ItemKind[];
+  items: ItemAndQuantity[];
 }
+
+export type ItemAndQuantity = [ItemKind, number];
 
 const CHANCE = new Chance();
 
@@ -31,6 +33,7 @@ export class Battle {
   location: Location;
   screen: PIXI.Container;
   playableParty: BattleEntity[];
+  status: BattleStatus;
 
   constructor(
     _location: LocationKind,
@@ -41,6 +44,17 @@ export class Battle {
     this.screen = _screen;
     this.playableParty = _playableParty;
     this.container = new PIXI.Container();
+    this.status = {
+      left: {
+        team: this.playableParty,
+        items: [["apple", 2]],
+      },
+      right: {
+        team: [],
+        items: [["apple", 2]],
+      },
+      queue: [],
+    };
   }
 
   public async load() {
@@ -95,17 +109,11 @@ export class RandomBattle extends Battle {
     ];
 
     const playableParty: BattleEntity[] = [a, b];
+    const usableItems: ItemAndQuantity[] = [["apple", 2]];
 
     super("google", _screen, playableParty);
 
-    const teamItems: ItemAndQuantity[] = [
-      ['apple', 2],
-    ];
-
-    
-    a.register(this, teamItems);
-    b.register(this, teamItems);
+    a.register(this, usableItems);
+    b.register(this, []);
   }
 }
-
-export type ItemAndQuantity = [ItemKind, number];
