@@ -174,97 +174,103 @@ export class BattleEntity extends Entity {
   }
 
   public cast(skill: SkillKind, target: BattleEntity) {
-    const castMessage = new BattleMessage(
-      this.screen,
-      `${this.name} cast ${skill}`,
-      {
-        onFlashEnd: () => {
-          this.screen.removeChild(castMessage.container);
-          castMessage.container.destroy();
-        },
-      }
-    );
-    this.screen.addChild(castMessage.container);
+    const skillEntry = skills[skill] as Skill;
 
-    const { behind, front, under } = loadCastingAnimations();
+    if (this.currentStats!.MP >= skillEntry.cost) {
+      this.lowerMPBy(skillEntry.cost);
 
-    this.perform("attacking", 2500, () => {
-      if (this.container) {
-        this.hideEffects();
-
-        this.container.addChildAt(behind, 0);
-        this.container.addChildAt(under, 1);
-        this.container.addChild(front);
-
-        for (const castingAnimation of [behind, front, under]) {
-          castingAnimation.loop = false;
-          castingAnimation.play();
-          castingAnimation.onComplete = () => {
-            castingAnimation.destroy();
-          };
+      const castMessage = new BattleMessage(
+        this.screen,
+        `${this.name} cast ${skill}`,
+        {
+          onFlashEnd: () => {
+            this.screen.removeChild(castMessage.container);
+            castMessage.container.destroy();
+          },
         }
+      );
+      this.screen.addChild(castMessage.container);
 
-        setTimeout(() => {
+      const { behind, front, under } = loadCastingAnimations();
+
+      this.perform("attacking", 2500, () => {
+        if (this.container) {
           this.hideEffects();
-          target.hideEffects();
 
-          const skillEntry = skills[skill] as Skill;
-          const animation = loadSkillAnimation(skill) as PIXI.AnimatedSprite;
-          animation.loop = false;
-          animation.animationSpeed =
-            skillEntry.loopSpeed ?? config.STANDARD_ANIMATION_SPEED;
-          animation.scale.set(config.ENTITY_SCALE);
+          this.container.addChildAt(behind, 0);
+          this.container.addChildAt(under, 1);
+          this.container.addChild(front);
 
-          if (skillEntry.offset) {
-            const [x, y] = skillEntry.offset;
-            animation.position.x += x;
-            animation.position.y += y;
+          for (const castingAnimation of [behind, front, under]) {
+            castingAnimation.loop = false;
+            castingAnimation.play();
+            castingAnimation.onComplete = () => {
+              castingAnimation.destroy();
+            };
           }
 
-          animation.onComplete = () => {
-            if (counter > 0) {
-              counter--;
-              animation.gotoAndPlay(0);
-            } else {
-              target.hideEffects();
-              target.container?.removeChild(animation);
-              animation.destroy();
+          setTimeout(() => {
+            this.hideEffects();
+            target.hideEffects();
 
-              // Use method to gauge strength algorithm.
-              target.damageBy(2000);
+            const animation = loadSkillAnimation(skill) as PIXI.AnimatedSprite;
+            animation.loop = false;
+            animation.animationSpeed =
+              skillEntry.loopSpeed ?? config.STANDARD_ANIMATION_SPEED;
+            animation.scale.set(config.ENTITY_SCALE);
 
-              if (skillEntry.affliction) {
-                const [affliction, chanceToInflict] = skillEntry.affliction;
-                const willInflict = CHANCE.bool({
-                  likelihood: chanceToInflict,
-                });
+            if (skillEntry.offset) {
+              const [x, y] = skillEntry.offset;
+              animation.position.x += x;
+              animation.position.y += y;
+            }
 
-                if (willInflict) {
-                  target.inflict(affliction);
+            animation.onComplete = () => {
+              if (counter > 0) {
+                counter--;
+                animation.gotoAndPlay(0);
+              } else {
+                target.hideEffects();
+                target.container?.removeChild(animation);
+                animation.destroy();
+                skillEntry.effect(this, target);
+
+                // Use method to gauge strength algorithm.
+                target.damageBy(2000);
+
+                if (skillEntry.affliction) {
+                  const [affliction, chanceToInflict] = skillEntry.affliction;
+                  const willInflict = CHANCE.bool({
+                    likelihood: chanceToInflict,
+                  });
+
+                  if (willInflict) {
+                    target.inflict(affliction);
+                  }
                 }
               }
-            }
-          };
+            };
 
-          let counter = skillEntry.loopCount ?? 1;
-          counter--;
-          animation.play();
+            let counter = skillEntry.loopCount ?? 1;
+            counter--;
+            animation.play();
 
-          target.container?.addChild(animation);
-        }, 1200);
-      }
-    });
+            target.container?.addChild(animation);
+          }, 1200);
+        }
+      });
+    }
   }
 
   public useItem(item: ItemKind, target: BattleEntity) {
+    const itemEntry = items[item];
     const attacking = this.showAnimation("attacking");
     attacking.loop = false;
     attacking.onComplete = () => {
       attacking.stop();
       attacking.loop = true;
+      itemEntry.effect(this, target);
     };
-
-    const itemEntry = items[item];
 
     if (target.container && target.animations && itemEntry) {
       const animation = loadItemAnimation(itemEntry.name);
@@ -336,10 +342,32 @@ export class BattleEntity extends Entity {
   public damageBy(amount: number) {
     if (!this.isDead) {
       const stats = this.currentStats!;
-      const hpAfterAttack = Math.max(stats.HP - amount, 0);
+      let hpAfterAttack = Math.max(stats.HP - amount, 0);
+      hpAfterAttack = Math.min(hpAfterAttack, this.maxStats!.HP);
       stats.HP = hpAfterAttack;
 
       this.displayDamageTaken(amount);
+    }
+  }
+
+  public lowerMPBy(amount: number) {
+    if (!this.isDead) {
+      const stats = this.currentStats!;
+      let mpAfter = Math.max(stats.MP - amount, 0);
+      mpAfter = Math.min(mpAfter, this.maxStats!.MP);
+      stats.MP = mpAfter;
+    }
+  }
+
+  public recoverHP(amount: number) {
+    if (!this.isDead) {
+      this.damageBy(-amount);
+    }
+  }
+
+  public recoverMP(amount: number) {
+    if (!this.isDead) {
+      this.lowerMPBy(-amount);
     }
   }
 

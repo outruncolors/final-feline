@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { SkillKind } from "../../../data";
+import { SkillKind, skills } from "../../../data";
 import type { BattleEntity } from "../../Entity";
 import { Menu } from "../Menu";
 
@@ -10,8 +10,9 @@ export class CastMenu extends Menu {
     _onSelectSkill: (kind: SkillKind) => void
   ) {
     const actions = _entity.baseSkills.map((skill) => ({
-      title: skill,
+      title: `${skill} (${skills[skill].cost} MP)`,
       onInteraction: () => _onSelectSkill(skill),
+      enabled: _entity.currentStats!.MP >= skills[skill].cost
     }));
 
     const menuConfig = {

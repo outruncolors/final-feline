@@ -1,4 +1,4 @@
-import type { Entity } from "../classes";
+import type { BattleEntity } from "../classes";
 import { AfflictionKind } from "./afflictions";
 
 export interface Skill {
@@ -13,9 +13,9 @@ export interface Skill {
   offset?: [number, number];
   affliction?: [AfflictionKind, number];
   effect: (
-    user: any,
-    target: any
-  ) => void | ((user: any, targets: any[]) => void);
+    user: BattleEntity,
+    target: BattleEntity
+  ) => void | ((user: BattleEntity, targets: BattleEntity[]) => void);
 }
 
 export const skills = {
@@ -28,7 +28,7 @@ export const skills = {
     affliction: ["subscribed", 100],
     offset: [16, 0],
     loopSpeed: 0.2,
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -41,7 +41,7 @@ export const skills = {
     loopCount: 3,
     loopSpeed: 0.2,
     affliction: ["charmed", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -52,7 +52,7 @@ export const skills = {
     description:
       "Summons a single huge post on the chosen target, dealing immense physical damage.",
     cost: 5,
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -65,7 +65,7 @@ export const skills = {
     multi: true,
     cost: 5,
     offset: [-156, 0],
-    effect(user: Entity, targets: Entity[]) {
+    effect(user: BattleEntity, targets: BattleEntity[]) {
       // Pass
     },
   },
@@ -77,7 +77,7 @@ export const skills = {
       "Attacks the enemy team with vicious, burning insults, dealing magic damage.",
     multi: true,
     cost: 5,
-    effect(user: Entity, targets: Entity[]) {
+    effect(user: BattleEntity, targets: BattleEntity[]) {
       // Pass
     },
   },
@@ -89,7 +89,7 @@ export const skills = {
       "Drowns the enemy team in wave after wave of text, dealing immense magic damage.",
     multi: true,
     cost: 5,
-    effect(user: Entity, targets: Entity[]) {
+    effect(user: BattleEntity, targets: BattleEntity[]) {
       // Pass
     },
   },
@@ -102,7 +102,7 @@ export const skills = {
     cost: 5,
     friendly: true,
     affliction: ["upvoted", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -116,7 +116,7 @@ export const skills = {
     loopCount: 3,
     loopSpeed: 0.2,
     affliction: ["upvoted", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -130,7 +130,7 @@ export const skills = {
     friendly: true,
     multi: true,
     affliction: ["upvoted", 100],
-    effect(user: Entity, targets: Entity) {
+    effect(user: BattleEntity, targets: BattleEntity) {
       // Pass
     },
   },
@@ -141,7 +141,7 @@ export const skills = {
     description: "Causes the chosen target to only be able to target the user.",
     cost: 5,
     affliction: ["baited", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -153,7 +153,7 @@ export const skills = {
     cost: 5,
     offset: [0, 64],
     affliction: ["trolled", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -167,7 +167,7 @@ export const skills = {
     loopCount: 7,
     loopSpeed: 0.5,
     affliction: ["followed", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -178,7 +178,7 @@ export const skills = {
     description: "Lowers all of a chosen target's stats by a moderate amount.",
     cost: 5,
     affliction: ["downvoted", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -189,7 +189,7 @@ export const skills = {
     description: "Prevents the target from targetting the user.",
     cost: 5,
     affliction: ["blocked", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -201,7 +201,7 @@ export const skills = {
     cost: 5,
     offset: [0, 32],
     affliction: ["reported", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -214,7 +214,7 @@ export const skills = {
     cost: 5,
     offset: [-20, 0],
     affliction: ["pinned", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -225,7 +225,7 @@ export const skills = {
     description: "Deals immense physical damage, lowers enemy ATB to 0.",
     cost: 5,
     affliction: ["deleted", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },
@@ -239,7 +239,7 @@ export const skills = {
     offset: [-64, 0],
     loopSpeed: 0.2,
     affliction: ["shadowbanned", 100],
-    effect(user: Entity, target: Entity) {
+    effect(user: BattleEntity, target: BattleEntity) {
       // Pass
     },
   },

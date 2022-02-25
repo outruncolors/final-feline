@@ -33,3 +33,6 @@ export const CAST_SHADOW_WIDTH_DOWN = 60;
 
 export const BATTLE_TOP_MARGIN = 256;
 export const BATTLE_CHARACTER_SEPARATION = 64;
+
+export const FAPPLE_HP_RECOVERY = [10, 30];
+export const RICH_BITCH_JUICE_MP_RECOVERY = [8, 24];

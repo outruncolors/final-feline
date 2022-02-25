@@ -17,6 +17,7 @@ export interface MessageAction {
   title: string;
   onInteraction(e: InteractionEvent): void;
   fontSize?: number;
+  enabled?: boolean;
 }
 
 export class Message {
@@ -245,19 +246,28 @@ export class InteractiveMessage extends Message {
   public addActions(...actions: MessageAction[]) {
     const actionWrapper = new PIXI.Container();
 
-    for (const { title, onInteraction, fontSize } of actions) {
+    for (const {
+      title,
+      onInteraction,
+      fontSize = 24,
+      enabled = true,
+    } of actions) {
       const action = new PIXI.Text(title, basicTextStyle);
-      action.style.fontSize = fontSize ?? 24;
-      action.interactive = true;
-      action.buttonMode = true;
-      action.on("mousedown", onInteraction);
-      action.on("touchstart", onInteraction);
-      action.on("mouseover", () => {
-        action.tint = colors.yellow;
-      });
-      action.on("mouseout", () => {
-        action.tint = colors.white;
-      });
+      action.style.fontSize = fontSize;
+      action.interactive = enabled;
+      action.alpha = enabled ? 1 : 0.5;
+      action.buttonMode = enabled;
+
+      if (enabled) {
+        action.on("mousedown", onInteraction);
+        action.on("touchstart", onInteraction);
+        action.on("mouseover", () => {
+          action.tint = colors.yellow;
+        });
+        action.on("mouseout", () => {
+          action.tint = colors.white;
+        });
+      }
 
       if (this.vertical) {
         action.position.x = config.MESSAGE_BOX_PADDING * 2;
