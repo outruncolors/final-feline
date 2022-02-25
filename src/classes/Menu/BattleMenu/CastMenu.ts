@@ -1,28 +1,24 @@
 import * as PIXI from "pixi.js";
-import { Menu } from "./Menu";
+import { Menu } from "../Menu";
 
-export class AttackMenu extends Menu {
+export class CastMenu extends Menu {
   constructor(_screen: PIXI.Container) {
     const menuConfig = {
       fontSize: 14,
       prompt:
-        "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tSelect a target.".toUpperCase(),
+        "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tUse which skill?".toUpperCase(),
       containerXOffset: 140,
       containerYOffset: 182,
       boxYOffset: 3,
-      width: 500,
-      height: 28,
+      width: 530,
+      height: 60,
       actions: [
         {
-          title: "\nTarget A\t\t",
+          title: "Skill A",
           onInteraction: () => {},
         },
         {
-          title: "\nTarget B\t\t",
-          onInteraction: () => {},
-        },
-        {
-          title: "\nTarget C",
+          title: "Skill B",
           onInteraction: () => {},
         },
       ],

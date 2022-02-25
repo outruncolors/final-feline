@@ -1,7 +1,6 @@
 import * as PIXI from "pixi.js";
-import { MessageAction } from "..";
 import { config } from "../../common";
-import { InteractiveMessage } from "../Message";
+import { InteractiveMessage, MessageAction } from "../Message";
 
 interface MenuConfig {
   prompt?: string;
