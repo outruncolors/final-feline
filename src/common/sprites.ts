@@ -192,16 +192,16 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
 
   return {
     container,
-    effects: {
-      ready: () => 0,
-      unready: () => {},
-    },
     animations: {
       standing: idleAnimation,
       walking: activeAnimation,
       attacking: activeAnimation,
       defending: idleAnimation,
       dying: idleAnimation,
+    },
+    effects: {
+      ready: () => 0,
+      unready: () => {},
     },
   };
 };

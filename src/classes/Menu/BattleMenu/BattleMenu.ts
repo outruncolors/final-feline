@@ -144,6 +144,7 @@ export class BattleMenu extends Menu {
 
   private handleAttackAction(target: BattleEntity) {
     this.entity.attack(target);
+    this.hideAllSubmenus();
   }
 
   private targetForCast(skillKind: SkillKind) {
@@ -159,6 +160,8 @@ export class BattleMenu extends Menu {
       this.entity.cast(this.skillKind, target);
       this.skillKind = null;
     }
+
+    this.hideAllSubmenus();
   }
 
   private targetForItem(itemKind: ItemKind) {
@@ -173,5 +176,7 @@ export class BattleMenu extends Menu {
     if (this.itemKind) {
       this.entity.useItem(this.itemKind, target);
     }
+
+    this.hideAllSubmenus();
   }
 }

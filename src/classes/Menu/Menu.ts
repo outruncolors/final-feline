@@ -11,6 +11,7 @@ interface MenuConfig {
   width: number;
   height: number;
   actions: MessageAction[];
+  vertical?: boolean;
 }
 
 export class Menu {
@@ -59,6 +60,7 @@ export class Menu {
         message.box.height + config.MESSAGE_BOX_PADDING * 2;
     }
 
+    message.vertical = Boolean(this.config.vertical);
     message.addActions(...this.config.actions);
 
     this.container.visible = false;

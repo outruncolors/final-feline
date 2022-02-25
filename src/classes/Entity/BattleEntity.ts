@@ -13,6 +13,7 @@ import {
 } from "../../common";
 import {
   AfflictionKind,
+  EntityKind,
   EntityStats,
   ItemKind,
   items,
@@ -55,6 +56,7 @@ export class BattleEntity extends Entity {
   damageTakenFlashCount = 0;
   readyFlashDirection: "in" | "out" = "in";
   battleMenu: null | BattleMenu = null;
+  isFoe: boolean;
 
   public get isDead() {
     return Boolean(this.currentStats?.HP === 0);
@@ -88,6 +90,15 @@ export class BattleEntity extends Entity {
     );
   }
 
+  public constructor(
+    _name: EntityKind,
+    _screen: PIXI.Container,
+    _relationship: "friend" | "foe" = "friend"
+  ) {
+    super(_name, _screen);
+    this.isFoe = _relationship === "foe";
+  }
+
   public async load() {
     this.setLoader(loadJobAnimations);
 
@@ -103,7 +114,7 @@ export class BattleEntity extends Entity {
     this.addBattleMenu();
   }
 
-  public register(forBattle: Battle, withItems: ItemAndQuantity[]) {
+  public register(forBattle: Battle, withItems: ItemAndQuantity[] = []) {
     this.battle = forBattle;
     this.items = withItems;
   }
@@ -533,6 +544,18 @@ export class BattleEntity extends Entity {
       job.position.x += 66;
       job.position.y += 36;
       this.vitalsTextContainer.addChild(job);
+
+      if (this.isFoe) {
+        for (const container of [this.vitalBox, this.vitalBoxOver]) {
+          if (container) {
+            container.scale.x *= -1;
+            container.position.x += 460;
+          }
+        }
+
+        this.vitalsTextContainer.scale.x *= -1;
+        this.vitalsTextContainer.position.x += 390;
+      }
     }
   }
 
@@ -562,6 +585,11 @@ export class BattleEntity extends Entity {
         this.container.height / 2
       );
       this.container.addChild(this.damageTakenText);
+
+      if (this.isFoe) {
+        this.damageTakenText.anchor.y = 1;
+        this.damageTakenText.position.y *= -1;
+      }
 
       if (damagedBy > 0) {
         this.damageTakenText.text = `+${this.damageTakenText.text}`;
@@ -615,7 +643,9 @@ export class BattleEntity extends Entity {
       this.vitalBoxOver.visible = true;
       this.vitalsTextContainer.visible = true;
 
-      this.battleMenu.show();
+      if (!this.isFoe) {
+        this.battleMenu.show();
+      }
 
       this.screen.interactive = true;
       this.screen.on("mousedown", this.hideVitals);
@@ -636,7 +666,9 @@ export class BattleEntity extends Entity {
       this.vitalBoxOver.visible = false;
       this.vitalsTextContainer.visible = false;
 
-      this.battleMenu.hide();
+      if (!this.isFoe) {
+        this.battleMenu.hide();
+      }
 
       this.screen.interactive = false;
       this.screen.off("mousedown", this.hideVitals);
@@ -645,7 +677,7 @@ export class BattleEntity extends Entity {
   };
 
   private flashReady() {
-    if (this.animations) {
+    if (this.animations && !this.isFoe) {
       if (this.readyFlashDirection === "in") {
         const isFullyIn =
           this.animations.effects.ready(

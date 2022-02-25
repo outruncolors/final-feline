@@ -43,7 +43,7 @@ export class Message {
 
     this.text = new PIXI.Text(_text, {
       ...basicTextStyle,
-      fontSize: this.options.fontSize ?? 48
+      fontSize: this.options.fontSize ?? 48,
     });
     this.text.position.set(
       config.MESSAGE_BOX_PADDING * 6,
@@ -240,6 +240,8 @@ export class ScreenMessage extends Message {
 }
 
 export class InteractiveMessage extends Message {
+  vertical = false;
+
   public addActions(...actions: MessageAction[]) {
     const actionWrapper = new PIXI.Container();
 
@@ -257,13 +259,26 @@ export class InteractiveMessage extends Message {
         action.tint = colors.white;
       });
 
-      let distance = config.MESSAGE_BOX_PADDING * 2;
-      for (let _child of actionWrapper.children) {
-        const child = _child as PIXI.Text;
-        distance += child.width + config.MESSAGE_BOX_PADDING * 4;
+      if (this.vertical) {
+        action.position.x = config.MESSAGE_BOX_PADDING * 2;
+
+        let distance = config.MESSAGE_BOX_PADDING * 2;
+        for (let _child of actionWrapper.children) {
+          const child = _child as PIXI.Text;
+          distance += child.height + config.MESSAGE_BOX_PADDING * 2;
+        }
+
+        action.position.y = distance - config.MESSAGE_BOX_PADDING * 4;
+      } else {
+        let distance = 0;
+        for (let _child of actionWrapper.children) {
+          const child = _child as PIXI.Text;
+          distance += child.width + config.MESSAGE_BOX_PADDING * 4;
+        }
+
+        action.position.x = distance;
       }
 
-      action.position.x = distance;
       actionWrapper.addChild(action);
     }
 
