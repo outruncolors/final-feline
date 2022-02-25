@@ -24,6 +24,7 @@ export class CastMenu extends Menu {
       width: 530,
       height: 60,
       actions,
+      vertical: true
     };
 
     super(_screen, menuConfig);

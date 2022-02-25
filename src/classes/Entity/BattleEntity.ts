@@ -8,6 +8,7 @@ import {
   loadAfflictionAnimation,
   loadCastingAnimations,
   loadExtraAnimation,
+  loadItemAnimation,
   loadJobAnimations,
   loadSkillAnimation,
 } from "../../common";
@@ -265,30 +266,29 @@ export class BattleEntity extends Entity {
 
     const itemEntry = items[item];
 
-    if (target.container && target.animations && itemEntry.emoji) {
-      const text = new PIXI.Text(itemEntry.emoji, {
-        fontSize: 64,
-      });
+    if (target.container && target.animations && itemEntry) {
+      const animation = loadItemAnimation(itemEntry.name);
+      animation.play();
+      animation.loop = false;
+      target.container.addChild(animation);
 
-      target.container.addChild(text);
-      text.position.x =
-        target.animations.animations.standing.width / 2 - text.height / 2;
-      text.position.y =
-        target.animations.animations.standing.height / 2 - text.height / 2;
+      animation.position.x =
+        target.animations.animations.standing.width / 2 - animation.height / 2;
+      animation.position.y =
+        target.animations.animations.standing.height / 2 - animation.height / 2;
 
       let times = 0;
       const shrinking = setInterval(() => {
         if (target.container) {
           if (times === 10) {
             clearInterval(shrinking);
-            target.container?.removeChild(text);
+            target.container?.removeChild(animation);
           } else {
-            text.style.fontSize =
-              parseInt((text.style.fontSize ?? 0).toString()) - 2;
+            animation.alpha -= 0.05;
             times++;
           }
         }
-      }, 150);
+      }, 250);
     }
 
     setTimeout(() => {

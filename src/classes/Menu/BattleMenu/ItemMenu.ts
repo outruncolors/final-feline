@@ -12,8 +12,8 @@ export class ItemMenu extends Menu {
     _onSelectItem: (item: ItemKind) => void
   ) {
     const actions = _items.map(([itemKind, quantity]) => {
-      const { emoji } = items[itemKind];
-      const title = emoji ?? itemKind;
+      const item = items[itemKind];
+      const title = item.displayName ?? item.name;
 
       return {
         title: `${title}  (x${quantity})`,
@@ -31,6 +31,7 @@ export class ItemMenu extends Menu {
       width: 530,
       height: 60,
       actions,
+      vertical: true
     };
 
     super(_screen, menuConfig);

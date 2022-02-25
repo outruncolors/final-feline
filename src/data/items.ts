@@ -1,16 +1,21 @@
 export interface Item {
   id: number;
   name: string;
-  emoji?: string;
+  displayName?: string;
   description: string;
 }
 
 export const items: Record<string, Item> = {
-  apple: {
+  fapple: {
     id: 0,
-    name: "apple",
-    emoji: "🍎",
-    description: "Just a red apple.",
+    name: "fapple",
+    description: "A feisty apple that restores some HP.",
+  },
+  "rich-bitch-juice": {
+    id: 1,
+    name: "rich-bitch-juice",
+    displayName: "rich bitch juice",
+    description: "A classy beverage for a classy bitch. Restores some MP.",
   },
 };
 

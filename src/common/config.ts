@@ -26,6 +26,8 @@ export const FASTER_ANIMATION_SPEED = STANDARD_ANIMATION_SPEED * 2;
 
 export const AFFLICTION_SCALE = 2;
 
+export const ITEM_SCALE = 3;
+
 export const CAST_SHADOW_WIDTH_UP = 25;
 export const CAST_SHADOW_WIDTH_DOWN = 60;
 

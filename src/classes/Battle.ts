@@ -147,7 +147,7 @@ export class RandomBattle extends Battle {
 
     const playableParty: BattleEntity[] = [a, b];
     const foes: BattleEntity[] = [c, d];
-    const usableItems: ItemAndQuantity[] = [["apple", 2]];
+    const usableItems: ItemAndQuantity[] = [["fapple", 1], ['rich-bitch-juice', 1]];
 
     super("google", _screen, usableItems, playableParty, foes);
 
