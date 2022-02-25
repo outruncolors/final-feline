@@ -58,6 +58,7 @@ export class BattleEntity extends Entity {
   readyFlashDirection: "in" | "out" = "in";
   battleMenu: null | BattleMenu = null;
   isFoe: boolean;
+  isRecovering = true;
 
   public get isDead() {
     return Boolean(this.currentStats?.HP === 0);
@@ -126,8 +127,11 @@ export class BattleEntity extends Entity {
     const stats = this.currentStats;
 
     if (stats) {
-      stats.FIN = Math.min(stats.FIN + 0.3, 100);
-      stats.ATB = Math.min(stats.ATB + 0.3, 100);
+      if (this.isRecovering) {
+        // stats.FIN = Math.min(stats.FIN + 0.3, 100);
+        stats.ATB = Math.min(stats.ATB + 0.3, 100);
+      }
+
       this.syncStats();
     }
 
@@ -140,6 +144,10 @@ export class BattleEntity extends Entity {
         this.flashReady();
       } else {
         this.animations.effects.unready();
+
+        if (this.isReady && !this.isDead) {
+          this.battleMenu?.show();
+        }
       }
     }
   }
@@ -161,22 +169,32 @@ export class BattleEntity extends Entity {
   }
 
   public attack(target: BattleEntity) {
+    this.currentStats!.ATB = 0;
+    this.isRecovering = false;
     const attack = this.showAnimation("attacking");
     attack.loop = false;
     this.perform("attacking", 2500, () => {
       target.damageBy(10);
+      this.isRecovering = true;
     });
   }
 
   public defend() {
+    this.currentStats!.ATB = 0;
+    this.isRecovering = false;
     const defend = this.showAnimation("defending");
     defend.loop = false;
+    defend.onComplete = () => {
+      this.isRecovering = true;
+    }
   }
 
   public cast(skill: SkillKind, target: BattleEntity) {
     const skillEntry = skills[skill] as Skill;
 
     if (this.currentStats!.MP >= skillEntry.cost) {
+      this.currentStats!.ATB = 0;
+      this.isRecovering = false;
       this.lowerMPBy(skillEntry.cost);
 
       const castMessage = new BattleMessage(
@@ -248,6 +266,8 @@ export class BattleEntity extends Entity {
                     target.inflict(affliction);
                   }
                 }
+
+                this.isRecovering = true;
               }
             };
 
@@ -263,6 +283,8 @@ export class BattleEntity extends Entity {
   }
 
   public useItem(item: ItemKind, target: BattleEntity) {
+    this.currentStats!.ATB = 0;
+    this.isRecovering = false;
     const itemEntry = items[item];
     const attacking = this.showAnimation("attacking");
     attacking.loop = false;
@@ -270,6 +292,7 @@ export class BattleEntity extends Entity {
       attacking.stop();
       attacking.loop = true;
       itemEntry.effect(this, target);
+      this.isRecovering = true;
     };
 
     if (target.container && target.animations && itemEntry) {
@@ -671,7 +694,7 @@ export class BattleEntity extends Entity {
       this.vitalBoxOver.visible = true;
       this.vitalsTextContainer.visible = true;
 
-      if (!this.isFoe) {
+      if (!this.isFoe && this.isReady) {
         this.battleMenu.show();
       }
 
