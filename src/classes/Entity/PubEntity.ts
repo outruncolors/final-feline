@@ -1,25 +1,20 @@
-import * as PIXI from "pixi.js";
 import Chance from "chance";
-import { getRomanNumeralFor, loadJobAnimations } from "../../common";
-import { EntityKind } from "../../data";
-import { InteractiveMessage, ScreenMessage } from "../Message";
+import {
+  getRomanNumeralFor,
+  loadJobAnimations,
+  loadJobPortrait,
+} from "../../common";
+import { InteractiveMessage, Message } from "../Message";
 import { Entity } from "./Entity";
 
 const CHANCE = new Chance();
 
 export class PubEntity extends Entity {
-  controller: ScreenMessage;
   meandering = false;
   shouldStopMeandering = false;
 
-  constructor(
-    _name: EntityKind,
-    _screen: PIXI.Container,
-    _controller: ScreenMessage
-  ) {
-    super(_name, _screen);
-    this.controller = _controller;
-  }
+  interactiveMessage: null | InteractiveMessage = null;
+  chatMessage: null | Message = null;
 
   public async load() {
     this.setLoader(loadJobAnimations);
@@ -27,51 +22,35 @@ export class PubEntity extends Entity {
     await super.load();
 
     if (this.container) {
-      const handleInteraction = () => {
-        if (this.container) {
-          const message = new InteractiveMessage(
-            `${this.goesBy},\n\t\t${CHANCE.capitalize(
-              this.name
-            )} ${getRomanNumeralFor(this.stage)}`
-          );
-          message.container.position.set(64, -128); // FIXME
-          this.container.addChild(message.container);
-
-          const removeMessage = () => {
-            if (this.container) {
-              this.container.removeChild(message.container);
-
-              message.container.destroy();
-
-              this.screen.interactive = false; // FIXME
-              this.screen.removeListener("mousedown", removeMessage);
-              this.screen.removeListener("touchstart", removeMessage);
-              this.container.on("mousedown", handleInteraction);
-              this.container.on("touchstart", handleInteraction);
-
-              this.controller.clear();
-              this.meander();
-            }
-          };
-
-          this.screen.interactive = true;
-          this.screen.on("mousedown", removeMessage);
-          this.screen.on("touchstart", removeMessage);
-
-          message.addActions({
-            title: "Chat",
-            onInteraction: (event) => {
-              event.stopPropagation();
-              this.handleChat();
-            },
-          });
+      this.interactiveMessage = new InteractiveMessage(
+        `${this.goesBy},\n\t\t${CHANCE.capitalize(
+          this.name
+        )} ${getRomanNumeralFor(this.stage)}`
+      );
+      this.interactiveMessage.container.position.set(64, -128); // FIXME
+      this.interactiveMessage.container.visible = false;
+      this.interactiveMessage.addActions(
+        {
+          title: "Chat",
+          onInteraction: (event) => {
+            event.stopPropagation();
+            this.handleChat();
+          },
+        },
+        {
+          title: "Hire",
+          onInteraction: (event) => {
+            event.stopPropagation();
+            this.handleHire();
+          },
         }
-      };
+      );
+      this.container.addChild(this.interactiveMessage.container);
 
       this.container.interactive = true;
       this.container.buttonMode = true;
-      this.container.on("mousedown", handleInteraction);
-      this.container.on("touchstart", handleInteraction);
+      this.container.on("mousedown", this.handleInteraction);
+      this.container.on("touchstart", this.handleInteraction);
     }
   }
 
@@ -88,12 +67,6 @@ export class PubEntity extends Entity {
       }
     }
   }
-
-  private handleChat = () => {
-    const stuff = CHANCE.sentence({ words: 4 }).split(". ").join(".\n");
-    this.stopMeandering();
-    this.controller.change(stuff);
-  };
 
   private startMeandering() {
     const willMove = CHANCE.bool({ likelihood: 1 });
@@ -114,4 +87,57 @@ export class PubEntity extends Entity {
   public meander() {
     this.meandering = true;
   }
+
+  private removeMessage = () => {
+    if (this.container && this.interactiveMessage) {
+      if (this.chatMessage) {
+        this.container.removeChild(this.chatMessage.container);
+        this.chatMessage.container.destroy();
+        this.chatMessage = null;
+      }
+
+      this.interactiveMessage.container.visible = false;
+
+      this.screen.interactive = false; // FIXME
+      this.screen.removeListener("mousedown", this.removeMessage);
+      this.screen.removeListener("touchstart", this.removeMessage);
+      this.container.on("mousedown", this.handleInteraction);
+      this.container.on("touchstart", this.handleInteraction);
+
+      this.meander();
+    }
+  };
+
+  private handleInteraction = () => {
+    if (this.container && this.interactiveMessage) {
+      this.screen.interactive = true;
+      this.screen.on("mousedown", this.removeMessage);
+      this.screen.on("touchstart", this.removeMessage);
+
+      this.interactiveMessage.container.visible = true;
+    }
+  };
+
+  private handleChat = () => {
+    if (this.container) {
+      const stuff = CHANCE.sentence({ words: 4 }).split(". ").join(".\n");
+      this.stopMeandering();
+
+      this.chatMessage = new Message(stuff, {
+        progressive: true,
+        duration: Infinity,
+      });
+      this.chatMessage.container.y -= 200;
+      this.container.addChild(this.chatMessage.container);
+
+      const portrait = loadJobPortrait(this.name);
+      portrait.position.x -= 80;
+      portrait.position.y -= 30;
+      this.chatMessage.container.addChild(portrait);
+    }
+  };
+
+  private handleHire = () => {
+    alert("Hiring " + this.goesBy);
+  };
 }

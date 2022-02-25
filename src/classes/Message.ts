@@ -44,7 +44,7 @@ export class Message {
 
     this.text = new PIXI.Text(_text, {
       ...basicTextStyle,
-      fontSize: this.options.fontSize ?? 48,
+      fontSize: this.options.fontSize ?? basicTextStyle.fontSize,
     });
     this.text.position.set(
       config.MESSAGE_BOX_PADDING * 6,
@@ -195,51 +195,6 @@ export class BattleMessage extends Message {
   }
 }
 
-// A type of message which stretches along the bottom of the screen.
-export class ScreenMessage extends Message {
-  screen: PIXI.Container;
-  shared: Message;
-  hasAvatar: boolean;
-
-  constructor(
-    screen: PIXI.Container,
-    _text: string,
-    _options: MessageOptions & { hasAvatar?: boolean } = {}
-  ) {
-    super(_text, _options);
-    this.screen = screen;
-    this.shared = new Message("", {
-      minWidth: document.body.clientWidth - 8,
-      minHeight: 235,
-    });
-    this.hasAvatar = Boolean(_options.hasAvatar);
-
-    this.adjustPosition();
-  }
-
-  public change(to: string) {
-    this.text.text = to;
-
-    if (this.hasAvatar) {
-      this.text.position.x = 128;
-    }
-  }
-
-  public clear() {
-    this.hasAvatar = false;
-    this.text.text = "";
-  }
-
-  private adjustPosition() {
-    this.container.position.set(
-      config.SCREEN_MESSAGE_BOX_MARGIN,
-      this.screen.height -
-        this.container.height -
-        config.SCREEN_MESSAGE_BOX_MARGIN * 2
-    );
-  }
-}
-
 export class InteractiveMessage extends Message {
   vertical = false;
 
@@ -249,10 +204,10 @@ export class InteractiveMessage extends Message {
     for (const {
       title,
       onInteraction,
-      fontSize = 24,
+      fontSize = 20,
       enabled = true,
     } of actions) {
-      const action = new PIXI.Text(title, basicTextStyle);
+      const action = new PIXI.Text(title.toUpperCase(), basicTextStyle);
       action.style.fontSize = fontSize;
       action.interactive = enabled;
       action.alpha = enabled ? 1 : 0.5;

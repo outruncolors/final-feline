@@ -2,7 +2,8 @@ import * as PIXI from "pixi.js";
 import { colors } from "./colors";
 
 const basicText = {
-  fontSize: 24,
+  fontSize: 14,
+  fontFamily: "VCR OSD Mono 1",
   dropShadow: true,
   dropShadowColor: colors.grey,
   fill: colors.white,
@@ -12,7 +13,7 @@ export const basicTextStyle = new PIXI.TextStyle(basicText);
 
 export const titleTextStyle = new PIXI.TextStyle({
   ...basicText,
-  fontSize: 48,
+  fontSize: 24,
   letterSpacing: 8,
 });
 

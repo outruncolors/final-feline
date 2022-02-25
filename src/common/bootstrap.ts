@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+import WebFont from "webfontloader";
 import { NavigateFunction } from "react-router-dom";
 
 const loader = PIXI.Loader.shared;
@@ -18,9 +19,15 @@ export const bootstrap = async (
 
   try {
     await loadCommonAssets();
-  } catch (error) {}
 
-  instance(app, screen, navigator);
+    WebFont.load({
+      custom: {
+        families: ["VCR OSD Mono 1"],
+        urls: ["/assets/fonts/fonts.css"],
+      },
+      active: () => instance(app, screen, navigator),
+    });
+  } catch (error) {}
 };
 
 const loadCommonAssets = () => {

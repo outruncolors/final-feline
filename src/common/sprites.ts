@@ -179,6 +179,17 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
   };
 };
 
+export const loadJobPortrait = (job: EntityKind) => {
+  const {
+    animations: { standing },
+  } = loadJobAnimations(job);
+  const [idle] = standing.textures as Array<PIXI.Texture<Resource>>;
+  const portrait = new PIXI.Sprite(idle);
+  portrait.scale.set(config.ENTITY_SCALE / 2);
+
+  return portrait;
+};
+
 export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
   const container = new PIXI.Container();
   const activeAnimation = loadAnimation(`foes/${foe}/foes_${foe}`);
