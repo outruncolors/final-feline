@@ -10,6 +10,7 @@ import {
   loadCastingAnimations,
   loadExtraAnimation,
   loadFoeAnimations,
+  loadImpactAnimation,
   loadItemAnimation,
   loadJobAnimations,
   loadSkillAnimation,
@@ -195,8 +196,9 @@ export class BattleEntity extends Entity {
     const attack = this.showAnimation("attacking");
     attack.loop = false;
     this.perform("attacking", 2500, () => {
-      target.damageBy(10);
+      target.lowerHPBy(10);
       this.isRecovering = true;
+      target.impact();
     });
   }
 
@@ -274,8 +276,12 @@ export class BattleEntity extends Entity {
                 animation.destroy();
                 skillEntry.effect(this, target);
 
+                if (skillEntry.impactsTarget) {
+                  target.impact();
+                }
+
                 // Use method to gauge strength algorithm.
-                target.damageBy(2000);
+                target.lowerHPBy(2000);
 
                 if (skillEntry.affliction) {
                   const [affliction, chanceToInflict] = skillEntry.affliction;
@@ -368,6 +374,23 @@ export class BattleEntity extends Entity {
     }
   }
 
+  public recoverHP(amount: number) {
+    if (!this.isDead) {
+      this.lowerHPBy(-amount);
+    }
+  }
+
+  public lowerHPBy(amount: number) {
+    if (!this.isDead) {
+      const stats = this.currentStats!;
+      let hpAfterAttack = Math.max(stats.HP - amount, 0);
+      hpAfterAttack = Math.min(hpAfterAttack, this.maxStats!.HP);
+      stats.HP = hpAfterAttack;
+
+      this.displayDamageTaken(amount);
+    }
+  }
+
   private die() {
     const dying = this.showAnimation("dying");
     dying.loop = false;
@@ -379,14 +402,9 @@ export class BattleEntity extends Entity {
     };
   }
 
-  public damageBy(amount: number) {
+  public recoverMP(amount: number) {
     if (!this.isDead) {
-      const stats = this.currentStats!;
-      let hpAfterAttack = Math.max(stats.HP - amount, 0);
-      hpAfterAttack = Math.min(hpAfterAttack, this.maxStats!.HP);
-      stats.HP = hpAfterAttack;
-
-      this.displayDamageTaken(amount);
+      this.lowerMPBy(-amount);
     }
   }
 
@@ -399,18 +417,42 @@ export class BattleEntity extends Entity {
     }
   }
 
-  public recoverHP(amount: number) {
-    if (!this.isDead) {
-      this.damageBy(-amount);
+  public impact() {
+    if (this.animations?.container) {
+      const impact = loadImpactAnimation();
+      const randomizeImpactPosition = () => {
+        if (this.animations?.container && !impact.destroyed) {
+          impact.position.set(
+            CHANCE.integer({
+              min: 0,
+              max: this.animations.container.width - impact.width,
+            }),
+            CHANCE.integer({
+              min: 0,
+              max: this.animations.container.height - impact.height,
+            })
+          );
+        }
+      };
+
+      impact.loop = false;
+      impact.play();
+      impact.onFrameChange = () => {
+        randomizeImpactPosition();
+      };
+      impact.onComplete = () => {
+        if (this.animations?.container) {
+          this.animations.container.removeChild(impact);
+          impact.destroy();
+        }
+      };
+      this.animations.container.addChild(impact);
+      
+      randomizeImpactPosition();
     }
   }
 
-  public recoverMP(amount: number) {
-    if (!this.isDead) {
-      this.lowerMPBy(-amount);
-    }
-  }
-
+  // U I
   public perform(
     animation: keyof EntityAnimations["animations"],
     duration = 1250,

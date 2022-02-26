@@ -11,6 +11,23 @@ import {
   ItemKind,
 } from "../data";
 
+export type EntityAnimationLoader = (key: EntityKind) => EntityAnimations;
+
+export interface EntityAnimations {
+  container: PIXI.Container;
+  effects: {
+    ready: (percent: number, hasFinaleReady: boolean) => number;
+    unready: () => void;
+  };
+  animations: {
+    standing: PIXI.AnimatedSprite;
+    walking: PIXI.AnimatedSprite;
+    attacking: PIXI.AnimatedSprite;
+    defending: PIXI.AnimatedSprite;
+    dying: PIXI.AnimatedSprite;
+  };
+}
+
 const CHANCE = new Chance();
 
 export const loadVisualAsset = (which: string, animated = false) => {
@@ -30,23 +47,6 @@ export const loadVisualAsset = (which: string, animated = false) => {
 
 export const loadSprite = (sprite: string) =>
   loadVisualAsset(sprite) as PIXI.Sprite;
-
-export interface EntityAnimations {
-  container: PIXI.Container;
-  effects: {
-    ready: (percent: number, hasFinaleReady: boolean) => number;
-    unready: () => void;
-  };
-  animations: {
-    standing: PIXI.AnimatedSprite;
-    walking: PIXI.AnimatedSprite;
-    attacking: PIXI.AnimatedSprite;
-    defending: PIXI.AnimatedSprite;
-    dying: PIXI.AnimatedSprite;
-  };
-}
-
-export type EntityAnimationLoader = (key: EntityKind) => EntityAnimations;
 
 export const loadAnimation = (animation: string) =>
   loadVisualAsset(animation, true) as PIXI.AnimatedSprite;
@@ -230,4 +230,18 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
       unready: () => {},
     },
   };
+};
+
+// === Extras ===
+export const loadImpactAnimation = () => {
+  const animation = loadExtraAnimation("impact");
+  const allTextures = animation.textures as Array<PIXI.Texture<Resource>>;
+  const textures = CHANCE.shuffle(allTextures.concat(allTextures)).slice(2);
+
+  const impact = new PIXI.AnimatedSprite(textures);
+  impact.scale.set(config.IMPACT_SCALE);
+  impact.animationSpeed = config.IMPACT_ANIMATION_SPEED;
+  impact.anchor.set(0.5);
+
+  return impact;
 };
