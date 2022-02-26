@@ -18,6 +18,7 @@ export interface EntityAnimations {
   effects: {
     ready: (percent: number, hasFinaleReady: boolean) => number;
     unready: () => void;
+    die: () => void;
   };
   animations: {
     standing: PIXI.AnimatedSprite;
@@ -175,6 +176,7 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
           readyState.blendMode = PIXI.BLEND_MODES.ERASE;
         }
       },
+      die: () => {},
     },
   };
 };
@@ -192,18 +194,37 @@ export const loadJobPortrait = (job: EntityKind) => {
 
 export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
   const container = new PIXI.Container();
-  const activeAnimation = loadAnimation(`foes/${foe}/foes_${foe}`);
-  const [idle] = activeAnimation.textures;
-  const idleAnimation = new PIXI.AnimatedSprite([idle] as Array<
-    PIXI.Texture<Resource>
-  >);
+  const getIdleAnimation = () => {
+    const activeAnimation = loadAnimation(`foes/${foe}/foes_${foe}`);
+    const [idle] = activeAnimation.textures;
+    const animation = new PIXI.AnimatedSprite([idle] as Array<
+      PIXI.Texture<Resource>
+    >);
+    animation.loop = false;
+    animation.stop();
+    return animation;
+  };
+  const getActiveAnimation = () => {
+    const animation = loadAnimation(`foes/${foe}/foes_${foe}`);
+    animation.play();
+    animation.loop = true;
+    return animation;
+  };
 
-  const [standing, walking, attacking, defending, dying] = [
-    idleAnimation,
-    activeAnimation,
-    activeAnimation,
-    idleAnimation,
-    idleAnimation,
+  const livingStates = [
+    getActiveAnimation(),
+    getActiveAnimation(),
+    getActiveAnimation(),
+    getIdleAnimation(),
+    getIdleAnimation(),
+  ];
+  const [standing, walking, attacking, defending, dying] = livingStates;
+  const dyingStates = [
+    getActiveAnimation(),
+    getActiveAnimation(),
+    getActiveAnimation(),
+    getIdleAnimation(),
+    getIdleAnimation(),
   ];
 
   for (const animation of [standing, walking, attacking, defending, dying]) {
@@ -214,20 +235,54 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
     container.addChild(animation);
   }
 
+  let i = 0;
+  for (const animation of [standing, walking, attacking, defending, dying]) {
+    animation.scale.set(config.ENTITY_SCALE);
+    animation.animationSpeed = config.SLOWED_ANIMATION_SPEED;
+    animation.visible = false;
+    container.addChild(animation);
+
+    const dyingState = dyingStates[i];
+    dyingState.alpha = 1;
+    dyingState.tint = colors.red;
+    // dyingState.blendMode = PIXI.BLEND_MODES.ADD;
+    dyingState.visible = false;
+    animation.addChild(dyingState);
+
+    i++;
+  }
+
   standing.visible = true;
 
   return {
     container,
     animations: {
-      standing: idleAnimation,
-      walking: activeAnimation,
-      attacking: activeAnimation,
-      defending: idleAnimation,
-      dying: idleAnimation,
+      standing: getIdleAnimation(),
+      walking: getActiveAnimation(),
+      attacking: getActiveAnimation(),
+      defending: getIdleAnimation(),
+      dying: getIdleAnimation(),
     },
     effects: {
       ready: () => 0,
       unready: () => {},
+      die: () => {
+        for (const state of livingStates) {
+          if (state.visible) {
+            state.visible = CHANCE.bool({ likelihood: 10 });
+          } else {
+            state.visible = true;
+          }
+
+          state.tint = colors.red;
+          state.alpha = Math.max(0, state.alpha - 0.01);
+        }
+
+        for (const state of dyingStates) {
+          state.visible = true;
+          state.alpha = Math.max(0, state.alpha - 0.01);
+        }
+      },
     },
   };
 };
@@ -241,6 +296,7 @@ export const loadImpactAnimation = () => {
   const impact = new PIXI.AnimatedSprite(textures);
   impact.scale.set(config.IMPACT_SCALE);
   impact.animationSpeed = config.IMPACT_ANIMATION_SPEED;
+  impact.blendMode = PIXI.BLEND_MODES.ADD;
   impact.anchor.set(0.5);
 
   return impact;

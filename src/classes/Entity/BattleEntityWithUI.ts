@@ -34,16 +34,35 @@ export class BattleEntityWithUI extends BattleEntity {
   public update() {
     super.update();
 
-    if (this.animations && !this.isFoe) {
-      if (this.isReady && !this.isDead && !this.vitalBox?.visible) {
-        this.flashReady();
+    if (this.animations) {
+      if (this.isFoe) {
+        if (this.isDead) {
+          this.flashDying();
+        }
       } else {
-        this.animations.effects.unready();
+        if (this.isReady && !this.isDead && !this.vitalBox?.visible) {
+          this.flashReady();
+        } else {
+          this.animations.effects.unready();
 
-        if (this.isReady && !this.isDead) {
-          this.battleMenu?.show();
+          if (this.isReady && !this.isDead) {
+            this.battleMenu?.show();
+          }
         }
       }
+    }
+  }
+
+  public syncStats() {
+    super.syncStats();
+
+    const stats = this.currentStats;
+
+    if (stats) {
+      this.addHPBar();
+      this.addMPBar();
+      this.addATBBar();
+      this.addFINBar();
     }
   }
 
@@ -80,99 +99,109 @@ export class BattleEntityWithUI extends BattleEntity {
   }
 
   private addHPBar() {
-    if (this.hpBar) {
-      this.hpBar.clear();
-      this.vitalBox!.removeChild(this.hpBar);
+    if (this.vitalBox) {
+      if (this.hpBar) {
+        this.hpBar.clear();
+        this.vitalBox.removeChild(this.hpBar);
+      }
+
+      this.hpBar = new PIXI.Graphics();
+
+      const maxHP = this.baseStats!.HP[1];
+      const percent = this.lastVitalStats.HP / maxHP;
+
+      this.hpBar.beginFill(colors.hp);
+      this.hpBar.drawRect(
+        config.ENTITY_VITAL_BAR_X_OFFSET,
+        config.ENTITY_VITAL_BAR_Y_OFFSET,
+        config.ENTITY_VITAL_BAR_WIDTH * percent,
+        config.ENTITY_VITAL_BAR_HEIGHT
+      );
+      this.hpBar.endFill();
+      this.vitalBox.addChild(this.hpBar);
     }
-
-    this.hpBar = new PIXI.Graphics();
-
-    const maxHP = this.baseStats!.HP[1];
-    const percent = this.lastVitalStats.HP / maxHP;
-
-    this.hpBar.beginFill(colors.hp);
-    this.hpBar.drawRect(
-      config.ENTITY_VITAL_BAR_X_OFFSET,
-      config.ENTITY_VITAL_BAR_Y_OFFSET,
-      config.ENTITY_VITAL_BAR_WIDTH * percent,
-      config.ENTITY_VITAL_BAR_HEIGHT
-    );
-    this.hpBar.endFill();
-    this.vitalBox!.addChild(this.hpBar);
   }
 
   private addMPBar() {
-    if (this.mpBar) {
-      this.mpBar.clear();
-      this.vitalBox!.removeChild(this.mpBar);
+    if (this.vitalBox) {
+      if (this.mpBar) {
+        this.mpBar.clear();
+        this.vitalBox.removeChild(this.mpBar);
+      }
+
+      this.mpBar = new PIXI.Graphics();
+
+      const maxMP = this.baseStats!.MP[1];
+      const percent = this.lastVitalStats.MP / maxMP;
+
+      this.mpBar.beginFill(colors.mp);
+      this.mpBar.drawRect(
+        config.ENTITY_VITAL_BAR_X_OFFSET,
+        config.ENTITY_VITAL_BAR_Y_OFFSET +
+          config.ENTITY_VITAL_BAR_Y_DISTANCE * 1,
+        config.ENTITY_VITAL_BAR_WIDTH * percent,
+        config.ENTITY_VITAL_BAR_HEIGHT
+      );
+      this.mpBar.endFill();
+      this.vitalBox.addChild(this.mpBar);
     }
-
-    this.mpBar = new PIXI.Graphics();
-
-    const maxMP = this.baseStats!.MP[1];
-    const percent = this.lastVitalStats.MP / maxMP;
-
-    this.mpBar.beginFill(colors.mp);
-    this.mpBar.drawRect(
-      config.ENTITY_VITAL_BAR_X_OFFSET,
-      config.ENTITY_VITAL_BAR_Y_OFFSET + config.ENTITY_VITAL_BAR_Y_DISTANCE * 1,
-      config.ENTITY_VITAL_BAR_WIDTH * percent,
-      config.ENTITY_VITAL_BAR_HEIGHT
-    );
-    this.mpBar.endFill();
-    this.vitalBox!.addChild(this.mpBar);
   }
 
   private addATBBar() {
-    if (this.atbBar) {
-      this.atbBar.clear();
-      this.vitalBox!.removeChild(this.atbBar);
+    if (this.vitalBox) {
+      if (this.atbBar) {
+        this.atbBar.clear();
+        this.vitalBox.removeChild(this.atbBar);
+      }
+
+      this.atbBar = new PIXI.Graphics();
+
+      const percent = this.lastVitalStats.ATB / 100;
+      const color = this.isReady ? colors.yellow : colors.atb;
+
+      this.atbBar.beginFill(color);
+      this.atbBar.drawRect(
+        config.ENTITY_VITAL_BAR_X_OFFSET,
+        config.ENTITY_VITAL_BAR_Y_OFFSET +
+          config.ENTITY_VITAL_BAR_Y_DISTANCE * 2,
+        config.ENTITY_VITAL_BAR_WIDTH * percent,
+        config.ENTITY_ATB_BAR_HEIGHT
+      );
+      this.atbBar.endFill();
+      this.vitalBox.addChild(this.atbBar);
     }
-
-    this.atbBar = new PIXI.Graphics();
-
-    const percent = this.lastVitalStats.ATB / 100;
-    const color = this.isReady ? colors.yellow : colors.atb;
-
-    this.atbBar.beginFill(color);
-    this.atbBar.drawRect(
-      config.ENTITY_VITAL_BAR_X_OFFSET,
-      config.ENTITY_VITAL_BAR_Y_OFFSET + config.ENTITY_VITAL_BAR_Y_DISTANCE * 2,
-      config.ENTITY_VITAL_BAR_WIDTH * percent,
-      config.ENTITY_ATB_BAR_HEIGHT
-    );
-    this.atbBar.endFill();
-    this.vitalBox!.addChild(this.atbBar);
   }
 
   private addFINBar() {
-    if (this.finaleBar) {
-      this.finaleBar.clear();
-      this.vitalBox!.removeChild(this.finaleBar);
+    if (this.vitalBox) {
+      if (this.finaleBar) {
+        this.finaleBar.clear();
+        this.vitalBox.removeChild(this.finaleBar);
+      }
+
+      this.finaleBar = new PIXI.Graphics();
+
+      const percent = this.lastVitalStats.FIN / 100;
+      const height = Math.min(
+        config.ENTITY_FINALE_BAR_HEIGHT * percent,
+        config.ENTITY_FINALE_BAR_HEIGHT
+      );
+      const distance = config.ENTITY_FINALE_BAR_HEIGHT - height;
+      const color =
+        percent === 1
+          ? CHANCE.pickone([colors.red, colors.yellow, colors.blue])
+          : colors.fin;
+
+      this.finaleBar.beginFill(color);
+      this.finaleBar.drawRect(
+        config.ENTITY_VITAL_BAR_X_OFFSET + config.ENTITY_VITAL_BAR_WIDTH + 1,
+        config.ENTITY_FINALE_BAR_HEIGHT + distance,
+        config.ENTITY_FINALE_BAR_WIDTH,
+        height
+      );
+      this.finaleBar.endFill();
+      this.vitalBox.addChild(this.finaleBar);
     }
-
-    this.finaleBar = new PIXI.Graphics();
-
-    const percent = this.lastVitalStats.FIN / 100;
-    const height = Math.min(
-      config.ENTITY_FINALE_BAR_HEIGHT * percent,
-      config.ENTITY_FINALE_BAR_HEIGHT
-    );
-    const distance = config.ENTITY_FINALE_BAR_HEIGHT - height;
-    const color =
-      percent === 1
-        ? CHANCE.pickone([colors.red, colors.yellow, colors.blue])
-        : colors.fin;
-
-    this.finaleBar.beginFill(color);
-    this.finaleBar.drawRect(
-      config.ENTITY_VITAL_BAR_X_OFFSET + config.ENTITY_VITAL_BAR_WIDTH + 1,
-      config.ENTITY_FINALE_BAR_HEIGHT + distance,
-      config.ENTITY_FINALE_BAR_WIDTH,
-      height
-    );
-    this.finaleBar.endFill();
-    this.vitalBox!.addChild(this.finaleBar);
   }
 
   private addVitalsText() {
@@ -323,6 +352,17 @@ export class BattleEntityWithUI extends BattleEntity {
           this.readyFlashDirection = "in";
         }
       }
+    }
+  }
+
+  private flashDying() {
+    if (
+      this.animations &&
+      this.animations.animations.dying.alpha > 0 &&
+      this.isFoe
+    ) {
+      this.showAnimation("dying");
+      this.animations.effects.die();
     }
   }
 }
