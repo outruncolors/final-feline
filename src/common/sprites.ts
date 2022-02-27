@@ -36,11 +36,11 @@ export const loadVisualAsset = (which: string, animated = false) => {
     PIXI.Loader.shared.resources[`/assets/sprites.json`].spritesheet;
 
   if (sheet) {
-    if (animated) {
-      return new PIXI.AnimatedSprite(sheet.animations[which]);
-    } else {
-      return new PIXI.Sprite(sheet.textures[which]);
-    }
+    const asset = animated
+      ? new PIXI.AnimatedSprite(sheet.animations[which])
+      : new PIXI.Sprite(sheet.textures[which]);
+
+    return asset;
   } else {
     throw new Error();
   }
@@ -120,11 +120,15 @@ export const loadJobAnimations = (job: EntityKind): EntityAnimations => {
   );
 
   let i = 0;
+  const filter = new PIXI.filters.ColorMatrixFilter();
+  filter.hue(CHANCE.integer({ min: -40, max: 40 }), true);
   for (const animation of [standing, walking, attacking, defending, dying]) {
     animation.scale.set(config.ENTITY_SCALE);
     animation.animationSpeed = config.SLOWED_ANIMATION_SPEED;
     animation.visible = false;
     container.addChild(animation);
+
+    animation.filters = [filter];
 
     const readyState = readyStates[i];
     readyState.alpha = 0;
@@ -227,10 +231,21 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
     getIdleAnimation(),
   ];
 
+  const filter = new PIXI.filters.ColorMatrixFilter();
+  filter.hue(
+    CHANCE.integer({
+      min: -config.ENTITY_HUE_TWEAK_PARAMETER,
+      max: config.ENTITY_HUE_TWEAK_PARAMETER,
+    }),
+    true
+  );
+
   for (const animation of [standing, walking, attacking, defending, dying]) {
     animation.scale.set(config.ENTITY_SCALE);
     animation.animationSpeed = config.SLOWED_ANIMATION_SPEED;
     animation.visible = false;
+
+    animation.filters = [filter];
 
     container.addChild(animation);
   }

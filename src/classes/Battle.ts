@@ -118,7 +118,7 @@ export class Battle {
   private async playBackgroundMusic() {
     sound.add("battle", "/assets/sounds/battle.wav");
     sound.play("battle", {
-      volume: 0.66,
+      volume: 0.3,
       loop: true,
     });
   }

@@ -12,6 +12,7 @@ export const ENTITY_VITAL_BAR_X_OFFSET = 48;
 export const ENTITY_VITAL_BAR_Y_OFFSET = 19;
 export const ENTITY_VITAL_BAR_Y_DISTANCE = 6;
 export const ENTITY_READY_FLASH_SPEED = 0.05;
+export const ENTITY_HUE_TWEAK_PARAMETER = 40;
 
 export const PUB_POPULATION_MINIMUM = 3;
 export const PUB_POPULATION_MAXIMUM = 8;
