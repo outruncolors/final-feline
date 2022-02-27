@@ -1,5 +1,6 @@
 import Chance from "chance";
 import * as PIXI from "pixi.js";
+import { sound, filters } from "@pixi/sound";
 import {
   config,
   EntityAnimationLoader,
@@ -105,6 +106,8 @@ export class BattleEntity extends Entity {
     }
 
     this.syncStats();
+
+    sound.add("punch", "/assets/sounds/punch.wav");
   }
 
   public register(forBattle: Battle, withItems: ItemAndQuantity[] = []) {
@@ -157,6 +160,32 @@ export class BattleEntity extends Entity {
       target.lowerHPBy(10);
       this.isRecovering = true;
       target.impact();
+
+      let count = 0;
+      const playPunchSound = () => {
+        const telephone = new filters.TelephoneFilter();
+        const distortion = new filters.DistortionFilter();
+
+        distortion.amount = CHANCE.integer({ min: 2, max: 12 });
+        const volume = CHANCE.floating({
+          min: 0.05,
+          max: 0.1,
+        });
+
+        sound.play("punch", {
+          volume,
+          loop: false,
+          filters: [telephone, distortion],
+          complete: () => {
+            count++;
+            if (count < 4) {
+              playPunchSound();
+            }
+          },
+        });
+      };
+
+      playPunchSound();
     });
   }
 
