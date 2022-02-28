@@ -45,3 +45,5 @@ export const AI_TURNS_BEFORE_FIRST_BUFF = 3;
 export const AI_DEFAULT_BUFF_RATE_IN_TURNS = 5;
 export const AI_ESCAPE_SUCCESS_RATE = 20;
 export const AI_DEFAULT_SKILL_CAST_RATE = 30;
+
+export const SCREEN_FADE_TIME_IN_MS = 1500;

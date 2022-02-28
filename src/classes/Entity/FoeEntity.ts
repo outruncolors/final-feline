@@ -13,14 +13,6 @@ export class FoeEntity extends BattleEntityWithUI {
   acting = false;
   lastBuffTurnsAgo = config.AI_TURNS_BEFORE_FIRST_BUFF;
 
-  public get hpPercentage() {
-    if (this.currentStats && this.maxStats) {
-      return this.currentStats.HP / this.maxStats.HP;
-    } else {
-      return 1;
-    }
-  }
-
   public constructor(_name: FoeKind, _screen: PIXI.Container) {
     super(_name, _screen, "foe", loadFoeAnimations);
     this.loadAI();
@@ -29,86 +21,143 @@ export class FoeEntity extends BattleEntityWithUI {
   public update() {
     super.update();
 
-    if (this.foe && this.ai) {
+    if (this.foe && this.ai && !this.acting) {
       // Am I ready to act?
       if (this.isReady) {
-        this.resetATB();
-
         // Should I run away, if I can?
-        if (!this.acting) {
-          const { canEscape } = this.foe;
-          if (canEscape) {
-            const { escape } = this.ai.thresholds;
-            const shouldTryToEscape = this.hpPercentage <= escape;
+        if (this.ai.behaviors?.canEscape) {
+          const { escapeAtHP } = this.ai.thresholds;
+          const shouldTryToEscape = this.hpPercentage <= escapeAtHP;
 
-            if (shouldTryToEscape) {
-              const didEscape = CHANCE.bool({
-                likelihood: config.AI_ESCAPE_SUCCESS_RATE,
-              });
+          if (shouldTryToEscape) {
+            const didEscape = CHANCE.bool({
+              likelihood: config.AI_ESCAPE_SUCCESS_RATE,
+            });
 
-              if (didEscape) {
-                this.escape();
-              } else {
-                // Display message.
-              }
-
-              this.acting = true;
+            if (didEscape) {
+              this.escape();
+            } else {
+              // Display message.
             }
+
+            this.acting = true;
+            return;
           }
         }
 
         // Should I buff myself, if possible?
-        if (!this.acting) {
-          const { buff } = this.foe;
+        const { buff } = this.foe;
 
-          if (buff) {
-            const turnsEachBuff = Math.ceil(
-              config.AI_DEFAULT_BUFF_RATE_IN_TURNS * this.ai.frequencies.buff
-            );
+        if (buff) {
+          const turnsEachBuff = Math.ceil(
+            config.AI_DEFAULT_BUFF_RATE_IN_TURNS * this.ai.frequencies.buff
+          );
 
-            if (this.lastBuffTurnsAgo >= turnsEachBuff) {
-              this.lastBuffTurnsAgo = 0;
-              this.acting = true;
-              this.selfBuff();
-            } else {
-              this.lastBuffTurnsAgo++;
-            }
+          if (this.lastBuffTurnsAgo >= turnsEachBuff) {
+            this.lastBuffTurnsAgo = 0;
+            this.acting = true;
+            return this.selfBuff();
+          } else {
+            this.lastBuffTurnsAgo++;
           }
         }
 
         // Should I cast a skill, if possible?
-        if (!this.acting) {
-          const { cast } = this.ai.frequencies;
-          const willCast = percentChance(
-            config.AI_DEFAULT_SKILL_CAST_RATE * cast
-          );
+        const { cast } = this.ai.frequencies;
+        const willCast = percentChance(
+          config.AI_DEFAULT_SKILL_CAST_RATE * cast
+        );
 
-          if (willCast) {
-            this.acting = true;
-            this.castSkill();
-          } else {
-            // Nothing else to do, let's attack.
-            this.attackPlayer();
-          }
+        if (willCast) {
+          this.acting = true;
+          return this.castSkill();
         }
       }
+      
+      this.acting = true;
+      return this.attackPlayer();
     }
   }
 
   private escape() {
     // window.alert(`${this.goesBy} escaped.`);
+    this.acting = false;
   }
 
   private selfBuff() {
     // window.alert(`${this.goesBy} buffed itself.`);
+    this.acting = false;
   }
 
-  private castSkill() {
-    // window.alert(`${this.goesBy} cast a skill.`);
+  private selectTarget() {
+    if (this.ai && this.battle) {
+      const { playableParty } = this.battle;
+      const validTargetExists = playableParty.some((target) => !target.isDead);
+
+      if (validTargetExists) {
+        let target = CHANCE.pickone(playableParty);
+
+        if (this.ai?.behaviors?.isRuthless) {
+          const [lowestHPTarget] = [...playableParty].sort(
+            (a, b) => a.hpPercentage - b.hpPercentage
+          );
+
+          target = lowestHPTarget;
+        } else {
+          do {
+            target = CHANCE.pickone(playableParty);
+          } while (target.isDead);
+
+          return target;
+        }
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 
-  private attackPlayer() {
-    // window.alert(`${this.goesBy} attacked a player.`);
+  private selectSkill() {
+    if (this.foe) {
+      for (let i = 0; i < this.foe.skills.length; i++) {
+        const skill = this.foe.skills[i];
+        const canSelect = this.canCast(skill);
+
+        if (canSelect) {
+          const likelihood = this.foe.skillChances[skill] ?? 100;
+          const willSelect = percentChance(likelihood);
+
+          if (willSelect) {
+            return skill;
+          }
+        }
+      }
+
+      // Nothing picked naturally, randomize.
+      return CHANCE.pickone(this.foe.skills);
+    } else {
+      throw new Error();
+    }
+  }
+
+  private async castSkill() {
+    const target = this.selectTarget();
+    const skill = this.selectSkill();
+
+    if (target) {
+      await this.cast(skill, target);
+      this.acting = false;
+    }
+  }
+
+  private async attackPlayer() {
+    const target = this.selectTarget();
+
+    if (target) {
+      await this.attack(target);
+      this.acting = false;
+    }
   }
 
   private loadAI() {

@@ -78,6 +78,14 @@ export class BattleEntity extends Entity {
     );
   }
 
+  public get hpPercentage() {
+    if (this.currentStats && this.maxStats) {
+      return this.currentStats.HP / this.maxStats.HP;
+    } else {
+      return 1;
+    }
+  }
+
   public constructor(
     _name: EntityKind,
     _screen: PIXI.Container,
@@ -152,40 +160,46 @@ export class BattleEntity extends Entity {
   }
 
   public attack(target: BattleEntity) {
-    this.resetATB();
     this.isRecovering = false;
-    const attack = this.showAnimation("attacking");
-    attack.loop = false;
-    this.perform("attacking", 2500, () => {
-      target.lowerHPBy(10);
+
+    return new Promise<void>((resolve, reject) => {
+      this.perform("attacking", 2500, () => {
+        target.lowerHPBy(10);
+        target.impact();
+
+        let count = 0;
+        let hasResolved = false;
+        const playPunchSound = () => {
+          const telephone = new filters.TelephoneFilter();
+          const distortion = new filters.DistortionFilter();
+
+          distortion.amount = CHANCE.integer({ min: 2, max: 12 });
+          const volume = CHANCE.floating({
+            min: 0.05,
+            max: 0.1,
+          });
+
+          sound.play("punch", {
+            volume,
+            loop: false,
+            filters: [telephone, distortion],
+            complete: () => {
+              count++;
+              if (count >= 4 && !hasResolved) {
+                hasResolved = true;
+                resolve();
+              } else {
+                playPunchSound();
+              }
+            },
+          });
+        };
+
+        playPunchSound();
+      });
+    }).then(() => {
+      this.resetATB();
       this.isRecovering = true;
-      target.impact();
-
-      let count = 0;
-      const playPunchSound = () => {
-        const telephone = new filters.TelephoneFilter();
-        const distortion = new filters.DistortionFilter();
-
-        distortion.amount = CHANCE.integer({ min: 2, max: 12 });
-        const volume = CHANCE.floating({
-          min: 0.05,
-          max: 0.1,
-        });
-
-        sound.play("punch", {
-          volume,
-          loop: false,
-          filters: [telephone, distortion],
-          complete: () => {
-            count++;
-            if (count < 4) {
-              playPunchSound();
-            }
-          },
-        });
-      };
-
-      playPunchSound();
     });
   }
 
@@ -203,101 +217,116 @@ export class BattleEntity extends Entity {
     this.currentStats!.ATB = 0;
   }
 
+  public canCast(skill: SkillKind) {
+    const entry = skills[skill];
+    return entry.cost <= (this.currentStats?.MP ?? 0);
+  }
+
   public cast(skill: SkillKind, target: BattleEntity) {
-    const skillEntry = skills[skill] as Skill;
+    this.isRecovering = false;
 
-    if (this.currentStats!.MP >= skillEntry.cost) {
-      this.resetATB();
-      this.isRecovering = false;
-      this.lowerMPBy(skillEntry.cost);
+    return new Promise<void>((resolve) => {
+      const skillEntry = skills[skill] as Skill;
 
-      const castMessage = new BattleMessage(
-        this.screen,
-        `${this.name} cast ${skill}`,
-        {
-          onFlashEnd: () => {
-            this.screen.removeChild(castMessage.container);
-            castMessage.container.destroy();
-          },
-        }
-      );
-      this.screen.addChild(castMessage.container);
+      if (this.canCast(skill)) {
+        this.lowerMPBy(skillEntry.cost);
 
-      const { behind, front, under } = loadCastingAnimations();
-
-      this.perform("attacking", 2500, () => {
-        if (this.container) {
-          this.hideEffects();
-
-          this.container.addChildAt(behind, 0);
-          this.container.addChildAt(under, 1);
-          this.container.addChild(front);
-
-          for (const castingAnimation of [behind, front, under]) {
-            castingAnimation.loop = false;
-            castingAnimation.play();
-            castingAnimation.onComplete = () => {
-              castingAnimation.destroy();
-            };
+        const castMessage = new BattleMessage(
+          this.screen,
+          `${this.name} cast ${skill}`,
+          {
+            onFlashEnd: () => {
+              this.screen.removeChild(castMessage.container);
+              castMessage.container.destroy();
+            },
           }
+        );
+        this.screen.addChild(castMessage.container);
 
-          setTimeout(() => {
+        const { behind, front, under } = loadCastingAnimations();
+
+        this.perform("attacking", 2500, () => {
+          if (this.container) {
             this.hideEffects();
-            target.hideEffects();
 
-            const animation = loadSkillAnimation(skill) as PIXI.AnimatedSprite;
-            animation.loop = false;
-            animation.animationSpeed =
-              skillEntry.loopSpeed ?? config.STANDARD_ANIMATION_SPEED;
-            animation.scale.set(config.ENTITY_SCALE);
+            this.container.addChildAt(behind, 0);
+            this.container.addChildAt(under, 1);
+            this.container.addChild(front);
 
-            if (skillEntry.offset) {
-              const [x, y] = skillEntry.offset;
-              animation.position.x += x;
-              animation.position.y += y;
+            for (const castingAnimation of [behind, front, under]) {
+              castingAnimation.loop = false;
+              castingAnimation.play();
+              castingAnimation.onComplete = () => {
+                castingAnimation.destroy();
+              };
             }
 
-            animation.onComplete = () => {
-              if (counter > 0) {
-                counter--;
-                animation.gotoAndPlay(0);
-              } else {
-                target.hideEffects();
-                target.container?.removeChild(animation);
-                animation.destroy();
-                skillEntry.effect(this, target);
+            setTimeout(() => {
+              this.hideEffects();
+              target.hideEffects();
 
-                if (skillEntry.impactsTarget) {
-                  target.impact();
-                }
+              const animation = loadSkillAnimation(
+                skill
+              ) as PIXI.AnimatedSprite;
+              animation.loop = false;
+              animation.animationSpeed =
+                skillEntry.loopSpeed ?? config.STANDARD_ANIMATION_SPEED;
+              animation.scale.set(config.ENTITY_SCALE);
 
-                // Use method to gauge strength algorithm.
-                target.lowerHPBy(2000);
-
-                if (skillEntry.affliction) {
-                  const [affliction, chanceToInflict] = skillEntry.affliction;
-                  const willInflict = CHANCE.bool({
-                    likelihood: chanceToInflict,
-                  });
-
-                  if (willInflict) {
-                    target.inflict(affliction);
-                  }
-                }
-
-                this.isRecovering = true;
+              if (skillEntry.offset) {
+                const [x, y] = skillEntry.offset;
+                animation.position.x += x;
+                animation.position.y += y;
               }
-            };
 
-            let counter = skillEntry.loopCount ?? 1;
-            counter--;
-            animation.play();
+              animation.onComplete = () => {
+                if (counter > 0) {
+                  counter--;
+                  animation.gotoAndPlay(0);
+                } else {
+                  target.hideEffects();
+                  target.container?.removeChild(animation);
+                  animation.destroy();
+                  skillEntry.effect(this, target);
 
-            target.container?.addChild(animation);
-          }, 1200);
-        }
-      });
-    }
+                  if (skillEntry.impactsTarget) {
+                    target.impact();
+                  }
+
+                  // Use method to gauge strength algorithm.
+                  target.lowerHPBy(2000);
+
+                  if (skillEntry.affliction) {
+                    const [affliction, chanceToInflict] = skillEntry.affliction;
+                    const willInflict = CHANCE.bool({
+                      likelihood: chanceToInflict,
+                    });
+
+                    if (willInflict) {
+                      target.inflict(affliction);
+                    }
+                  }
+
+                  this.isRecovering = true;
+
+                  resolve();
+                }
+              };
+
+              let counter = skillEntry.loopCount ?? 1;
+              counter--;
+              animation.play();
+
+              target.container?.addChild(animation);
+            }, 1200);
+          }
+        });
+      } else {
+        throw new Error();
+      }
+    }).then(() => {
+      this.resetATB();
+    });
   }
 
   public useItem(item: ItemKind, target: BattleEntity) {

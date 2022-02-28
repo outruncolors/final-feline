@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import Chance from "chance";
-import { config, loadLocationSprite } from "../common";
+import { colors, config, loadLocationSprite } from "../common";
 import {
   Location,
   LocationKind,
@@ -13,6 +13,7 @@ import {
   locations,
 } from "../data";
 import { BattleEntity, FriendEntity, FoeEntity } from "./Entity";
+import { ScreenFader } from ".";
 
 export interface BattleStatus {
   left: BattleSide;
@@ -28,8 +29,10 @@ export interface BattleSide {
 export type ItemAndQuantity = [ItemKind, number];
 
 const CHANCE = new Chance();
+const ticker = PIXI.Ticker.shared;
 
 export class Battle {
+  background: PIXI.Sprite;
   container: PIXI.Container;
   location: Location;
   screen: PIXI.Container;
@@ -37,6 +40,7 @@ export class Battle {
   playableParty: BattleEntity[];
   foes: BattleEntity[];
   status: BattleStatus;
+  inProgress = true;
 
   constructor(
     _location: LocationKind,
@@ -62,12 +66,44 @@ export class Battle {
       },
       queue: [],
     };
+    this.background = loadLocationSprite(this.location.name);
+
+    if (this.background) {
+      this.screen.addChild(this.background);
+    }
   }
 
   public async load() {
-    this.displayBackground();
     this.playBackgroundMusic();
-    await this.loadAnimations();
+
+    await Promise.all([this.loadAnimations()]);
+
+    ticker.add(this.update.bind(this));
+
+    await ScreenFader.fadeIn(this.screen);
+  }
+
+  public update() {
+    if (this.inProgress) {
+      const someoneIsAlive = this.playableParty.some(
+        (member) => !member.isDead
+      );
+
+      if (!someoneIsAlive) {
+        this.inProgress = false;
+        this.handlePlayerLost();
+      }
+    }
+  }
+
+  private async handlePlayerLost() {
+    this.background.tint = colors.red;
+
+    if (ScreenFader.shared.children.length > 0) {
+      const [fader] = ScreenFader.shared.children as PIXI.Sprite[];
+      fader.tint = colors.red;
+    }
+    await ScreenFader.fadeOut(this.screen);
   }
 
   private async loadAnimations() {
@@ -107,13 +143,6 @@ export class Battle {
     this.screen.addChild(this.container);
   }
 
-  private displayBackground() {
-    const background = loadLocationSprite(this.location.name);
-
-    if (background) {
-      this.screen.addChild(background);
-    }
-  }
 
   private async playBackgroundMusic() {
     sound.add("battle", "/assets/sounds/battle.wav");
@@ -127,15 +156,15 @@ export class Battle {
 export class RandomBattle extends Battle {
   constructor(_screen: PIXI.Container) {
     // MOVEME
-    const [a, b, c, d] = [
+    const [a, c] = [
       new FriendEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
-      new FriendEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
+      // new FriendEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
       new FoeEntity(CHANCE.pickone(Object.keys(foes) as FoeKind[]), _screen),
-      new FoeEntity(CHANCE.pickone(Object.keys(foes) as FoeKind[]), _screen),
+      // new FoeEntity(CHANCE.pickone(Object.keys(foes) as FoeKind[]), _screen),
     ];
 
-    const playableParty: FriendEntity[] = [a, b];
-    const foeParty: FoeEntity[] = [c, d];
+    const playableParty: FriendEntity[] = [a];
+    const foeParty: FoeEntity[] = [c];
     const usableItems: ItemAndQuantity[] = [
       ["fapple", 1],
       ["rich-bitch-juice", 1],
@@ -144,8 +173,8 @@ export class RandomBattle extends Battle {
     super("google", _screen, usableItems, playableParty, foeParty);
 
     a.register(this, usableItems);
-    b.register(this, usableItems);
+    // b.register(this, usableItems);
     c.register(this, []);
-    d.register(this, []);
+    // d.register(this, []);
   }
 }

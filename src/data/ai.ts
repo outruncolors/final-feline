@@ -4,7 +4,11 @@ export interface AIConfig {
     cast: number; // How often will the AI choose to cast a skill?
   };
   thresholds: {
-    escape: number; // What percent (from 0.0 to 1.0) of HP will it try to escape?
+    escapeAtHP: number; // What percent (from 0.0 to 1.0) of HP will it try to escape?
+  };
+  behaviors?: {
+    canEscape?: boolean; // Will the foe try to escape?
+    isRuthless?: boolean; // Specifically targets lowest HP foe.
   };
 }
 
@@ -15,7 +19,7 @@ export const ais = {
       cast: 1,
     },
     thresholds: {
-      escape: 0.3,
+      escapeAtHP: 0.3,
     },
   },
   cautious: {
@@ -24,7 +28,10 @@ export const ais = {
       cast: 1,
     },
     thresholds: {
-      escape: 0.6,
+      escapeAtHP: 0.6,
+    },
+    behaviors: {
+      canEscape: true,
     },
   },
   reckless: {
@@ -33,7 +40,10 @@ export const ais = {
       cast: 0.3,
     },
     thresholds: {
-      escape: 0.1,
+      escapeAtHP: 0.1,
+    },
+    behaviors: {
+      isRuthless: true,
     },
   },
 };
