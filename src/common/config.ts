@@ -40,3 +40,8 @@ export const BATTLE_CHARACTER_SEPARATION = 64;
 
 export const FAPPLE_HP_RECOVERY = [10, 30];
 export const RICH_BITCH_JUICE_MP_RECOVERY = [8, 24];
+
+export const AI_TURNS_BEFORE_FIRST_BUFF = 3;
+export const AI_DEFAULT_BUFF_RATE_IN_TURNS = 5;
+export const AI_ESCAPE_SUCCESS_RATE = 20;
+export const AI_DEFAULT_SKILL_CAST_RATE = 30;

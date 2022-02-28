@@ -152,7 +152,7 @@ export class BattleEntity extends Entity {
   }
 
   public attack(target: BattleEntity) {
-    this.currentStats!.ATB = 0;
+    this.resetATB();
     this.isRecovering = false;
     const attack = this.showAnimation("attacking");
     attack.loop = false;
@@ -199,11 +199,15 @@ export class BattleEntity extends Entity {
     };
   }
 
+  public resetATB() {
+    this.currentStats!.ATB = 0;
+  }
+
   public cast(skill: SkillKind, target: BattleEntity) {
     const skillEntry = skills[skill] as Skill;
 
     if (this.currentStats!.MP >= skillEntry.cost) {
-      this.currentStats!.ATB = 0;
+      this.resetATB();
       this.isRecovering = false;
       this.lowerMPBy(skillEntry.cost);
 
@@ -297,7 +301,7 @@ export class BattleEntity extends Entity {
   }
 
   public useItem(item: ItemKind, target: BattleEntity) {
-    this.currentStats!.ATB = 0;
+    this.resetATB();
     this.isRecovering = false;
     const itemEntry = items[item];
     const attacking = this.showAnimation("attacking");

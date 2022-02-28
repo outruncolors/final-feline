@@ -5,7 +5,6 @@ import {
   colors,
   config,
   loadExtraAnimation,
-  loadFoeAnimations,
   loadJobAnimations,
 } from "../../common";
 import { EntityKind } from "../../data";
@@ -370,11 +369,5 @@ export class BattleEntityWithUI extends BattleEntity {
 export class FriendEntity extends BattleEntityWithUI {
   public constructor(_name: EntityKind, _screen: PIXI.Container) {
     super(_name, _screen, "friend", loadJobAnimations);
-  }
-}
-
-export class FoeEntity extends BattleEntityWithUI {
-  public constructor(_name: EntityKind, _screen: PIXI.Container) {
-    super(_name, _screen, "foe", loadFoeAnimations);
   }
 }

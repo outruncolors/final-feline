@@ -1,3 +1,4 @@
+import type { AIKind } from "./ai";
 import type { EntityStats } from "./entities";
 import type { SkillKind } from "./skills";
 
@@ -8,6 +9,9 @@ export interface Foe {
   stats: EntityStats;
   skills: SkillKind[];
   flipped?: boolean;
+  buff?: SkillKind;
+  canEscape?: boolean;
+  ai: AIKind;
 }
 
 export const foes = {
@@ -26,6 +30,7 @@ export const foes = {
       FIN: 0,
     },
     skills: ["downvote"] as SkillKind[],
+    ai: "basic",
   },
   macey: {
     id: 7,
@@ -42,6 +47,7 @@ export const foes = {
       FIN: 0,
     },
     skills: ["downvote"] as SkillKind[],
+    ai: "basic",
   },
   mimic: {
     id: 1,
@@ -58,6 +64,7 @@ export const foes = {
       FIN: 0,
     },
     skills: ["downvote"] as SkillKind[],
+    ai: "basic",
   },
   npcat: {
     id: 2,
@@ -74,6 +81,8 @@ export const foes = {
       FIN: 0,
     },
     skills: ["downvote"] as SkillKind[],
+    ai: "basic",
+    canEscape: true,
   },
   shapehero: {
     id: 8,
@@ -90,6 +99,7 @@ export const foes = {
       FIN: 0,
     },
     skills: ["downvote"] as SkillKind[],
+    ai: "basic",
   },
   soylamander: {
     id: 3,
@@ -106,6 +116,7 @@ export const foes = {
       FIN: 0,
     },
     skills: ["downvote"] as SkillKind[],
+    ai: "basic",
   },
   soynail: {
     id: 4,
@@ -122,6 +133,7 @@ export const foes = {
       FIN: 0,
     },
     skills: ["downvote"] as SkillKind[],
+    ai: "basic",
   },
   soynake: {
     id: 5,
@@ -138,6 +150,7 @@ export const foes = {
       FIN: 0,
     },
     skills: ["downvote"] as SkillKind[],
+    ai: "basic",
   },
   soyvyrn: {
     id: 6,
@@ -154,6 +167,7 @@ export const foes = {
       FIN: 0,
     },
     skills: ["downvote"] as SkillKind[],
+    ai: "basic",
   },
 };
 
