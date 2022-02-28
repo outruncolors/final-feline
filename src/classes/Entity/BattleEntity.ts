@@ -394,6 +394,12 @@ export class BattleEntity extends Entity {
     }
   }
 
+  public removeAfflictions() {
+    for (const affliction of this.afflictionAnimations) {
+      affliction.visible = false;
+    }
+  }
+
   public recoverHP(amount: number) {
     if (!this.isDead) {
       this.lowerHPBy(-amount);
@@ -414,12 +420,19 @@ export class BattleEntity extends Entity {
   }
 
   private die() {
+    this.removeAfflictions();
     const dying = this.showAnimation("dying");
     dying.loop = false;
     dying.onComplete = () => {
       if (this.castShadow) {
-        this.castShadow.width =
-          config.CAST_SHADOW_WIDTH_DOWN * config.ENTITY_SCALE;
+        if (this.isFoe) {
+          this.hideEffects();
+        } else {
+          this.castShadow.width =
+            config.CAST_SHADOW_WIDTH_DOWN * config.ENTITY_SCALE;
+          this.castShadow.alpha = 0.75;
+          this.castShadow.visible = true;
+        }
       }
     };
   }

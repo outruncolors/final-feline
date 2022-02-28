@@ -162,9 +162,6 @@ export class Entity {
           effect.visible = false;
         }
       }
-
-      this.castShadow!.alpha = 0.75;
-      this.castShadow!.visible = true;
     }
   }
 

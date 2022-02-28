@@ -41,6 +41,7 @@ export class Battle {
   foes: BattleEntity[];
   status: BattleStatus;
   inProgress = true;
+  framesSinceEnd = 0;
 
   constructor(
     _location: LocationKind,
@@ -93,6 +94,17 @@ export class Battle {
         this.inProgress = false;
         this.handlePlayerLost();
       }
+
+      const enemyIsAlive = this.foes.some((foe) => !foe.isDead);
+
+      if (!enemyIsAlive) {
+        this.inProgress = false;
+        this.handlePlayerWon();
+      }
+    } else if (this.framesSinceEnd >= config.SCREEN_FADE_DELAY_IN_FRAMES) {
+      ScreenFader.fadeOut(this.screen);
+    } else {
+      this.framesSinceEnd++;
     }
   }
 
@@ -103,7 +115,15 @@ export class Battle {
       const [fader] = ScreenFader.shared.children as PIXI.Sprite[];
       fader.tint = colors.red;
     }
-    await ScreenFader.fadeOut(this.screen);
+  }
+
+  private async handlePlayerWon() {
+    this.background.tint = colors.blue;
+
+    if (ScreenFader.shared.children.length > 0) {
+      const [fader] = ScreenFader.shared.children as PIXI.Sprite[];
+      fader.tint = colors.blue;
+    }
   }
 
   private async loadAnimations() {
@@ -143,7 +163,6 @@ export class Battle {
     this.screen.addChild(this.container);
   }
 
-
   private async playBackgroundMusic() {
     sound.add("battle", "/assets/sounds/battle.wav");
     sound.play("battle", {
@@ -155,14 +174,10 @@ export class Battle {
 
 export class RandomBattle extends Battle {
   constructor(_screen: PIXI.Container) {
-    // MOVEME
     const [a, c] = [
       new FriendEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
-      // new FriendEntity(CHANCE.pickone(Object.keys(jobs) as JobKind[]), _screen),
       new FoeEntity(CHANCE.pickone(Object.keys(foes) as FoeKind[]), _screen),
-      // new FoeEntity(CHANCE.pickone(Object.keys(foes) as FoeKind[]), _screen),
     ];
-
     const playableParty: FriendEntity[] = [a];
     const foeParty: FoeEntity[] = [c];
     const usableItems: ItemAndQuantity[] = [
@@ -173,8 +188,6 @@ export class RandomBattle extends Battle {
     super("google", _screen, usableItems, playableParty, foeParty);
 
     a.register(this, usableItems);
-    // b.register(this, usableItems);
     c.register(this, []);
-    // d.register(this, []);
   }
 }

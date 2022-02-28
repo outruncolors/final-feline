@@ -47,3 +47,4 @@ export const AI_ESCAPE_SUCCESS_RATE = 20;
 export const AI_DEFAULT_SKILL_CAST_RATE = 30;
 
 export const SCREEN_FADE_TIME_IN_MS = 1500;
+export const SCREEN_FADE_DELAY_IN_FRAMES = 180;

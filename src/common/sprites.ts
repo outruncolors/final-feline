@@ -260,7 +260,7 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
     const dyingState = dyingStates[i];
     dyingState.alpha = 1;
     dyingState.tint = colors.red;
-    // dyingState.blendMode = PIXI.BLEND_MODES.ADD;
+    dyingState.blendMode = PIXI.BLEND_MODES.ADD;
     dyingState.visible = false;
     animation.addChild(dyingState);
 
@@ -283,6 +283,7 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
       unready: () => {},
       die: () => {
         for (const state of livingStates) {
+          
           if (state.visible) {
             state.visible = CHANCE.bool({ likelihood: 10 });
           } else {
