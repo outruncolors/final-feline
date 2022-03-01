@@ -397,6 +397,7 @@ export class BattleEntity extends Entity {
   public removeAfflictions() {
     for (const affliction of this.afflictionAnimations) {
       affliction.visible = false;
+      affliction.destroy();
     }
   }
 
@@ -420,7 +421,6 @@ export class BattleEntity extends Entity {
   }
 
   private die() {
-    this.removeAfflictions();
     const dying = this.showAnimation("dying");
     dying.loop = false;
     dying.onComplete = () => {
@@ -434,6 +434,7 @@ export class BattleEntity extends Entity {
           this.castShadow.visible = true;
         }
       }
+      this.removeAfflictions();
     };
   }
 
