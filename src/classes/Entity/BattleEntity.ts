@@ -397,7 +397,6 @@ export class BattleEntity extends Entity {
   public removeAfflictions() {
     for (const affliction of this.afflictionAnimations) {
       affliction.visible = false;
-      affliction.destroy();
     }
   }
 

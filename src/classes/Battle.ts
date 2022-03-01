@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import Chance from "chance";
-import { colors, config, loadLocationSprite } from "../common";
+import { colors, config, loadLocationSprite, sleep } from "../common";
 import {
   Location,
   LocationKind,
@@ -13,7 +13,8 @@ import {
   locations,
 } from "../data";
 import { BattleEntity, FriendEntity, FoeEntity } from "./Entity";
-import { ScreenFader } from ".";
+import { Message } from "./Message";
+import { ScreenFader } from "./ScreenFader";
 
 export interface BattleStatus {
   left: BattleSide;
@@ -42,6 +43,8 @@ export class Battle {
   status: BattleStatus;
   inProgress = true;
   framesSinceEnd = 0;
+  won = false;
+  escaped = false;
 
   constructor(
     _location: LocationKind,
@@ -102,7 +105,7 @@ export class Battle {
         this.handlePlayerWon();
       }
     } else if (this.framesSinceEnd >= config.SCREEN_FADE_DELAY_IN_FRAMES) {
-      ScreenFader.fadeOut(this.screen);
+      this.showOutcomeScreen();
     } else {
       this.framesSinceEnd++;
     }
@@ -169,6 +172,15 @@ export class Battle {
       volume: 0.3,
       loop: true,
     });
+  }
+
+  private async showOutcomeScreen() {
+    await ScreenFader.fadeOut(this.screen);
+    const message = new Message("Testing one two");
+    this.screen.removeChildren();
+    await sleep(2000);
+    await ScreenFader.fadeIn(this.screen);
+    this.screen.addChild(message.container);
   }
 }
 
