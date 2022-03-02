@@ -17,10 +17,7 @@ export function Wrapper() {
       wrapper.current?.appendChild(app.view);
       changers.changeLog("misc", "Appended game screen.");
       changers.changeScreen("shop");
-
       setShowActionMenu(true);
-      setShowDrawer(true);
-
       setScreenTitle(selectors.selectScreenTitle());
     });
   }, []);
@@ -34,13 +31,30 @@ export function Wrapper() {
           className="action-menu"
           selectable={false}
         >
-          <Ant.Menu.Item>Action A</Ant.Menu.Item>
-          <Ant.Menu.Item onClick={() => setShowDrawer((prev) => !prev)}>
-            Action B
-          </Ant.Menu.Item>
+          <Ant.Menu.Item className="action-menu-action">Leave</Ant.Menu.Item>
+
           <li style={{ position: "absolute", right: 20 }}>
-            <GoLocation />
-            {screenTitle}
+            <Ant.Menu theme="dark" mode="horizontal">
+              <li style={{ marginRight: "1rem" }}>
+                <GoLocation />
+                {screenTitle}
+              </li>
+
+              <li>
+                <img
+                  alt="Felidae"
+                  src="/assets/forte.svg"
+                  width={20}
+                  height={20}
+                  style={{
+                    position: "relative",
+                    top: -2,
+                    right: -2,
+                  }}
+                />
+                200.00
+              </li>
+            </Ant.Menu>
           </li>
         </Ant.Menu>
       )}
