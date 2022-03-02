@@ -1,0 +1,14 @@
+html,
+body {
+  background: #eff2f5 !important;
+}
+
+canvas {
+  border-radius: 4px;
+}
+
+.ant-layout-header {
+  text-transform: uppercase;
+  font-family: "VCR OSD Mono 1";
+  letter-spacing: 0.6ch;
+}
