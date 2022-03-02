@@ -4,9 +4,13 @@ body {
 }
 
 canvas {
-  -webkit-box-shadow: inset 0 0 12px lightyellow, 0 0 12px lightyellow;
-  -moz-box-shadow: inset 0 0 12px lightyellow, 0 0 12px lightyellow;
-  box-shadow: inset 0 0 12px lightyellow, 0 0 12px lightyellow;
+  border: 2px solid #ffffff;
+  border-bottom: none;
+}
+
+.wrapper {
+  position: relative;
+  overflow: hidden;
 }
 
 .ant-layout {
@@ -41,4 +45,32 @@ canvas {
   padding: 2.5rem;
   background: #333333;
   border-radius: 8px;
+}
+
+.ant-notification-notice {
+  background: rgba(0, 21, 40, 0.9) !important;
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+}
+
+.ant-notification-notice * {
+  color: rgb(239, 254, 239) !important;
+}
+
+.action-menu {
+  position: relative !important;
+  top: -50px !important;
+  background: rgba(0, 21, 40, 0.9) !important;
+  border: 2px solid #ffffff !important;
+}
+
+.right-drawer {
+  position: absolute !important;
+  height: 500px !important;
+}
+
+.right-drawer .ant-drawer-content {
+  background: rgba(0, 21, 40, 0.95) !important;
+  border: 2px solid #ffffff !important;
+  border-bottom: none;
 }
