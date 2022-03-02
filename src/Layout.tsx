@@ -17,21 +17,11 @@ export function Layout({ children }: Props) {
         >
           Final Feline
         </Ant.Layout.Header>
-        <Ant.Layout.Content
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "2rem 0px",
-            borderRadius: 8,
-          }}
-        >
-          <div style={{ padding: "2.5em", background: "#333333" }}>
-            {children}
-          </div>
+        <Ant.Layout.Content>
+          <div className="television">{children}</div>
         </Ant.Layout.Content>
       </Ant.Layout>
-      <Ant.Layout.Sider>Sider</Ant.Layout.Sider>
+      <Ant.Layout.Sider></Ant.Layout.Sider>
     </Ant.Layout>
   );
 }
