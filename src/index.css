@@ -19,8 +19,8 @@ canvas {
 
 .ant-layout-header {
   border-bottom: 2px solid #ffffff;
-  text-transform: uppercase;
   font-family: "VCR OSD Mono 1";
+  text-transform: uppercase;
   letter-spacing: 0.6ch;
 }
 
@@ -95,4 +95,25 @@ canvas {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+.ant-comment {
+  background: rgba(0, 21, 40, 0.95) !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+.ant-comment * {
+  color: rgb(239, 254, 239) !important;
+}
+
+.vitals {
+  font-family: "VCR OSD Mono 1";
+}
+
+.fancy {
+  text-transform: uppercase;
+  letter-spacing: 0.6ch;
 }

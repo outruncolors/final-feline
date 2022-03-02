@@ -1,8 +1,8 @@
 import * as Ant from "antd";
 import { GoLocation } from "react-icons/go";
 import { useEffect, useRef, useState } from "react";
-import { GameState, state as gameState, changers, selectors } from "./state";
-import { loadAssets } from "./common";
+import { GameState, state as gameState, changers, selectors } from "../state";
+import { loadAssets } from "../common";
 
 export function Wrapper() {
   const [showActionMenu, setShowActionMenu] = useState(false);

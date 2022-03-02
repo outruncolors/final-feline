@@ -1,7 +1,6 @@
 import "./App.css";
 import "antd/dist/antd.css";
-import { Wrapper } from "./Wrapper";
-import { Layout } from "./Layout";
+import { Layout, Wrapper } from "./components";
 
 function App() {
   return (
