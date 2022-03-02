@@ -1,13 +1,14 @@
 import * as Ant from "antd";
 import { AiOutlineClose } from "react-icons/ai";
 import { GoLocation } from "react-icons/go";
+import { GiOpenTreasureChest, GiRun } from "react-icons/gi";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GameState, state as gameState, changers, selectors } from "../state";
 import { loadAssets } from "../common";
-import { Vitals } from "./Vitals";
+import { PartyMenu, StuffMenu } from "./menus";
 
-type MenuKind = "party";
+type MenuKind = "party" | "stuff";
 
 export function Wrapper() {
   const [showActionMenu, setShowActionMenu] = useState(false);
@@ -20,25 +21,8 @@ export function Wrapper() {
   // Memo
   const menuLookup: Record<MenuKind, JSX.Element> = useMemo(
     () => ({
-      party: (
-        <>
-          <Ant.PageHeader
-            title="Party"
-            backIcon={<HiOutlineUserGroup color="white" size={24} />}
-            onBack={() => {}}
-            style={{ margin: 0, marginBottom: "1rem", padding: 0 }}
-          />
-          <Vitals
-            name="Foo Bar"
-            job="copamancer"
-            stage={3}
-            hp={[90, 100]}
-            mp={[80, 100]}
-            atb={100}
-            fin={20}
-          />
-        </>
-      ),
+      party: <PartyMenu />,
+      stuff: <StuffMenu />,
     }),
     []
   );
@@ -59,6 +43,7 @@ export function Wrapper() {
     </Ant.Menu.Item>
   );
   const openPartyMenu = useCallback(() => setActiveMenu("party"), []);
+  const openStuffMenu = useCallback(() => setActiveMenu("stuff"), []);
 
   // Effects
   // Bootstrap the app and perform the initial loading process.
@@ -90,42 +75,57 @@ export function Wrapper() {
           className="action-menu"
           selectable={false}
         >
-          <Ant.Menu.Item className="action-menu-action">Leave</Ant.Menu.Item>
+          <Ant.Menu.Item>
+            <GiRun /> Leave
+          </Ant.Menu.Item>
 
-          <li style={{ position: "absolute", right: 20 }}>
-            <Ant.Menu theme="dark" mode="horizontal" selectable={false}>
-              {activeMenu === "party" ? (
-                closeButton
-              ) : (
-                <Ant.Menu.Item
-                  style={{ marginRight: "1rem" }}
-                  className="noselect"
-                  onClick={openPartyMenu}
-                >
-                  <HiOutlineUserGroup />
-                  Party
-                </Ant.Menu.Item>
-              )}
-              <li style={{ marginRight: "1rem" }}>
-                <GoLocation />
-                {screenTitle}
-              </li>
-              <li>
-                <img
-                  alt="Felidae"
-                  src="/assets/forte.svg"
-                  width={20}
-                  height={20}
-                  style={{
-                    position: "relative",
-                    top: -2,
-                    right: -2,
-                  }}
-                />
-                200.00
-              </li>
-            </Ant.Menu>
-          </li>
+          {activeMenu === "party" ? (
+            closeButton
+          ) : (
+            <Ant.Menu.Item
+              style={{ marginRight: "1rem" }}
+              className="noselect"
+              onClick={openPartyMenu}
+            >
+              <HiOutlineUserGroup />
+              Party
+            </Ant.Menu.Item>
+          )}
+
+          {activeMenu === "stuff" ? (
+            closeButton
+          ) : (
+            <Ant.Menu.Item
+              style={{ marginRight: "1rem" }}
+              className="noselect"
+              onClick={openStuffMenu}
+            >
+              <GiOpenTreasureChest />
+              Stuff
+            </Ant.Menu.Item>
+          )}
+
+          <Ant.Menu.Item
+            className="noselect"
+            style={{ marginRight: "1rem", alignSelf: "flex-end" }}
+          >
+            <GoLocation />
+            {screenTitle}
+          </Ant.Menu.Item>
+          <Ant.Menu.Item className="noselect">
+            <img
+              alt="Felidae"
+              src="/assets/forte.svg"
+              width={20}
+              height={20}
+              style={{
+                position: "relative",
+                top: -2,
+                right: -2,
+              }}
+            />
+            200.00
+          </Ant.Menu.Item>
         </Ant.Menu>
       )}
       {showDrawer && (
