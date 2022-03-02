@@ -1,29 +1,32 @@
 import * as Ant from "antd";
+import { GoLocation } from "react-icons/go";
 import { useEffect, useRef, useState } from "react";
-import { GameState, state as gameState, getChangers } from "./state";
+import { GameState, state as gameState, changers, selectors } from "./state";
 import { loadAssets } from "./common";
 
 export function Wrapper() {
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [screenTitle, setScreenTitle] = useState("");
   const state = useRef<GameState>(gameState);
   const wrapper = useRef<null | HTMLDivElement>(null);
-  const changers = useRef(getChangers());
 
   useEffect(() => {
     loadAssets().then(() => {
       const { app } = state.current;
       wrapper.current?.appendChild(app.view);
-      changers.current.changeLog("misc", "Appended game screen.");
-      changers.current.changeScreen("shop");
-      changers.current.changeNotifications("Foo");
+      changers.changeLog("misc", "Appended game screen.");
+      changers.changeScreen("shop");
+
       setShowActionMenu(true);
       setShowDrawer(true);
+
+      setScreenTitle(selectors.selectScreenTitle());
     });
   }, []);
 
   return (
-    <div ref={wrapper} className="wrapper">
+    <div ref={wrapper} className="wrapper noselect">
       {showActionMenu && (
         <Ant.Menu
           theme="dark"
@@ -35,7 +38,10 @@ export function Wrapper() {
           <Ant.Menu.Item onClick={() => setShowDrawer((prev) => !prev)}>
             Action B
           </Ant.Menu.Item>
-          <Ant.Menu.Item>Action C</Ant.Menu.Item>
+          <li style={{ position: "absolute", right: 20 }}>
+            <GoLocation />
+            {screenTitle}
+          </li>
         </Ant.Menu>
       )}
       {showDrawer && (
