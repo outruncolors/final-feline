@@ -9,6 +9,8 @@ import {
   LocationKind,
   EntityKind,
   ItemKind,
+  ScreenKind,
+  screens,
 } from "../data";
 
 export type EntityAnimationLoader = (key: EntityKind) => EntityAnimations;
@@ -283,7 +285,6 @@ export const loadFoeAnimations = (foe: EntityKind): EntityAnimations => {
       unready: () => {},
       die: () => {
         for (const state of livingStates) {
-          
           if (state.visible) {
             state.visible = CHANCE.bool({ likelihood: 10 });
           } else {
@@ -316,4 +317,25 @@ export const loadImpactAnimation = () => {
   impact.anchor.set(0.5);
 
   return impact;
+};
+
+export const loadScreenAnimation =
+  (screen: ScreenKind) => (animation: string) =>
+    loadAnimation(
+      `screens/${screen}/${animation}/screen_${screen}_${animation}`
+    );
+
+export const loadScreenAnimations = (screen: ScreenKind) => {
+  const entry = screens[screen];
+  const loader = loadScreenAnimation(screen);
+  const animations: Record<string, PIXI.AnimatedSprite> = {};
+
+  for (const animation of entry.animations) {
+    const anim = (animations[animation] = loader(animation));
+    anim.scale.set(4);
+    anim.animationSpeed = 0.1;
+    anim.play();
+  }
+
+  return animations;
 };

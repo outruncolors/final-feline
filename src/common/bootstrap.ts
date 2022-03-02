@@ -37,3 +37,22 @@ const loadCommonAssets = () => {
       .load(resolve);
   });
 };
+
+export const loadAssets = async () => {
+  await Promise.all([
+    new Promise((resolve) => {
+      loader
+        .add("/assets/sprites.json", { crossOrigin: "anonymous" })
+        .load(resolve);
+    }),
+    new Promise((resolve) => {
+      WebFont.load({
+        custom: {
+          families: ["VCR OSD Mono 1"],
+          urls: ["/assets/fonts/fonts.css"],
+        },
+        active: () => resolve(undefined),
+      });
+    }),
+  ]).catch();
+};

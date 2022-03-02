@@ -1,5 +1,7 @@
 import * as PIXI from "pixi.js";
 import { IObjectDidChange, makeAutoObservable, observe } from "mobx";
+import { ScreenKind, screens } from "./data";
+import { loadScreenAnimations } from "./common";
 
 export type GameState = ReturnType<typeof initState>;
 export type GameStateProperty = keyof GameState;
@@ -22,6 +24,7 @@ const initState = () => {
     ticks: 0,
     screen: {
       container: screen,
+      which: null as null | ScreenKind,
       width,
       height,
     },
@@ -40,24 +43,28 @@ observe(state, (change) => {
     const handlers = getHandlers();
     const handler = handlers[asProperty];
 
-    console.log({ handler });
-
     handler.call(null, change);
   } catch (error) {
-    state.log.push({
-      kind: "error",
-      message: `Error: Unable to handle change.`,
-    });
+    changeLog("error", "Unable to handle change.");
   }
 });
 
 // === changers
 export const getChangers = () => ({
   changeLog,
+  changeScreen,
 });
 
 const changeLog = (kind: "misc" | "error", message: string) => {
   state.log.unshift({ kind, message });
+};
+
+const changeScreen = (screen: ScreenKind) => {
+  const entry = screens[screen];
+
+  if (entry) {
+    state.screen.which = screen;
+  }
 };
 
 // === handlers
@@ -70,13 +77,21 @@ const getHandlers = (): Record<GameStateProperty, GameStateChangeHandler> => ({
   log: handleLogChange,
 });
 
-const handleScreenChange: GameStateChangeHandler = (change) => {};
+const handleScreenChange: GameStateChangeHandler = (change) => {
+  if (state.screen.which) {
+    const animations = loadScreenAnimations(state.screen.which);
+
+    if (animations.caught) {
+      state.screen.container.addChild(animations.caught);
+    }
+  }
+};
+observe(state.screen, handleScreenChange);
 
 const handleLogChange: GameStateChangeHandler = (change) => {
   const newest = { ...state.log[0] };
   console.log(`Log) [${newest.kind}]: `, newest.message);
 };
+observe(state.log, handleLogChange);
 
 const noop = () => {};
-
-observe(state.log, handleLogChange);
