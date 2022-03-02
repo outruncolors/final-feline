@@ -25,11 +25,11 @@ export function Vitals({ name, job, stage, hp, mp, atb, fin }: Props) {
   const finPercent = Math.floor((fin / 100) * 100);
 
   return (
-    <div style={{ display: "inline-block" }}>
+    <div style={{ display: "block" }}>
       <Ant.Comment
         className="vitals"
         author={
-          <Ant.Typography.Title style={{ margin: 0, width: 325 }} level={5}>
+          <Ant.Typography.Title style={{ margin: 0, width: "100%" }} level={5}>
             {name}{" "}
             <span className="fancy" style={{ float: "right", fontSize: 12 }}>
               {job.toUpperCase()} {getRomanNumeralFor(stage)}
@@ -54,7 +54,7 @@ export function Vitals({ name, job, stage, hp, mp, atb, fin }: Props) {
           </VitalTooltip>
         }
         content={
-          <div style={{ width: 340 }}>
+          <div>
             <VitalTooltip title={`ATB: ${atbPercent}%`}>
               <Ant.Progress
                 percent={atbPercent}

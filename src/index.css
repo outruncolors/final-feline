@@ -71,11 +71,6 @@ canvas {
   left: -4px;
 }
 
-.action-menu-action {
-  text-transform: uppercase;
-  letter-spacing: 0.3ch;
-}
-
 .right-drawer {
   position: absolute !important;
   height: 500px !important;
@@ -105,14 +100,21 @@ canvas {
   padding-left: 1rem;
 }
 
-.ant-comment * {
+.ant-comment *,
+.ant-page-header-heading-title {
   color: rgb(239, 254, 239) !important;
+}
+
+.ant-comment-content-author-name {
+  flex: 1;
 }
 
 .vitals {
   font-family: "VCR OSD Mono 1";
 }
 
+.ant-page-header-heading-title,
+.action-menu-action,
 .fancy {
   text-transform: uppercase;
   letter-spacing: 0.6ch;
