@@ -48,6 +48,7 @@ const initState = () => {
     },
     notifications: [] as Array<{ message: ReactNode; duration: number }>,
     log: [{ kind: "misc", message: "--- Start ---" }],
+    dialogue: [] as Dialogue[],
   };
 };
 
@@ -76,3 +77,9 @@ export interface Foe extends GameEntity {
 }
 
 export type ItemAndQuantity = [ItemKind, number];
+
+export interface Dialogue {
+  name: string;
+  avatar: string;
+  text: string;
+}

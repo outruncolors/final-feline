@@ -74,6 +74,11 @@ const handleLogChange: GameStateChangeHandler = () => {
 };
 observe(state.log, handleLogChange);
 
+const handleDialogueChange: GameStateChangeHandler = () => {
+  rerender?.();
+};
+observe(state.dialogue, handleDialogueChange);
+
 export const handlers: Record<GameStateProperty, GameStateChangeHandler> = {
   app: noop,
   ticks: noop,
@@ -81,4 +86,5 @@ export const handlers: Record<GameStateProperty, GameStateChangeHandler> = {
   notifications: handleNotificationsChange,
   log: handleLogChange,
   player: noop,
+  dialogue: handleDialogueChange,
 };

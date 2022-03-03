@@ -32,9 +32,28 @@ const changeFuzzing = () => {
   setTimeout(() => (state.screen.fuzzing = false), 2000);
 };
 
+const addDialogue = (name: string, content: string) => {
+  state.dialogue.push({
+    name,
+    avatar: name,
+    text: content,
+  });
+};
+
+const nextDialogue = () => {
+  state.dialogue.shift();
+};
+
+const finishDialogue = () => {
+  state.dialogue = [];
+};
+
 export const changers = {
   changeLog,
   notify,
   changeScreen,
   changeFuzzing,
+  addDialogue,
+  nextDialogue,
+  finishDialogue,
 };

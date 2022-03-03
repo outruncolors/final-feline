@@ -74,12 +74,34 @@ canvas {
 .right-drawer {
   position: absolute !important;
   height: 500px !important;
+  z-index: 3;
 }
 
 .right-drawer .ant-drawer-content {
   background: rgba(0, 21, 40, 0.95) !important;
   border: 2px solid #ffffff !important;
   border-bottom: none;
+}
+
+.bottom-drawer {
+  position: absolute !important;
+  bottom: 97px !important;
+}
+
+.bottom-drawer .ant-drawer-body {
+  display: flex !important;
+  flex-direction: column-reverse !important;
+}
+
+.bottom-drawer .ant-drawer-content {
+  background: transparent !important;
+}
+
+.bottom-drawer .ant-comment-actions {
+  background: transparent !important;
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  padding-right: 1rem;
 }
 
 .noselect {

@@ -1,29 +1,24 @@
 import * as Ant from "antd";
-
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import {
   GameState,
   state as gameState,
   changers,
   setRerender,
   beginTrackingTicks,
+  selectors,
 } from "../state";
 import { loadAssets } from "../common";
 import { MenuKind } from "./menus";
-import { ActionBar } from ".";
+import { ActionBar } from "./ActionBar";
+import { SpeechBox } from "./SpeechBox";
 
 export function Wrapper() {
   const [, setRenders] = useState(0);
   const rerender = useCallback(() => setRenders((prev) => prev + 1), []);
-  const [showActionMenu, setShowActionMenu] = useState(false);
-  const [showDrawer, setShowDrawer] = useState(false);
+  const [showActionBar, setShowActionBar] = useState(false);
+  const [showSpeechBox, setShowSpeechBox] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const [activeMenu, setActiveMenu] = useState<null | MenuKind>(null);
   const [menuContent, setMenuContent] = useState<ReactNode>(null);
   const state = useRef<GameState>(gameState);
@@ -40,41 +35,59 @@ export function Wrapper() {
     loadAssets().then(() => {
       const { app } = state.current;
       wrapper.current?.appendChild(app.view);
+
       setRerender(() => {
         rerender();
+        setShowSpeechBox(Boolean(selectors.selectDialogue()));
       });
       beginTrackingTicks();
+      setShowActionBar(true);
+
       changers.changeLog("misc", "Appended game screen.");
       changers.changeScreen("title");
-      setShowActionMenu(true);
     });
   }, [rerender]);
 
   // Handle drawer open/close.
   useEffect(() => {
-    if (activeMenu && !showDrawer) {
-      setShowDrawer(true);
-    } else if (!activeMenu && showDrawer) {
-      setShowDrawer(false);
+    if (activeMenu && !showMenu) {
+      setShowMenu(true);
+    } else if (!activeMenu && showMenu) {
+      setShowMenu(false);
     }
-  }, [activeMenu, showDrawer]);
+  }, [activeMenu, showMenu]);
 
   return (
     <div ref={wrapper} className="wrapper noselect">
-      {showActionMenu && (
+      {showSpeechBox && (
+        <Ant.Drawer
+          placement="bottom"
+          closable={false}
+          getContainer={false}
+          className="bottom-drawer"
+          visible={showSpeechBox}
+          maskClosable={false}
+          width={500}
+        >
+          {selectors.selectDialogue() && (
+            <SpeechBox dialogue={selectors.selectDialogue()!} />
+          )}
+        </Ant.Drawer>
+      )}
+      {showActionBar && (
         <ActionBar
           selectedAction={activeMenu}
           onClose={closeMenu}
           onSelectAction={selectAction}
         />
       )}
-      {showDrawer && (
+      {showMenu && (
         <Ant.Drawer
           placement="right"
           closable={false}
           getContainer={false}
           className="right-drawer"
-          visible={showActionMenu}
+          visible={showActionBar}
           maskClosable={true}
           onClose={closeMenu}
           width={500}

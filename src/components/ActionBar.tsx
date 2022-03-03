@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import * as Ant from "antd";
 import { GoLocation } from "react-icons/go";
 import { GiOpenTreasureChest } from "react-icons/gi";
@@ -144,7 +144,7 @@ export function ActionBar({ selectedAction, onClose, onSelectAction }: Props) {
         element: ReactNode;
       }
     >;
-  }, [onClose]);
+  }, [onClose, playerData.felidae, playerData.name]);
 
   return (
     <Ant.Menu
