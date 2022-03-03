@@ -13,8 +13,12 @@ const handleScreenChange: GameStateChangeHandler = () => {
   if (state.screen.which) {
     const animations = loadScreenAnimations(state.screen.which);
 
-    if (animations.caught) {
-      state.screen.container.addChild(animations.caught);
+    const { animation } = state.screen;
+    const [defaultAnimation] = Object.values(animations);
+    const animationToUse = animation ? animations[animation] : defaultAnimation;
+
+    if (animationToUse) {
+      state.screen.container.addChild(animationToUse);
     }
   }
 };

@@ -24,6 +24,7 @@ const initState = () => {
     screen: {
       container: screen,
       which: null as null | ScreenKind,
+      animation: null as null | string,
       width,
       height,
     },

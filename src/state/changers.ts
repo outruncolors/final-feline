@@ -9,11 +9,15 @@ const changeNotifications = (message: string) => {
   state.notifications.unshift(message);
 };
 
-const changeScreen = (screen: ScreenKind) => {
+const changeScreen = (screen: ScreenKind, animation?: string) => {
   const entry = screens[screen];
 
   if (entry) {
     state.screen.which = screen;
+
+    if (animation) {
+      state.screen.animation = animation;
+    }
   }
 };
 

@@ -52,7 +52,7 @@ export function Wrapper() {
       const { app } = state.current;
       wrapper.current?.appendChild(app.view);
       changers.changeLog("misc", "Appended game screen.");
-      changers.changeScreen("shop");
+      changers.changeScreen("title");
       setShowActionMenu(true);
       setScreenTitle(selectors.selectScreenTitle());
     });

@@ -1648,7 +1648,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":246,"h":126},
 	"sourceSize": {"w":246,"h":126}
 },
-"screens/casino/left-blink/screens_casino_left-blink_000":
+"screens/casino/left-blink/screen_casino_left-blink_000":
 {
 	"frame": {"x":392,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1656,7 +1656,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/casino/left-blink/screens_casino_left-blink_001":
+"screens/casino/left-blink/screen_casino_left-blink_001":
 {
 	"frame": {"x":1,"y":553,"w":254,"h":124},
 	"rotated": false,
@@ -1664,7 +1664,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/casino/right-blink/screens_casino_right-blink_000":
+"screens/casino/right-blink/screen_casino_right-blink_000":
 {
 	"frame": {"x":392,"y":127,"w":254,"h":124},
 	"rotated": false,
@@ -1672,7 +1672,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/casino/right-blink/screens_casino_right-blink_001":
+"screens/casino/right-blink/screen_casino_right-blink_001":
 {
 	"frame": {"x":392,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1680,7 +1680,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/left-blink/screens_housing_left-blink_000":
+"screens/housing/left-blink/screen_housing_left-blink_000":
 {
 	"frame": {"x":648,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1688,7 +1688,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/left-blink/screens_housing_left-blink_001":
+"screens/housing/left-blink/screen_housing_left-blink_001":
 {
 	"frame": {"x":1,"y":679,"w":254,"h":124},
 	"rotated": false,
@@ -1696,7 +1696,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/left-talk/screens_housing_left-talk_000":
+"screens/housing/left-talk/screen_housing_left-talk_000":
 {
 	"frame": {"x":648,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1704,7 +1704,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/left-talk/screens_housing_left-talk_001":
+"screens/housing/left-talk/screen_housing_left-talk_001":
 {
 	"frame": {"x":648,"y":127,"w":254,"h":124},
 	"rotated": false,
@@ -1712,7 +1712,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/look-viewer/screens_housing_look-viewer_000":
+"screens/housing/look-viewer/screen_housing_look-viewer_000":
 {
 	"frame": {"x":648,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1720,7 +1720,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/look-viewer/screens_housing_look-viewer_001":
+"screens/housing/look-viewer/screen_housing_look-viewer_001":
 {
 	"frame": {"x":904,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1728,7 +1728,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/right-blink/screens_housing_right-blink_000":
+"screens/housing/right-blink/screen_housing_right-blink_000":
 {
 	"frame": {"x":648,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1736,7 +1736,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/right-blink/screens_housing_right-blink_001":
+"screens/housing/right-blink/screen_housing_right-blink_001":
 {
 	"frame": {"x":1,"y":805,"w":254,"h":124},
 	"rotated": false,
@@ -1744,7 +1744,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/right-talk/screens_housing_right-talk_000":
+"screens/housing/right-talk/screen_housing_right-talk_000":
 {
 	"frame": {"x":648,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1752,7 +1752,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/right-talk/screens_housing_right-talk_001":
+"screens/housing/right-talk/screen_housing_right-talk_001":
 {
 	"frame": {"x":904,"y":127,"w":254,"h":124},
 	"rotated": false,
@@ -1856,7 +1856,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
 	"sourceSize": {"w":245,"h":124}
 },
-"screens/title/title/screens_title_title_000":
+"screens/title/title/screen_title_title_000":
 {
 	"frame": {"x":1160,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1864,7 +1864,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/title/title/screens_title_title_001":
+"screens/title/title/screen_title_title_001":
 {
 	"frame": {"x":1,"y":931,"w":254,"h":124},
 	"rotated": false,
@@ -1872,7 +1872,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/title/title/screens_title_title_002":
+"screens/title/title/screen_title_title_002":
 {
 	"frame": {"x":1160,"y":127,"w":254,"h":124},
 	"rotated": false,
@@ -1880,7 +1880,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/title/title/screens_title_title_003":
+"screens/title/title/screen_title_title_003":
 {
 	"frame": {"x":1416,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1888,7 +1888,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/title/title/screens_title_title_004":
+"screens/title/title/screen_title_title_004":
 {
 	"frame": {"x":1,"y":1057,"w":254,"h":124},
 	"rotated": false,
@@ -1896,7 +1896,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/title/title/screens_title_title_005":
+"screens/title/title/screen_title_title_005":
 {
 	"frame": {"x":1416,"y":127,"w":254,"h":124},
 	"rotated": false,
@@ -1904,7 +1904,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/title/title/screens_title_title_006":
+"screens/title/title/screen_title_title_006":
 {
 	"frame": {"x":1672,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -1912,7 +1912,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/title/title/screens_title_title_007":
+"screens/title/title/screen_title_title_007":
 {
 	"frame": {"x":1,"y":1183,"w":254,"h":124},
 	"rotated": false,
@@ -1920,7 +1920,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/title/title/screens_title_title_008":
+"screens/title/title/screen_title_title_008":
 {
 	"frame": {"x":1672,"y":127,"w":254,"h":124},
 	"rotated": false,
@@ -1928,7 +1928,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/title/title/screens_title_title_009":
+"screens/title/title/screen_title_title_009":
 {
 	"frame": {"x":1416,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -3501,19 +3501,19 @@
 	"screens/bar/charge/screen_bar_charge": ["screens/bar/charge/screen_bar_charge_000","screens/bar/charge/screen_bar_charge_001"],
 	"screens/bar/mad/screen_bar_mad": ["screens/bar/mad/screen_bar_mad_000","screens/bar/mad/screen_bar_mad_001","screens/bar/mad/screen_bar_mad_002"],
 	"screens/bar/talk/screen_bar_talk": ["screens/bar/talk/screen_bar_talk_000","screens/bar/talk/screen_bar_talk_001"],
-	"screens/casino/left-blink/screens_casino_left-blink": ["screens/casino/left-blink/screens_casino_left-blink_000","screens/casino/left-blink/screens_casino_left-blink_001"],
-	"screens/casino/right-blink/screens_casino_right-blink": ["screens/casino/right-blink/screens_casino_right-blink_000","screens/casino/right-blink/screens_casino_right-blink_001"],
-	"screens/housing/left-blink/screens_housing_left-blink": ["screens/housing/left-blink/screens_housing_left-blink_000","screens/housing/left-blink/screens_housing_left-blink_001"],
-	"screens/housing/left-talk/screens_housing_left-talk": ["screens/housing/left-talk/screens_housing_left-talk_000","screens/housing/left-talk/screens_housing_left-talk_001"],
-	"screens/housing/look-viewer/screens_housing_look-viewer": ["screens/housing/look-viewer/screens_housing_look-viewer_000","screens/housing/look-viewer/screens_housing_look-viewer_001"],
-	"screens/housing/right-blink/screens_housing_right-blink": ["screens/housing/right-blink/screens_housing_right-blink_000","screens/housing/right-blink/screens_housing_right-blink_001"],
-	"screens/housing/right-talk/screens_housing_right-talk": ["screens/housing/right-talk/screens_housing_right-talk_000","screens/housing/right-talk/screens_housing_right-talk_001"],
+	"screens/casino/left-blink/screen_casino_left-blink": ["screens/casino/left-blink/screen_casino_left-blink_000","screens/casino/left-blink/screen_casino_left-blink_001"],
+	"screens/casino/right-blink/screen_casino_right-blink": ["screens/casino/right-blink/screen_casino_right-blink_000","screens/casino/right-blink/screen_casino_right-blink_001"],
+	"screens/housing/left-blink/screen_housing_left-blink": ["screens/housing/left-blink/screen_housing_left-blink_000","screens/housing/left-blink/screen_housing_left-blink_001"],
+	"screens/housing/left-talk/screen_housing_left-talk": ["screens/housing/left-talk/screen_housing_left-talk_000","screens/housing/left-talk/screen_housing_left-talk_001"],
+	"screens/housing/look-viewer/screen_housing_look-viewer": ["screens/housing/look-viewer/screen_housing_look-viewer_000","screens/housing/look-viewer/screen_housing_look-viewer_001"],
+	"screens/housing/right-blink/screen_housing_right-blink": ["screens/housing/right-blink/screen_housing_right-blink_000","screens/housing/right-blink/screen_housing_right-blink_001"],
+	"screens/housing/right-talk/screen_housing_right-talk": ["screens/housing/right-talk/screen_housing_right-talk_000","screens/housing/right-talk/screen_housing_right-talk_001"],
 	"screens/shop/blink-talk/screen_shop_blink-talk": ["screens/shop/blink-talk/screen_shop_blink-talk_000","screens/shop/blink-talk/screen_shop_blink-talk_001"],
 	"screens/shop/blink/screen_shop_blink": ["screens/shop/blink/screen_shop_blink_000","screens/shop/blink/screen_shop_blink_001"],
 	"screens/shop/caught/screen_shop_caught": ["screens/shop/caught/screen_shop_caught_000","screens/shop/caught/screen_shop_caught_001","screens/shop/caught/screen_shop_caught_002","screens/shop/caught/screen_shop_caught_003"],
 	"screens/shop/sleep/screen_shop_sleep": ["screens/shop/sleep/screen_shop_sleep_000","screens/shop/sleep/screen_shop_sleep_001"],
 	"screens/shop/talk/screen_shop_talk": ["screens/shop/talk/screen_shop_talk_000","screens/shop/talk/screen_shop_talk_001"],
-	"screens/title/title/screens_title_title": ["screens/title/title/screens_title_title_000","screens/title/title/screens_title_title_001","screens/title/title/screens_title_title_002","screens/title/title/screens_title_title_003","screens/title/title/screens_title_title_004","screens/title/title/screens_title_title_005","screens/title/title/screens_title_title_006","screens/title/title/screens_title_title_007","screens/title/title/screens_title_title_008","screens/title/title/screens_title_title_009"],
+	"screens/title/title/screen_title_title": ["screens/title/title/screen_title_title_000","screens/title/title/screen_title_title_001","screens/title/title/screen_title_title_002","screens/title/title/screen_title_title_003","screens/title/title/screen_title_title_004","screens/title/title/screen_title_title_005","screens/title/title/screen_title_title_006","screens/title/title/screen_title_title_007","screens/title/title/screen_title_title_008","screens/title/title/screen_title_title_009"],
 	"screens/tower/blink-talk/screen_tower_blink-talk": ["screens/tower/blink-talk/screen_tower_blink-talk_000","screens/tower/blink-talk/screen_tower_blink-talk_001"],
 	"screens/tower/blink/screen_tower_blink": ["screens/tower/blink/screen_tower_blink_000","screens/tower/blink/screen_tower_blink_001"],
 	"screens/tower/jot/screen_tower_jot": ["screens/tower/jot/screen_tower_jot_000","screens/tower/jot/screen_tower_jot_001"],
@@ -3545,6 +3545,6 @@
 	"format": "RGBA8888",
 	"size": {"w":2048,"h":1358},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:d1bff44fb25d0246c9d0dc17fb78faac:a5c67c73a231d320fa456b9d57025f0b:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:e3ecff10d85e7ac82c1203735db8ed28:a5c67c73a231d320fa456b9d57025f0b:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }

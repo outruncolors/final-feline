@@ -326,7 +326,7 @@ export const loadScreenAnimations = (screen: ScreenKind) => {
   for (const animation of entry.animations) {
     const anim = (animations[animation] = loader(animation));
     anim.scale.set(4);
-    anim.animationSpeed = 0.1;
+    anim.animationSpeed = 0.05;
     anim.play();
   }
 
