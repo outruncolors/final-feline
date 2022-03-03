@@ -9,6 +9,9 @@ export type GameStateChangeHandler = (
 
 const noop = () => {};
 
+let rerender: null | (() => void) = null;
+export const setRerender = (func: () => void) => (rerender = func);
+
 const handleScreenChange: GameStateChangeHandler = () => {
   if (state.screen.which) {
     const animations = loadScreenAnimations(state.screen.which);
@@ -20,6 +23,8 @@ const handleScreenChange: GameStateChangeHandler = () => {
     if (animationToUse) {
       state.screen.container.addChild(animationToUse);
     }
+
+    rerender?.();
   }
 };
 observe(state.screen, handleScreenChange);

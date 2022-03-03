@@ -4,6 +4,7 @@ export interface Screen {
   title: string;
   description: string;
   animations: string[];
+  canVisit?: boolean;
 }
 
 export const screens = {
@@ -54,6 +55,7 @@ export const screens = {
     title: "Title",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["title"],
+    canVisit: false as undefined | false,
   },
 };
 

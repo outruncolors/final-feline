@@ -4,33 +4,28 @@ import { GoLocation } from "react-icons/go";
 import { GiOpenTreasureChest, GiRun } from "react-icons/gi";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GameState, state as gameState, changers, selectors } from "../state";
+import {
+  GameState,
+  state as gameState,
+  changers,
+  selectors,
+  setRerender,
+} from "../state";
 import { loadAssets } from "../common";
-import { PartyMenu, StuffMenu } from "./menus";
+import { PartyMenu, PlacesMenu, StuffMenu } from "./menus";
 
-type MenuKind = "party" | "stuff";
+type MenuKind = "party" | "stuff" | "places";
 
 export function Wrapper() {
+  const [, setRenders] = useState(0);
+  const rerender = useCallback(() => setRenders((prev) => prev + 1), []);
   const [showActionMenu, setShowActionMenu] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [activeMenu, setActiveMenu] = useState<null | MenuKind>(null);
-  const [screenTitle, setScreenTitle] = useState("");
   const state = useRef<GameState>(gameState);
   const wrapper = useRef<null | HTMLDivElement>(null);
 
-  // Memo
-  const menuLookup: Record<MenuKind, JSX.Element> = useMemo(
-    () => ({
-      party: <PartyMenu />,
-      stuff: <StuffMenu />,
-    }),
-    []
-  );
-  const drawerContent = useMemo(
-    () => (activeMenu ? menuLookup[activeMenu] : null),
-    [menuLookup, activeMenu]
-  );
-
+  //
   const closeMenu = useCallback(() => setActiveMenu(null), []);
   const closeButton = (
     <Ant.Menu.Item
@@ -42,8 +37,24 @@ export function Wrapper() {
       Close
     </Ant.Menu.Item>
   );
+
+  // Memo
+  const menuLookup: Record<MenuKind, JSX.Element> = useMemo(
+    () => ({
+      party: <PartyMenu />,
+      stuff: <StuffMenu />,
+      places: <PlacesMenu onClose={closeMenu} />,
+    }),
+    [closeMenu]
+  );
+  const drawerContent = useMemo(
+    () => (activeMenu ? menuLookup[activeMenu] : null),
+    [menuLookup, activeMenu]
+  );
+
   const openPartyMenu = useCallback(() => setActiveMenu("party"), []);
   const openStuffMenu = useCallback(() => setActiveMenu("stuff"), []);
+  const openPlacesMenu = useCallback(() => setActiveMenu("places"), []);
 
   // Effects
   // Bootstrap the app and perform the initial loading process.
@@ -51,12 +62,14 @@ export function Wrapper() {
     loadAssets().then(() => {
       const { app } = state.current;
       wrapper.current?.appendChild(app.view);
+      setRerender(() => {
+        rerender();
+      });
       changers.changeLog("misc", "Appended game screen.");
       changers.changeScreen("title");
       setShowActionMenu(true);
-      setScreenTitle(selectors.selectScreenTitle());
     });
-  }, []);
+  }, [rerender]);
 
   useEffect(() => {
     if (activeMenu && !showDrawer) {
@@ -108,9 +121,10 @@ export function Wrapper() {
           <Ant.Menu.Item
             className="noselect"
             style={{ marginRight: "1rem", alignSelf: "flex-end" }}
+            onClick={openPlacesMenu}
           >
             <GoLocation />
-            {screenTitle}
+            {selectors.selectScreenTitle()}
           </Ant.Menu.Item>
           <Ant.Menu.Item className="noselect">
             <img
