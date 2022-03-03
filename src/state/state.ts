@@ -1,7 +1,14 @@
 import { ReactNode } from "react";
 import * as PIXI from "pixi.js";
 import { makeAutoObservable } from "mobx";
-import { ScreenKind } from "../data";
+import {
+  AfflictionKind,
+  FoeKind,
+  ItemKind,
+  JobKind,
+  ScreenKind,
+  SkillKind,
+} from "../data";
 
 export type GameState = ReturnType<typeof initState>;
 export type GameStateProperty = keyof GameState;
@@ -22,6 +29,15 @@ const initState = () => {
   return {
     app,
     ticks: 0,
+    player: {
+      id: "",
+      name: "Foo Bar",
+      stuff: [] as ItemAndQuantity[],
+      party: [] as TeamMember[],
+      roster: [] as TeamMember[],
+      felidae: 0,
+      transactions: [],
+    },
     screen: {
       container: screen,
       which: null as null | ScreenKind,
@@ -38,3 +54,25 @@ const initState = () => {
 export let state = initState();
 
 makeAutoObservable(state);
+
+// == player
+export interface GameEntity {
+  name: string;
+  stage: number;
+  hp: [number, number];
+  mp: [number, number];
+  atb: number;
+  fin: number;
+  affliction: AfflictionKind;
+  skills: SkillKind[];
+}
+
+export interface TeamMember extends GameEntity {
+  job: JobKind;
+}
+
+export interface Foe extends GameEntity {
+  foe: FoeKind;
+}
+
+export type ItemAndQuantity = [ItemKind, number];

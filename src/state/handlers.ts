@@ -80,4 +80,5 @@ export const handlers: Record<GameStateProperty, GameStateChangeHandler> = {
   screen: handleScreenChange,
   notifications: handleNotificationsChange,
   log: handleLogChange,
+  player: noop,
 };

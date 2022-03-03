@@ -16,9 +16,12 @@ const selectScreenTitle = () => {
 
 const selectScreenContainer = () => state.screen.container;
 
+const selectPlayerData = () => ({ ...state.player });
+
 export const selectors = {
   selectFuzzing,
   selectScreenName,
   selectScreenTitle,
   selectScreenContainer,
+  selectPlayerData,
 };
