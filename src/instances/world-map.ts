@@ -9,7 +9,6 @@ import {
   padding,
   titleTextStyle,
 } from "../common";
-import { Location, LocationKind, locations } from "../data";
 
 export const initializeWorldMap = (
   app: PIXI.Application,
@@ -35,10 +34,7 @@ const addOptions = (
   navigator: NavigateFunction
 ) => {
   const optionWrapper = new PIXI.Container();
-  const options = (Object.keys(locations) as LocationKind[])
-    .sort((a, b) => a.localeCompare(b))
-    .map((key) => locations[key])
-    .filter(({ name }) => name !== "world-map") as Location[];
+  const options: any[] = [];
 
   let optionIndex = 0;
   for (const option of options) {
@@ -71,7 +67,7 @@ const addOptions = (
 };
 
 const handleSelectOption = (
-  option: Location,
+  option: any,
   screen: PIXI.Container,
   navigator: NavigateFunction
 ) => {

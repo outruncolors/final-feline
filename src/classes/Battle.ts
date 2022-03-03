@@ -1,17 +1,8 @@
 import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import Chance from "chance";
-import { colors, config, loadLocationSprite, sleep } from "../common";
-import {
-  Location,
-  LocationKind,
-  JobKind,
-  ItemKind,
-  FoeKind,
-  foes,
-  jobs,
-  locations,
-} from "../data";
+import { colors, config, sleep } from "../common";
+import { JobKind, ItemKind, FoeKind, foes, jobs } from "../data";
 import { BattleEntity, FriendEntity, FoeEntity } from "./Entity";
 import { Message } from "./Message";
 import { ScreenFader } from "./ScreenFader";
@@ -33,9 +24,7 @@ const CHANCE = new Chance();
 const ticker = PIXI.Ticker.shared;
 
 export class Battle {
-  background: PIXI.Sprite;
   container: PIXI.Container;
-  location: Location;
   screen: PIXI.Container;
   usableItems: ItemAndQuantity[];
   playableParty: BattleEntity[];
@@ -47,13 +36,11 @@ export class Battle {
   escaped = false;
 
   constructor(
-    _location: LocationKind,
     _screen: PIXI.Container,
     _usableItems: ItemAndQuantity[],
     _playableParty: BattleEntity[],
     _foes: BattleEntity[]
   ) {
-    this.location = (locations as Record<LocationKind, Location>)[_location];
     this.screen = _screen;
     this.usableItems = _usableItems;
     this.playableParty = _playableParty;
@@ -70,11 +57,6 @@ export class Battle {
       },
       queue: [],
     };
-    this.background = loadLocationSprite(this.location.name);
-
-    if (this.background) {
-      this.screen.addChild(this.background);
-    }
   }
 
   public async load() {
@@ -112,8 +94,6 @@ export class Battle {
   }
 
   private async handlePlayerLost() {
-    this.background.tint = colors.red;
-
     if (ScreenFader.shared.children.length > 0) {
       const [fader] = ScreenFader.shared.children as PIXI.Sprite[];
       fader.tint = colors.red;
@@ -121,8 +101,6 @@ export class Battle {
   }
 
   private async handlePlayerWon() {
-    this.background.tint = colors.blue;
-
     if (ScreenFader.shared.children.length > 0) {
       const [fader] = ScreenFader.shared.children as PIXI.Sprite[];
       fader.tint = colors.blue;
@@ -197,7 +175,7 @@ export class RandomBattle extends Battle {
       ["rich-bitch-juice", 1],
     ];
 
-    super("google", _screen, usableItems, playableParty, foeParty);
+    super(_screen, usableItems, playableParty, foeParty);
 
     a.register(this, usableItems);
     c.register(this, []);

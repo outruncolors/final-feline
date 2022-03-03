@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { sound } from "@pixi/sound";
 import Chance from "chance";
 import { NavigateFunction } from "react-router-dom";
-import { config, loadLocationSprite } from "../common";
+import { config } from "../common";
 import { PubEntity, BattleMessage } from "../classes";
 import { JobKind, jobs } from "../data";
 
@@ -18,13 +18,7 @@ export const initializePub = async (
   populatePub(app, screen);
 };
 
-const addImage = (app: PIXI.Application, screen: PIXI.Container) => {
-  const sprite = loadLocationSprite("pub");
-
-  if (sprite) {
-    screen.addChild(sprite);
-  }
-};
+const addImage = (app: PIXI.Application, screen: PIXI.Container) => {};
 
 const playBackgroundMusic = async () => {
   sound.add("pub", "/assets/sounds/pub.mp3");

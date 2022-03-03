@@ -28,6 +28,33 @@ export const screens = {
     description: "Lorem ipsum dolor sit amet.",
     animations: ["blink", "blink-talk", "jot", "pat", "send", "talk"],
   },
+  housing: {
+    id: 3,
+    name: "housing",
+    title: "Hyperrealestation",
+    description: "Lorem ipsum dolor sit amet.",
+    animations: [
+      "left-blink",
+      "left-talk",
+      "look-viewer",
+      "right-blink",
+      "right-talk",
+    ],
+  },
+  casino: {
+    id: 4,
+    name: "casino",
+    title: "Marseyland",
+    description: "Lorem ipsum dolor sit amet.",
+    animations: ["left-blink", "right-blink"],
+  },
+  title: {
+    id: 5,
+    name: "title",
+    title: "Title",
+    description: "Lorem ipsum dolor sit amet.",
+    animations: ["title"],
+  },
 };
 
 export type ScreenKind = keyof typeof screens;

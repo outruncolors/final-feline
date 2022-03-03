@@ -6,7 +6,6 @@ import { colors } from "./colors";
 import {
   AfflictionKind,
   SkillKind,
-  LocationKind,
   EntityKind,
   ItemKind,
   ScreenKind,
@@ -55,12 +54,6 @@ export const loadAnimation = (animation: string) =>
   loadVisualAsset(animation, true) as PIXI.AnimatedSprite;
 
 /* = = C O M P O S I T I O N S = = */
-export const loadLocationSprite = (location: LocationKind) => {
-  const sprite = loadSprite(`locations/${location}`);
-  sprite.scale.set(4, 3);
-  return sprite;
-};
-
 export const loadExtraSprite = (extra: string) => {
   const sprite = loadSprite(`extras/extra_${extra}`);
   sprite.scale.set(config.ENTITY_SCALE);
