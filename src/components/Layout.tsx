@@ -21,7 +21,6 @@ export function Layout({ children }: Props) {
           <div className="television">{children}</div>
         </Ant.Layout.Content>
       </Ant.Layout>
-      <Ant.Layout.Sider></Ant.Layout.Sider>
     </Ant.Layout>
   );
 }

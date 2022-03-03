@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { ScreenKind, screens } from "../data";
 import { state } from "./state";
 
@@ -5,8 +6,11 @@ const changeLog = (kind: "misc" | "error", message: string) => {
   state.log.unshift({ kind, message });
 };
 
-const changeNotifications = (message: string) => {
-  state.notifications.unshift(message);
+const notify = (message: ReactNode, duration = 3000) => {
+  state.notifications.unshift({
+    message,
+    duration,
+  });
 };
 
 const changeScreen = (screen: ScreenKind, animation?: string) => {
@@ -18,11 +22,19 @@ const changeScreen = (screen: ScreenKind, animation?: string) => {
     if (animation) {
       state.screen.animation = animation;
     }
+
+    changeFuzzing();
   }
+};
+
+const changeFuzzing = () => {
+  state.screen.fuzzing = true;
+  setTimeout(() => (state.screen.fuzzing = false), 2000);
 };
 
 export const changers = {
   changeLog,
-  changeNotifications,
+  notify,
   changeScreen,
+  changeFuzzing,
 };

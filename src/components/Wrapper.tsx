@@ -10,9 +10,11 @@ import {
   changers,
   selectors,
   setRerender,
+  beginTrackingTicks,
 } from "../state";
 import { loadAssets } from "../common";
 import { PartyMenu, PlacesMenu, StuffMenu } from "./menus";
+import { screens } from "../data";
 
 type MenuKind = "party" | "stuff" | "places";
 
@@ -65,6 +67,7 @@ export function Wrapper() {
       setRerender(() => {
         rerender();
       });
+      beginTrackingTicks();
       changers.changeLog("misc", "Appended game screen.");
       changers.changeScreen("title");
       setShowActionMenu(true);
@@ -85,7 +88,7 @@ export function Wrapper() {
         <Ant.Menu
           theme="dark"
           mode="horizontal"
-          className="action-menu"
+          className="action-menu game-font"
           selectable={false}
         >
           <Ant.Menu.Item>
@@ -95,11 +98,7 @@ export function Wrapper() {
           {activeMenu === "party" ? (
             closeButton
           ) : (
-            <Ant.Menu.Item
-              style={{ marginRight: "1rem" }}
-              className="noselect"
-              onClick={openPartyMenu}
-            >
+            <Ant.Menu.Item className="noselect" onClick={openPartyMenu}>
               <HiOutlineUserGroup />
               Party
             </Ant.Menu.Item>
@@ -108,23 +107,34 @@ export function Wrapper() {
           {activeMenu === "stuff" ? (
             closeButton
           ) : (
-            <Ant.Menu.Item
-              style={{ marginRight: "1rem" }}
-              className="noselect"
-              onClick={openStuffMenu}
-            >
+            <Ant.Menu.Item className="noselect" onClick={openStuffMenu}>
               <GiOpenTreasureChest />
               Stuff
             </Ant.Menu.Item>
           )}
 
-          <Ant.Menu.Item
-            className="noselect"
-            style={{ marginRight: "1rem", alignSelf: "flex-end" }}
-            onClick={openPlacesMenu}
-          >
-            <GoLocation />
-            {selectors.selectScreenTitle()}
+          <Ant.Menu.Item className="noselect" onClick={openPlacesMenu}>
+            {selectors.selectScreenName() === "title" ? (
+              <>
+                <GoLocation />
+                Places
+              </>
+            ) : (
+              <>
+                {(() => {
+                  const which = selectors.selectScreenName();
+
+                  if (which) {
+                    const { Icon } = screens[which];
+
+                    return <Icon />;
+                  } else {
+                    return null;
+                  }
+                })()}
+                {selectors.selectScreenTitle()}
+              </>
+            )}
           </Ant.Menu.Item>
           <Ant.Menu.Item className="noselect">
             <img

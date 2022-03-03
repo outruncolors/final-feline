@@ -3,6 +3,7 @@ import { GameStateProperty, state } from "./state";
 import { changers } from "./changers";
 import { handlers, setRerender } from "./handlers";
 import { selectors } from "./selectors";
+import { beginTrackingTicks } from "./tick";
 
 observe(state, (change) => {
   try {
@@ -16,5 +17,5 @@ observe(state, (change) => {
   }
 });
 
-export { changers, selectors, setRerender };
+export { changers, selectors, setRerender, beginTrackingTicks };
 export * from "./state";

@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import * as PIXI from "pixi.js";
 import { makeAutoObservable } from "mobx";
 import { ScreenKind } from "../data";
@@ -27,8 +28,9 @@ const initState = () => {
       animation: null as null | string,
       width,
       height,
+      fuzzing: false,
     },
-    notifications: [] as string[],
+    notifications: [] as Array<{ message: ReactNode; duration: number }>,
     log: [{ kind: "misc", message: "--- Start ---" }],
   };
 };

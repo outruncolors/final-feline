@@ -1,6 +1,7 @@
 import * as Ant from "antd";
+import * as PIXI from "pixi.js";
 import { IObjectDidChange, observe } from "mobx";
-import { loadScreenAnimations } from "../common";
+import { colors, loadScreenAnimations } from "../common";
 import { GameState, GameStateProperty, state } from "./state";
 
 export type GameStateChangeHandler = (
@@ -12,31 +13,56 @@ const noop = () => {};
 let rerender: null | (() => void) = null;
 export const setRerender = (func: () => void) => (rerender = func);
 
-const handleScreenChange: GameStateChangeHandler = () => {
-  if (state.screen.which) {
-    const animations = loadScreenAnimations(state.screen.which);
+const handleScreenChange: GameStateChangeHandler = (change) => {
+  if (change.name === "which") {
+    if (state.screen.which) {
+      const animations = loadScreenAnimations(state.screen.which);
 
-    const { animation } = state.screen;
-    const [defaultAnimation] = Object.values(animations);
-    const animationToUse = animation ? animations[animation] : defaultAnimation;
+      const { animation } = state.screen;
+      const [defaultAnimation] = Object.values(animations);
+      const animationToUse = animation
+        ? animations[animation]
+        : defaultAnimation;
 
-    if (animationToUse) {
-      state.screen.container.addChild(animationToUse);
+      if (animationToUse) {
+        state.screen.container.addChild(animationToUse);
+      }
+
+      rerender?.();
     }
+  }
 
-    rerender?.();
+  if (change.name === "fuzzing") {
+    if ((change as any).newValue) {
+      const fuzzer = new PIXI.Sprite(PIXI.Texture.WHITE);
+      fuzzer.name = "fuzzer";
+      fuzzer.width = state.screen.container.width;
+      fuzzer.height = state.screen.container.height;
+      const noise = new PIXI.filters.NoiseFilter();
+      fuzzer.filters = [noise];
+      fuzzer.tint = colors.black;
+      state.screen.container.addChild(fuzzer);
+    } else {
+      const fuzzer = state.screen.container.getChildByName("fuzzer");
+
+      if (fuzzer) {
+        state.screen.container.removeChild(fuzzer);
+      }
+    }
   }
 };
 observe(state.screen, handleScreenChange);
 
 const handleNotificationsChange: GameStateChangeHandler = () => {
-  const newest = state.notifications[0];
+  const { message } = state.notifications[0];
+
   Ant.notification.open({
-    message: newest,
+    message,
     style: {
-      position: "absolute",
+      position: "fixed",
       top: 200,
-      right: 535,
+      right: 815,
+      width: 400,
     },
   });
 };

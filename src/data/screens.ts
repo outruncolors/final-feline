@@ -1,3 +1,7 @@
+import { GiTvTower, GiRingedPlanet, GiSharpAxe, GiHouse } from "react-icons/gi";
+import { MdCasino, MdTitle } from "react-icons/md";
+import { IconType } from "react-icons/lib";
+
 export interface Screen {
   id: number;
   name: ScreenKind;
@@ -5,6 +9,7 @@ export interface Screen {
   description: string;
   animations: string[];
   canVisit?: boolean;
+  Icon: IconType;
 }
 
 export const screens = {
@@ -14,6 +19,7 @@ export const screens = {
     title: "Electric Saturn",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["blink", "blink-talk", "charge", "mad", "talk"],
+    Icon: GiRingedPlanet,
   },
   shop: {
     id: 1,
@@ -21,6 +27,7 @@ export const screens = {
     title: "The Bare Axe",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["blink", "blink-talk", "caught", "sleep", "talk"],
+    Icon: GiSharpAxe,
   },
   tower: {
     id: 2,
@@ -28,6 +35,7 @@ export const screens = {
     title: "The Tower",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["blink", "blink-talk", "jot", "pat", "send", "talk"],
+    Icon: GiTvTower,
   },
   housing: {
     id: 3,
@@ -41,6 +49,7 @@ export const screens = {
       "right-blink",
       "right-talk",
     ],
+    Icon: GiHouse,
   },
   casino: {
     id: 4,
@@ -48,6 +57,7 @@ export const screens = {
     title: "Marseyland",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["left-blink", "right-blink"],
+    Icon: MdCasino,
   },
   title: {
     id: 5,
@@ -56,6 +66,7 @@ export const screens = {
     description: "Lorem ipsum dolor sit amet.",
     animations: ["title"],
     canVisit: false as undefined | false,
+    Icon: MdTitle,
   },
 };
 
