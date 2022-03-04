@@ -17,6 +17,7 @@ import {
   ItemKind,
   JobKind,
   ScreenKind,
+  screens,
   SkillKind,
 } from "./data";
 
@@ -90,15 +91,8 @@ function App() {
       app.current.stage.addChild(screen.current);
       app.current.renderer.render(app.current.stage);
 
-      setScreenName("title");
-      setDialogue((prev) => [
-        ...prev,
-        {
-          name: "bob",
-          avatar: "bob",
-          text: " hey",
-        },
-      ]);
+      setScreenName("housing");
+      setScreenAnimation("right-talk");
     });
   }, []);
 

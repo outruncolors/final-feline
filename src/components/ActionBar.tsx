@@ -1,5 +1,5 @@
 import * as Ant from "antd";
-import { useContext } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { GoLocation } from "react-icons/go";
 import { GiOpenTreasureChest } from "react-icons/gi";
 import { HiOutlineUserGroup } from "react-icons/hi";
@@ -19,14 +19,14 @@ import { Selectable } from "./Selectable";
 import { GameContext } from "../App";
 
 export function ActionBar() {
-  const {
-    screenName,
-    screenTitle,
-    menu,
-    changeMenu,
-    player: playerData,
-  } = useContext(GameContext);
-  const closeMenu = () => changeMenu(null);
+  const [activeMenu, setActiveMenu] = useState<null | MenuKind>(null);
+  const { screenName, menu, changeMenu, player: playerData } = useContext(
+    GameContext
+  );
+  const closeMenu = useCallback(() => {
+    changeMenu(null);
+    setActiveMenu(null);
+  }, [changeMenu, setActiveMenu]);
   const closeButton = (
     <Selectable key="close">
       <Ant.Menu.Item
@@ -122,19 +122,26 @@ export function ActionBar() {
           <>
             {(() => {
               if (screenName) {
-                const { Icon } = screens[screenName as ScreenKind];
+                const { Icon, title } = screens[screenName as ScreenKind];
 
-                return <Icon />;
+                return (
+                  <>
+                    <Icon /> {title}
+                  </>
+                );
               } else {
                 return null;
               }
             })()}
-            {screenTitle}
           </>
         ),
       element: <PlacesMenu />,
     },
   };
+
+  useEffect(() => {
+    closeMenu();
+  }, [closeMenu, screenName]);
 
   return (
     <>
@@ -160,7 +167,7 @@ export function ActionBar() {
         selectable={false}
       >
         {Object.values(menuConfig).map(({ name, inner, element }) =>
-          name === menu ? (
+          name === activeMenu ? (
             closeButton
           ) : (
             <Selectable key={name}>
@@ -169,6 +176,7 @@ export function ActionBar() {
                 onClick={(event) => {
                   event.domEvent.preventDefault();
                   changeMenu(element);
+                  setActiveMenu(name as MenuKind);
                 }}
               >
                 {inner}
