@@ -1,31 +1,29 @@
+import { useContext } from "react";
 import * as Ant from "antd";
-import { observer } from "mobx-react";
-import { changers, selectors, state } from "../state";
+import { GameContext } from "../App";
 
-export const SpeechBox = observer(() => {
-  const activeDialogue = state.dialogue[0];
+export function SpeechBox() {
+  const { dialogue, changeDialogue } = useContext(GameContext);
+
+  const activeDialogue = dialogue[0];
 
   if (activeDialogue) {
     const { name, avatar, text } = activeDialogue;
 
     const actions = [
-      <Ant.Button
-        key="done"
-        type="ghost"
-        onClick={() => changers.finishDialogue(state)}
-      >
+      <Ant.Button key="done" type="ghost" onClick={() => changeDialogue([])}>
         Done
       </Ant.Button>,
     ];
 
-    const hasNextOne = selectors.selectDialogueCount(state) > 1;
+    const hasNextOne = false;
     if (hasNextOne) {
       actions.unshift(
         <Ant.Button
           key="next"
           type="ghost"
-          onClick={() => changers.nextDialogue(state)}
           style={{ marginRight: "1rem" }}
+          onClick={() => changeDialogue(dialogue.slice(1))}
         >
           Next
         </Ant.Button>
@@ -52,4 +50,4 @@ export const SpeechBox = observer(() => {
   } else {
     return null;
   }
-});
+}

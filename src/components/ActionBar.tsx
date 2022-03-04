@@ -1,12 +1,11 @@
 import * as Ant from "antd";
-import { ReactNode, useState } from "react";
+import { useContext } from "react";
 import { GoLocation } from "react-icons/go";
 import { GiOpenTreasureChest } from "react-icons/gi";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { IoIosGrid } from "react-icons/io";
 import { AiOutlineClose } from "react-icons/ai";
-import { screens } from "../data";
-import { state, changers, selectors } from "../state";
+import { ScreenKind, screens } from "../data";
 import {
   MenuKind,
   PartyMenu,
@@ -17,17 +16,17 @@ import {
   TransactionMenu,
 } from "./menus";
 import { Selectable } from "./Selectable";
+import { GameContext } from "../App";
 
 export function ActionBar() {
-  const [menuContent, setMenuContent] = useState<ReactNode>(null);
-  const playerData = selectors.selectPlayerData(state);
-  const screenName = selectors.selectScreenName(state);
-  const screenTitle = selectors.selectScreenTitle(state);
-  const menu = selectors.selectActiveMenu(state);
-  const closeMenu = () => {
-    changers.changeMenu(state, null);
-    setMenuContent(null);
-  };
+  const {
+    screenName,
+    screenTitle,
+    menu,
+    changeMenu,
+    player: playerData,
+  } = useContext(GameContext);
+  const closeMenu = () => changeMenu(null);
   const closeButton = (
     <Selectable key="close">
       <Ant.Menu.Item
@@ -52,7 +51,7 @@ export function ActionBar() {
               alt="Player"
             />
           </span>
-          {playerData.name}
+          {playerData?.name ?? ""}
         </>
       ),
       element: <ProfileMenu />,
@@ -76,7 +75,7 @@ export function ActionBar() {
             style: "decimal",
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
-          }).format(playerData.felidae)}
+          }).format(playerData?.felidae ?? 0)}
         </>
       ),
       element: <TransactionMenu />,
@@ -123,7 +122,7 @@ export function ActionBar() {
           <>
             {(() => {
               if (screenName) {
-                const { Icon } = screens[screenName];
+                const { Icon } = screens[screenName as ScreenKind];
 
                 return <Icon />;
               } else {
@@ -139,18 +138,18 @@ export function ActionBar() {
 
   return (
     <>
-      {menuContent && (
+      {menu && (
         <Ant.Drawer
           placement="right"
           closable={false}
           getContainer={false}
           className="right-drawer"
-          visible={Boolean(menuContent)}
+          visible={true}
           maskClosable={true}
           onClose={closeMenu}
           width={500}
         >
-          {menuContent}
+          {menu}
         </Ant.Drawer>
       )}
 
@@ -169,8 +168,7 @@ export function ActionBar() {
                 className="noselect"
                 onClick={(event) => {
                   event.domEvent.preventDefault();
-                  changers.changeMenu(state, name as MenuKind);
-                  setMenuContent(element);
+                  changeMenu(element);
                 }}
               >
                 {inner}

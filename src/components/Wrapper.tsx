@@ -1,32 +1,24 @@
-import { observer } from "mobx-react-lite";
+import * as PIXI from "pixi.js";
 import { useEffect, useRef } from "react";
-import { beginTrackingTicks, state } from "../state";
-import { loadAssets } from "../common";
 import { ActionBar } from "./ActionBar";
 import { SpeechBox } from "./SpeechBox";
 
-export const Wrapper = observer(() => {
+interface Props {
+  app: PIXI.Application;
+}
+
+export function Wrapper({ app }: Props) {
   const wrapper = useRef<null | HTMLDivElement>(null);
 
   // Effects
   // Bootstrap the app and perform the initial loading process.
   useEffect(() => {
-    const setup = () => {
-      const { app } = state;
-      wrapper.current?.appendChild(app.view);
-
-      beginTrackingTicks();
-
-      state.screen.which = "title";
-      state.dialogue.push({
-        name: "bob",
-        avatar: "bob",
-        text: " hey",
-      });
+    const _wrapper = wrapper.current;
+    _wrapper?.appendChild(app.view);
+    return () => {
+      _wrapper?.removeChild(app.view);
     };
-
-    loadAssets().then(setup).catch(setup);
-  }, []);
+  });
 
   return (
     <div ref={wrapper} className="wrapper noselect">
@@ -34,4 +26,4 @@ export const Wrapper = observer(() => {
       <ActionBar />
     </div>
   );
-});
+}
