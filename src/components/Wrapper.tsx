@@ -44,7 +44,7 @@ export function Wrapper() {
       setShowActionBar(true);
 
       changers.changeLog("misc", "Appended game screen.");
-      changers.changeScreen("title");
+      changers.changeScreen("city", "intro");
     });
   }, [rerender]);
 

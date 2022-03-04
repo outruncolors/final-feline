@@ -68,6 +68,14 @@ export const screens = {
     canVisit: false as undefined | false,
     Icon: MdTitle,
   },
+  city: {
+    id: 6,
+    name: "city",
+    title: "City",
+    description: "Lorem ipsum dolor sit amet.",
+    animations: ["bar", "casino", "housing", "intro", "shop", "tower"],
+    Icon: MdTitle,
+  },
 };
 
 export type ScreenKind = keyof typeof screens;
