@@ -9,6 +9,7 @@ import {
   ScreenKind,
   SkillKind,
 } from "../data";
+import type { MenuKind } from "../components";
 
 export type GameState = ReturnType<typeof initState>;
 export type GameStateProperty = keyof GameState;
@@ -46,9 +47,10 @@ const initState = () => {
       height,
       fuzzing: false,
     },
-    notifications: [] as Array<{ message: ReactNode; duration: number }>,
-    log: [{ kind: "misc", message: "--- Start ---" }],
-    dialogue: [] as Dialogue[],
+    notifications: [] as GameNotification[],
+    log: [] as GameLog[],
+    dialogue: [] as GameDialogue[],
+    menu: null as null | MenuKind,
   };
 };
 
@@ -78,8 +80,18 @@ export interface Foe extends GameEntity {
 
 export type ItemAndQuantity = [ItemKind, number];
 
-export interface Dialogue {
+export interface GameDialogue {
   name: string;
   avatar: string;
   text: string;
+}
+
+export interface GameLog {
+  kind: string;
+  message: string;
+}
+
+export interface GameNotification {
+  message: ReactNode;
+  duration: number;
 }

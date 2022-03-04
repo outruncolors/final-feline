@@ -1,7 +1,7 @@
 import { observe } from "mobx";
 import { GameStateProperty, state } from "./state";
 import { changers } from "./changers";
-import { handlers, setRerender } from "./handlers";
+import { handlers } from "./handlers";
 import { selectors } from "./selectors";
 import { beginTrackingTicks } from "./tick";
 
@@ -17,5 +17,5 @@ observe(state, (change) => {
   }
 });
 
-export { changers, selectors, setRerender, beginTrackingTicks };
+export { changers, selectors, beginTrackingTicks };
 export * from "./state";

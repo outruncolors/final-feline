@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { ScreenKind, screens } from "../data";
 import { state } from "./state";
+import type { MenuKind } from "../components";
 
 const changeLog = (kind: "misc" | "error", message: string) => {
   state.log.unshift({ kind, message });
@@ -21,6 +22,8 @@ const changeScreen = (screen: ScreenKind, animation?: string) => {
 
     if (animation) {
       state.screen.animation = animation;
+    } else {
+      state.screen.animation = entry.initialAnimation;
     }
 
     changeFuzzing();
@@ -48,6 +51,10 @@ const finishDialogue = () => {
   state.dialogue = [];
 };
 
+const changeMenu = (menu: null | MenuKind) => {
+  state.menu = menu;
+};
+
 export const changers = {
   changeLog,
   notify,
@@ -56,4 +63,5 @@ export const changers = {
   addDialogue,
   nextDialogue,
   finishDialogue,
+  changeMenu,
 };

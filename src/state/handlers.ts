@@ -10,9 +10,6 @@ export type GameStateChangeHandler = (
 
 const noop = () => {};
 
-let rerender: null | (() => void) = null;
-export const setRerender = (func: () => void) => (rerender = func);
-
 const handleScreenChange: GameStateChangeHandler = (change) => {
   if (change.name === "which") {
     if (state.screen.which) {
@@ -27,8 +24,6 @@ const handleScreenChange: GameStateChangeHandler = (change) => {
       if (animationToUse) {
         state.screen.container.addChild(animationToUse);
       }
-
-      rerender?.();
     }
   }
 
@@ -74,9 +69,7 @@ const handleLogChange: GameStateChangeHandler = () => {
 };
 observe(state.log, handleLogChange);
 
-const handleDialogueChange: GameStateChangeHandler = () => {
-  rerender?.();
-};
+const handleDialogueChange: GameStateChangeHandler = () => {};
 observe(state.dialogue, handleDialogueChange);
 
 export const handlers: Record<GameStateProperty, GameStateChangeHandler> = {
@@ -86,5 +79,6 @@ export const handlers: Record<GameStateProperty, GameStateChangeHandler> = {
   notifications: handleNotificationsChange,
   log: handleLogChange,
   player: noop,
-  dialogue: handleDialogueChange,
+  dialogue: noop,
+  menu: noop,
 };

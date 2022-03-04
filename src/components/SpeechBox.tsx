@@ -1,11 +1,12 @@
 import * as Ant from "antd";
-import { Dialogue, changers, selectors } from "../state";
+import { GameDialogue, changers, selectors, GameState } from "../state";
 
 interface Props {
-  dialogue: Dialogue;
+  state: GameState;
+  dialogue: GameDialogue;
 }
 
-export function SpeechBox({ dialogue }: Props) {
+export function SpeechBox({ dialogue, state }: Props) {
   const { name, avatar, text } = dialogue;
   const actions = [
     <Ant.Button
@@ -17,7 +18,7 @@ export function SpeechBox({ dialogue }: Props) {
     </Ant.Button>,
   ];
 
-  const hasNextOne = selectors.selectDialogueCount() > 1;
+  const hasNextOne = selectors.selectDialogueCount(state) > 1;
   if (hasNextOne) {
     actions.unshift(
       <Ant.Button

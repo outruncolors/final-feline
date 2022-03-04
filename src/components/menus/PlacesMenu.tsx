@@ -3,15 +3,15 @@ import { GoLocation } from "react-icons/go";
 import cx from "classnames";
 import { ComposableMenu } from "./ComposableMenu";
 import { Screen, ScreenKind, screens } from "../../data";
-import { changers, selectors } from "../../state";
+import { changers, GameState, selectors } from "../../state";
 import { Selectable } from "../Selectable";
 
 interface Props {
-  onClose(): void;
+  state: GameState;
 }
 
-export const PlacesMenu = ({ onClose }: Props) => {
-  const which = selectors.selectScreenName() as ScreenKind;
+export const PlacesMenu = ({ state }: Props) => {
+  const screenName = selectors.selectScreenName(state) as ScreenKind;
 
   return (
     <ComposableMenu title="Places" Icon={GoLocation}>
@@ -30,13 +30,13 @@ export const PlacesMenu = ({ onClose }: Props) => {
               !screen.hasOwnProperty("canVisit") || (screen as Screen).canVisit
           )
           .map((screen) => (
-            <Selectable key={screen.name} selected={screen.name === which}>
+            <Selectable key={screen.name} selected={screen.name === screenName}>
               <Ant.Menu.Item
                 key={screen.name}
                 onClick={() => {
-                  if (screen.name !== which) {
+                  if (screen.name !== screenName) {
                     changers.changeScreen(screen.name as ScreenKind);
-                    onClose();
+                    changers.changeMenu(null);
                   }
                 }}
               >

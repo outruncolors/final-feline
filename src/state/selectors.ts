@@ -1,11 +1,11 @@
 import { screens } from "../data";
-import { state } from "./state";
+import { GameState } from "./state";
 
-const selectFuzzing = () => state.screen.fuzzing;
+const selectFuzzing = (state: GameState) => state.screen.fuzzing;
 
-const selectScreenName = () => state.screen.which;
+const selectScreenName = (state: GameState) => state.screen.which;
 
-const selectScreenTitle = () => {
+const selectScreenTitle = (state: GameState) => {
   if (state.screen.which) {
     const screen = screens[state.screen.which];
     return screen.title;
@@ -14,11 +14,11 @@ const selectScreenTitle = () => {
   }
 };
 
-const selectScreenContainer = () => state.screen.container;
+const selectScreenContainer = (state: GameState) => state.screen.container;
 
-const selectPlayerData = () => ({ ...state.player });
+const selectPlayerData = (state: GameState) => ({ ...state.player });
 
-const selectDialogue = () => {
+const selectDialogue = (state: GameState) => {
   try {
     const newest = { ...state.dialogue[0] };
 
@@ -32,7 +32,9 @@ const selectDialogue = () => {
   }
 };
 
-const selectDialogueCount = () => state.dialogue.length;
+const selectDialogueCount = (state: GameState) => state.dialogue.length;
+
+const selectActiveMenu = (state: GameState) => state.menu;
 
 export const selectors = {
   selectFuzzing,
@@ -42,4 +44,5 @@ export const selectors = {
   selectPlayerData,
   selectDialogue,
   selectDialogueCount,
+  selectActiveMenu,
 };

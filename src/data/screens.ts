@@ -8,6 +8,7 @@ export interface Screen {
   title: string;
   description: string;
   animations: string[];
+  initialAnimation: string;
   canVisit?: boolean;
   Icon: IconType;
 }
@@ -19,6 +20,7 @@ export const screens = {
     title: "Electric Saturn",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["blink", "blink-talk", "charge", "mad", "talk"],
+    initialAnimation: "talk",
     Icon: GiRingedPlanet,
   },
   shop: {
@@ -27,6 +29,7 @@ export const screens = {
     title: "The Bare Axe",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["blink", "blink-talk", "caught", "sleep", "talk"],
+    initialAnimation: "talk",
     Icon: GiSharpAxe,
   },
   tower: {
@@ -35,6 +38,7 @@ export const screens = {
     title: "The Tower",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["blink", "blink-talk", "jot", "pat", "send", "talk"],
+    initialAnimation: "talk",
     Icon: GiTvTower,
   },
   housing: {
@@ -49,6 +53,7 @@ export const screens = {
       "right-blink",
       "right-talk",
     ],
+    initialAnimation: "left-talk",
     Icon: GiHouse,
   },
   casino: {
@@ -57,6 +62,7 @@ export const screens = {
     title: "Marseyland",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["left-blink", "right-blink"],
+    initialAnimation: "right-blink",
     Icon: MdCasino,
   },
   title: {
@@ -65,6 +71,7 @@ export const screens = {
     title: "Title",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["title"],
+    initialAnimation: "title",
     canVisit: false as undefined | false,
     Icon: MdTitle,
   },
@@ -74,6 +81,7 @@ export const screens = {
     title: "City",
     description: "Lorem ipsum dolor sit amet.",
     animations: ["bar", "casino", "housing", "intro", "shop", "tower"],
+    initialAnimation: "intro",
     Icon: MdTitle,
   },
 };

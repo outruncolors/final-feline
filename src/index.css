@@ -59,8 +59,10 @@ canvas {
 }
 
 .action-menu {
-  position: relative !important;
-  top: -50px !important;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   background: rgba(0, 21, 40, 0.9) !important;
   border: 2px solid #ffffff !important;
 }
