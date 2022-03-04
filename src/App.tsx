@@ -27,6 +27,7 @@ const noop = () => {};
 const CHANCE = new Chance();
 
 export const GameStateContext = createContext<GameState>({
+  getScreen: () => null,
   screenName: null,
   screenAnimation: null,
   player: null,
@@ -55,6 +56,7 @@ function App() {
   const [menu, setMenu] = useState<null | ReactNode>(null);
   const gameState = useMemo<GameState>(
     () => ({
+      getScreen: () => screen.current,
       screenName,
       screenAnimation,
       player,
@@ -118,19 +120,28 @@ function App() {
   }, []);
 
   // Bootstrapping
+  const hasBootstrapped = useRef(false);
   useEffect(() => {
-    loadAssets().then(() => {
-      PIXI.Ticker.shared.add(handleGameTick);
+    if (!hasBootstrapped.current) {
+      hasBootstrapped.current = true;
 
-      screen.current = new PIXI.Container();
-      app.current = new PIXI.Application({ width: 1920 / 2, height: 1080 / 2 });
-      app.current.stage.addChild(screen.current);
-      app.current.renderer.render(app.current.stage);
+      loadAssets().then(() => {
+        PIXI.Ticker.shared.add(handleGameTick);
 
-      setScreenName("housing");
-      setScreenAnimation("right-talk");
-    });
-  }, [handleGameTick]);
+        screen.current = new PIXI.Container();
+        screen.current.name = "screen";
+        app.current = new PIXI.Application({
+          width: 1920 / 2,
+          height: 1080 / 2,
+        });
+        app.current.stage.addChild(screen.current);
+        app.current.renderer.render(app.current.stage);
+
+        setScreenName("title");
+        setTimeout(() => screens.title.script(gameState, gameChangers));
+      });
+    }
+  });
 
   // Changing screen or animation.
   useEffect(() => {
@@ -138,10 +149,9 @@ function App() {
 
     if (_screen && screenName) {
       const animations = loadScreenAnimations(screenName);
-      const [defaultAnimation] = Object.values(animations);
       const animationToUse = screenAnimation
         ? animations[screenAnimation]
-        : defaultAnimation;
+        : animations[screens[screenName].initialAnimation];
 
       if (animationToUse) {
         _screen.addChild(animationToUse);
@@ -154,7 +164,7 @@ function App() {
   }, [screenName, screenAnimation]);
 
   // Fuzzing
-  const lastScreenLoaded = useRef("");
+  const lastScreenLoaded = useRef("title");
   useEffect(() => {
     const _screen = screen.current;
     const _lastScreen = lastScreenLoaded.current;
@@ -248,6 +258,7 @@ export interface GameNotification {
 }
 
 export interface GameState {
+  getScreen(): null | PIXI.Container;
   screenName: null | ScreenKind;
   screenAnimation: null | string;
   player: null | GamePlayer;

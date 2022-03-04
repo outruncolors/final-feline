@@ -41,6 +41,8 @@ export const loadVisualAsset = (which: string, animated = false) => {
       ? new PIXI.AnimatedSprite(sheet.animations[which])
       : new PIXI.Sprite(sheet.textures[which]);
 
+    asset.name = which;
+
     return asset;
   } else {
     throw new Error();
@@ -326,7 +328,7 @@ export const loadScreenAnimations = (screen: ScreenKind) => {
   for (const animation of entry.animations) {
     const anim = (animations[animation] = loader(animation));
     anim.scale.set(4);
-    anim.animationSpeed = 0.05;
+    anim.animationSpeed = 0.075;
     anim.play();
   }
 

@@ -1,7 +1,7 @@
-import Chance from "chance";
 import { GiTvTower, GiRingedPlanet, GiSharpAxe, GiHouse } from "react-icons/gi";
 import { MdCasino, MdTitle } from "react-icons/md";
 import { IconType } from "react-icons/lib";
+import { barScript, cityScript, titleScript } from "./scripts";
 import type { GameState, GameChangers } from "../App";
 
 export interface Screen {
@@ -16,8 +16,6 @@ export interface Screen {
   script(gameState: GameState, gameChangers: GameChangers): void;
 }
 
-const CHANCE = new Chance();
-
 export const screens = {
   bar: {
     id: 0,
@@ -27,24 +25,7 @@ export const screens = {
     animations: ["blink", "blink-talk", "charge", "mad", "talk"],
     initialAnimation: "talk",
     Icon: GiRingedPlanet,
-    script(gameState: GameState, gameChangers: GameChangers) {
-      gameChangers.changeDialogue([
-        {
-          name: "Bob",
-          avatar: "Bob",
-          text: "A",
-        },
-        {
-          name: "Bob",
-          avatar: "Bob",
-          text: "B",
-          onClose: () => {
-            gameChangers.changeScreenAnimation("blink");
-            gameChangers.randomizeScreenAnimation(1000);
-          },
-        },
-      ]);
-    },
+    script: barScript,
   },
   shop: {
     id: 1,
@@ -101,17 +82,17 @@ export const screens = {
     initialAnimation: "title",
     canVisit: false as undefined | false,
     Icon: MdTitle,
-    script() {},
+    script: titleScript,
   },
   city: {
     id: 6,
     name: "city",
     title: "City",
     description: "Lorem ipsum dolor sit amet.",
-    animations: ["bar", "casino", "housing", "intro", "shop", "tower"],
+    animations: ["bar", "casino", "housing", "intro", "shop", "tower", "idle"],
     initialAnimation: "intro",
     Icon: MdTitle,
-    script() {},
+    script: cityScript,
   },
 };
 

@@ -1800,7 +1800,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
 	"sourceSize": {"w":245,"h":124}
 },
-"screens/city/intro/screen_city_intro_000":
+"screens/city/idle/screen_city_idle_000":
 {
 	"frame": {"x":383,"y":507,"w":245,"h":124},
 	"rotated": false,
@@ -1808,15 +1808,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
 	"sourceSize": {"w":245,"h":124}
 },
-"screens/city/intro/screen_city_intro_001":
-{
-	"frame": {"x":383,"y":507,"w":245,"h":124},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
-	"sourceSize": {"w":245,"h":124}
-},
-"screens/city/intro/screen_city_intro_002":
+"screens/city/idle/screen_city_idle_001":
 {
 	"frame": {"x":383,"y":633,"w":245,"h":124},
 	"rotated": false,
@@ -1824,7 +1816,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
 	"sourceSize": {"w":245,"h":124}
 },
-"screens/city/intro/screen_city_intro_003":
+"screens/city/intro/screen_city_intro_000":
 {
 	"frame": {"x":630,"y":507,"w":245,"h":124},
 	"rotated": false,
@@ -1832,9 +1824,33 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
 	"sourceSize": {"w":245,"h":124}
 },
-"screens/city/intro/screen_city_intro_004":
+"screens/city/intro/screen_city_intro_001":
+{
+	"frame": {"x":630,"y":507,"w":245,"h":124},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
+	"sourceSize": {"w":245,"h":124}
+},
+"screens/city/intro/screen_city_intro_002":
 {
 	"frame": {"x":383,"y":759,"w":245,"h":124},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
+	"sourceSize": {"w":245,"h":124}
+},
+"screens/city/intro/screen_city_intro_003":
+{
+	"frame": {"x":630,"y":633,"w":245,"h":124},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
+	"sourceSize": {"w":245,"h":124}
+},
+"screens/city/intro/screen_city_intro_004":
+{
+	"frame": {"x":383,"y":507,"w":245,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
@@ -1842,7 +1858,7 @@
 },
 "screens/city/intro/screen_city_intro_005":
 {
-	"frame": {"x":630,"y":633,"w":245,"h":124},
+	"frame": {"x":877,"y":507,"w":245,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
@@ -1850,7 +1866,7 @@
 },
 "screens/city/intro/screen_city_intro_006":
 {
-	"frame": {"x":877,"y":507,"w":245,"h":124},
+	"frame": {"x":383,"y":885,"w":245,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
@@ -1858,7 +1874,7 @@
 },
 "screens/city/intro/screen_city_intro_007":
 {
-	"frame": {"x":383,"y":885,"w":245,"h":124},
+	"frame": {"x":630,"y":759,"w":245,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
@@ -1866,7 +1882,7 @@
 },
 "screens/city/intro/screen_city_intro_008":
 {
-	"frame": {"x":877,"y":507,"w":245,"h":124},
+	"frame": {"x":383,"y":885,"w":245,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
@@ -1874,7 +1890,7 @@
 },
 "screens/city/intro/screen_city_intro_009":
 {
-	"frame": {"x":630,"y":633,"w":245,"h":124},
+	"frame": {"x":877,"y":507,"w":245,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
@@ -1882,7 +1898,7 @@
 },
 "screens/city/intro/screen_city_intro_010":
 {
-	"frame": {"x":383,"y":759,"w":245,"h":124},
+	"frame": {"x":383,"y":507,"w":245,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
@@ -1890,7 +1906,7 @@
 },
 "screens/city/intro/screen_city_intro_011":
 {
-	"frame": {"x":630,"y":759,"w":245,"h":124},
+	"frame": {"x":383,"y":633,"w":245,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
@@ -3802,6 +3818,7 @@
 	"screens/city/bar/screen_city_bar": ["screens/city/bar/screen_city_bar_000","screens/city/bar/screen_city_bar_001","screens/city/bar/screen_city_bar_002","screens/city/bar/screen_city_bar_003","screens/city/bar/screen_city_bar_004"],
 	"screens/city/casino/screen_city_casino": ["screens/city/casino/screen_city_casino_000","screens/city/casino/screen_city_casino_001","screens/city/casino/screen_city_casino_002","screens/city/casino/screen_city_casino_003","screens/city/casino/screen_city_casino_004"],
 	"screens/city/housing/screen_city_housing": ["screens/city/housing/screen_city_housing_000","screens/city/housing/screen_city_housing_001","screens/city/housing/screen_city_housing_002","screens/city/housing/screen_city_housing_003","screens/city/housing/screen_city_housing_004"],
+	"screens/city/idle/screen_city_idle": ["screens/city/idle/screen_city_idle_000","screens/city/idle/screen_city_idle_001"],
 	"screens/city/intro/screen_city_intro": ["screens/city/intro/screen_city_intro_000","screens/city/intro/screen_city_intro_001","screens/city/intro/screen_city_intro_002","screens/city/intro/screen_city_intro_003","screens/city/intro/screen_city_intro_004","screens/city/intro/screen_city_intro_005","screens/city/intro/screen_city_intro_006","screens/city/intro/screen_city_intro_007","screens/city/intro/screen_city_intro_008","screens/city/intro/screen_city_intro_009","screens/city/intro/screen_city_intro_010","screens/city/intro/screen_city_intro_011"],
 	"screens/city/shop/screen_city_shop": ["screens/city/shop/screen_city_shop_000","screens/city/shop/screen_city_shop_001","screens/city/shop/screen_city_shop_002","screens/city/shop/screen_city_shop_003","screens/city/shop/screen_city_shop_004"],
 	"screens/city/tower/screen_city_tower": ["screens/city/tower/screen_city_tower_000","screens/city/tower/screen_city_tower_001","screens/city/tower/screen_city_tower_002","screens/city/tower/screen_city_tower_003","screens/city/tower/screen_city_tower_004"],
@@ -3847,6 +3864,6 @@
 	"format": "RGBA8888",
 	"size": {"w":1997,"h":1753},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:4e7e5770af26f1fd0b196670ed474116:772a05253efdc4167fc4363049acb9a6:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b122fa987b6157ec8e5587904582b534:5fed31c683088a0454f3703e2e60fe65:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }
