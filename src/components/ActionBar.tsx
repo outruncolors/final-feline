@@ -16,13 +16,12 @@ import {
   TransactionMenu,
 } from "./menus";
 import { Selectable } from "./Selectable";
-import { GameContext } from "../App";
+import { GameStateContext, GameChangerContext } from "../App";
 
 export function ActionBar() {
   const [activeMenu, setActiveMenu] = useState<null | MenuKind>(null);
-  const { screenName, menu, changeMenu, player: playerData } = useContext(
-    GameContext
-  );
+  const { screenName, menu, player: playerData } = useContext(GameStateContext);
+  const { changeMenu } = useContext(GameChangerContext);
   const closeMenu = useCallback(() => {
     changeMenu(null);
     setActiveMenu(null);

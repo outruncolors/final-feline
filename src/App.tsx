@@ -1,3 +1,4 @@
+import Chance from "chance";
 import {
   ReactNode,
   useEffect,
@@ -5,11 +6,12 @@ import {
   useState,
   createContext,
   useMemo,
+  useCallback,
 } from "react";
 import * as PIXI from "pixi.js";
 import "./App.css";
 import "antd/dist/antd.css";
-import { loadAssets, loadScreenAnimations } from "./common";
+import { colors, loadAssets, loadScreenAnimations } from "./common";
 import { Layout, Wrapper } from "./components";
 import {
   AfflictionKind,
@@ -22,18 +24,24 @@ import {
 } from "./data";
 
 const noop = () => {};
-export const GameContext = createContext<Record<string, any>>({
+const CHANCE = new Chance();
+
+export const GameStateContext = createContext<GameState>({
   screenName: null,
   screenAnimation: null,
   player: null,
   notifications: [],
   dialogue: [],
   menu: null,
+});
+export const GameChangerContext = createContext<GameChangers>({
+  changeScreenName: noop,
   changeScreenAnimation: noop,
   changePlayer: noop,
   changeNotifications: noop,
   changeDialogue: noop,
   changeMenu: noop,
+  randomizeScreenAnimation: noop,
 });
 
 function App() {
@@ -42,11 +50,10 @@ function App() {
   const [screenName, setScreenName] = useState<null | ScreenKind>(null);
   const [screenAnimation, setScreenAnimation] = useState<null | string>(null);
   const [player, setPlayer] = useState<null | GamePlayer>(null);
-  const [fuzzing, setFuzzing] = useState(false);
   const [notifications, setNotifications] = useState<GameNotification[]>([]);
   const [dialogue, setDialogue] = useState<GameDialogue[]>([]);
   const [menu, setMenu] = useState<null | ReactNode>(null);
-  const gameChangers = useMemo(
+  const gameState = useMemo<GameState>(
     () => ({
       screenName,
       screenAnimation,
@@ -54,38 +61,67 @@ function App() {
       notifications,
       dialogue,
       menu,
+    }),
+    [screenName, screenAnimation, player, notifications, dialogue, menu]
+  );
+  const randomizingScreenAnimation = useRef<NodeJS.Timeout>();
+  const randomizeScreenAnimation = useCallback(
+    (frequencyInMs: number) => {
+      const chooseRandomAnimation = () => {
+        const willChange = CHANCE.bool({ likelihood: 20 });
+
+        if (willChange && screenName) {
+          setScreenAnimation(CHANCE.pickone(screens[screenName].animations));
+        }
+
+        setTimeout(chooseRandomAnimation, frequencyInMs);
+      };
+
+      randomizingScreenAnimation.current = setTimeout(
+        chooseRandomAnimation,
+        frequencyInMs
+      );
+    },
+    [screenName]
+  );
+  const gameChangers = useMemo<GameChangers>(
+    () => ({
       changeScreenName: setScreenName,
       changeScreenAnimation: setScreenAnimation,
       changePlayer: setPlayer,
       changeNotifications: setNotifications,
       changeDialogue: setDialogue,
       changeMenu: setMenu,
+      randomizeScreenAnimation: randomizeScreenAnimation,
     }),
-    [screenName, screenAnimation, player, notifications, dialogue, menu]
+    [randomizeScreenAnimation]
   );
+  const sinceLastFuzzChange = useRef(0);
+  const handleGameTick = useCallback(() => {
+    const _screen = screen.current;
 
-  useEffect(() => {}, [fuzzing]);
+    if (_screen) {
+      const fuzzer = _screen.getChildByName("fuzzer");
 
-  useEffect(() => {
-    if (screenName) {
-      const animations = loadScreenAnimations(screenName);
-      const [defaultAnimation] = Object.values(animations);
-      const animationToUse = screenAnimation
-        ? animations[screenAnimation]
-        : defaultAnimation;
-
-      if (animationToUse) {
-        screen.current?.addChild(animationToUse);
-
-        return () => {
-          screen.current?.removeChild(animationToUse);
-        };
+      if (fuzzer) {
+        if (sinceLastFuzzChange.current === 20) {
+          const value = Math.random();
+          (fuzzer.filters![0] as any).seed = value;
+          sinceLastFuzzChange.current = 0;
+        } else {
+          sinceLastFuzzChange.current++;
+        }
+      } else {
+        sinceLastFuzzChange.current = 0;
       }
     }
-  }, [screenName, screenAnimation]);
+  }, []);
 
+  // Bootstrapping
   useEffect(() => {
     loadAssets().then(() => {
+      PIXI.Ticker.shared.add(handleGameTick);
+
       screen.current = new PIXI.Container();
       app.current = new PIXI.Application({ width: 1920 / 2, height: 1080 / 2 });
       app.current.stage.addChild(screen.current);
@@ -94,12 +130,69 @@ function App() {
       setScreenName("housing");
       setScreenAnimation("right-talk");
     });
-  }, []);
+  }, [handleGameTick]);
+
+  // Changing screen or animation.
+  useEffect(() => {
+    const _screen = screen.current;
+
+    if (_screen && screenName) {
+      const animations = loadScreenAnimations(screenName);
+      const [defaultAnimation] = Object.values(animations);
+      const animationToUse = screenAnimation
+        ? animations[screenAnimation]
+        : defaultAnimation;
+
+      if (animationToUse) {
+        _screen.addChild(animationToUse);
+
+        return () => {
+          _screen.removeChild(animationToUse);
+        };
+      }
+    }
+  }, [screenName, screenAnimation]);
+
+  // Fuzzing
+  const lastScreenLoaded = useRef("");
+  useEffect(() => {
+    const _screen = screen.current;
+    const _lastScreen = lastScreenLoaded.current;
+
+    if (_screen && screenName && screenName !== _lastScreen) {
+      if (randomizingScreenAnimation.current) {
+        clearTimeout(randomizingScreenAnimation.current);
+      }
+
+      lastScreenLoaded.current = screenName;
+
+      const fuzzer = new PIXI.Sprite(PIXI.Texture.WHITE);
+      fuzzer.name = "fuzzer";
+      fuzzer.width = _screen.width;
+      fuzzer.height = _screen.height;
+      const noise = new PIXI.filters.NoiseFilter();
+      fuzzer.filters = [noise];
+      fuzzer.tint = colors.black;
+      _screen.addChild(fuzzer);
+
+      fuzzer.on("destroyed", () => {
+        const screenNow = screens[lastScreenLoaded.current as ScreenKind];
+        screenNow?.script(gameState, gameChangers);
+      });
+
+      setTimeout(() => {
+        _screen.removeChild(fuzzer);
+        fuzzer.destroy();
+      }, 3000);
+    }
+  }, [screenName, gameState, gameChangers]);
 
   return (
-    <GameContext.Provider value={gameChangers}>
-      <Layout>{app.current && <Wrapper app={app.current} />}</Layout>
-    </GameContext.Provider>
+    <GameStateContext.Provider value={gameState}>
+      <GameChangerContext.Provider value={gameChangers}>
+        <Layout>{app.current && <Wrapper app={app.current} />}</Layout>
+      </GameChangerContext.Provider>
+    </GameStateContext.Provider>
   );
 }
 
@@ -140,6 +233,8 @@ export interface GameDialogue {
   name: string;
   avatar: string;
   text: string;
+  onOpen?(): void;
+  onClose?(): void;
 }
 
 export interface GameLog {
@@ -150,4 +245,23 @@ export interface GameLog {
 export interface GameNotification {
   message: ReactNode;
   duration: number;
+}
+
+export interface GameState {
+  screenName: null | ScreenKind;
+  screenAnimation: null | string;
+  player: null | GamePlayer;
+  notifications: GameNotification[];
+  dialogue: GameDialogue[];
+  menu: null | ReactNode;
+}
+
+export interface GameChangers {
+  changeScreenName(screen: null | ScreenKind): void;
+  changeScreenAnimation(animation: null | string): void;
+  changePlayer(player: null | GamePlayer): void;
+  changeNotifications(notifications: GameNotification[]): void;
+  changeDialogue(dialogue: GameDialogue[]): void;
+  changeMenu(menu: null | ReactNode): void;
+  randomizeScreenAnimation(frequency: number): void;
 }

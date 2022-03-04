@@ -1,29 +1,54 @@
 import { useContext } from "react";
 import * as Ant from "antd";
-import { GameContext } from "../App";
+import { GameStateContext, GameChangerContext } from "../App";
 
 export function SpeechBox() {
-  const { dialogue, changeDialogue } = useContext(GameContext);
+  const { dialogue } = useContext(GameStateContext);
+  const { changeDialogue } = useContext(GameChangerContext);
 
   const activeDialogue = dialogue[0];
 
   if (activeDialogue) {
-    const { name, avatar, text } = activeDialogue;
+    const restOfDialogue = dialogue.slice(1);
+    const noop = () => {};
+    const {
+      name,
+      avatar,
+      text,
+      onClose = noop,
+      onOpen = noop,
+    } = activeDialogue;
+    const closeDialogue = () => {
+      onClose();
+
+      changeDialogue([]);
+
+      // Handle the rest of the unseen messages.
+      for (const each of restOfDialogue) {
+        each.onOpen?.();
+        each.onClose?.();
+      }
+    };
+    const nextDialog = () => {
+      onClose();
+      changeDialogue(restOfDialogue);
+      onOpen();
+    };
 
     const actions = [
-      <Ant.Button key="done" type="ghost" onClick={() => changeDialogue([])}>
+      <Ant.Button key="done" type="ghost" onClick={closeDialogue}>
         Done
       </Ant.Button>,
     ];
 
-    const hasNextOne = false;
+    const hasNextOne = dialogue.length > 1;
     if (hasNextOne) {
       actions.unshift(
         <Ant.Button
           key="next"
           type="ghost"
           style={{ marginRight: "1rem" }}
-          onClick={() => changeDialogue(dialogue.slice(1))}
+          onClick={nextDialog}
         >
           Next
         </Ant.Button>

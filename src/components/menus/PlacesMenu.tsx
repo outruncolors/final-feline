@@ -2,18 +2,16 @@ import { useContext } from "react";
 import * as Ant from "antd";
 import { GoLocation } from "react-icons/go";
 import cx from "classnames";
-import { GameContext } from "../../App";
+import { GameChangerContext, GameStateContext } from "../../App";
 import { Screen, ScreenKind, screens } from "../../data";
 import { Selectable } from "../Selectable";
 import { ComposableMenu } from "./ComposableMenu";
 
 export function PlacesMenu() {
-  const {
-    screenName,
-    changeScreenName,
-    changeScreenAnimation,
-    changeMenu,
-  } = useContext(GameContext);
+  const { screenName } = useContext(GameStateContext);
+  const { changeScreenName, changeScreenAnimation, changeMenu } = useContext(
+    GameChangerContext
+  );
 
   return (
     <ComposableMenu title="Places" Icon={GoLocation}>
