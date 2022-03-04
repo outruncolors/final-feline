@@ -43,7 +43,7 @@ canvas {
   -webkit-box-shadow: -9px 9px 15px 0px #000000;
   box-shadow: -9px 9px 15px 0px #000000;
   padding: 2.5rem;
-  padding-bottom: 0;
+  padding-bottom: 0px;
   background: #333333;
   border-radius: 8px;
 }
@@ -60,8 +60,8 @@ canvas {
 
 .action-menu {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: 0px;
+  left: 0px;
   width: 100%;
   background: rgba(0, 21, 40, 0.9) !important;
   border: 2px solid #ffffff !important;
@@ -99,7 +99,7 @@ canvas {
   background: transparent !important;
 }
 
-.bottom-drawer .ant-comment-actions {
+.speech-box .ant-comment-actions {
   background: transparent !important;
   display: flex !important;
   flex-direction: row-reverse !important;
@@ -169,4 +169,11 @@ canvas {
 
 .no-margin {
   margin: 0;
+}
+
+.speech-box {
+  position: absolute !important;
+  bottom: 50px !important;
+  left: 10% !important;
+  width: 80% !important;
 }

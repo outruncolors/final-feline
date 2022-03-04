@@ -1,16 +1,13 @@
 import * as Ant from "antd";
+import { observer } from "mobx-react";
 import { GoLocation } from "react-icons/go";
 import cx from "classnames";
 import { ComposableMenu } from "./ComposableMenu";
 import { Screen, ScreenKind, screens } from "../../data";
-import { changers, GameState, selectors } from "../../state";
+import { state, changers, selectors } from "../../state";
 import { Selectable } from "../Selectable";
 
-interface Props {
-  state: GameState;
-}
-
-export const PlacesMenu = ({ state }: Props) => {
+export const PlacesMenu = observer(() => {
   const screenName = selectors.selectScreenName(state) as ScreenKind;
 
   return (
@@ -35,8 +32,8 @@ export const PlacesMenu = ({ state }: Props) => {
                 key={screen.name}
                 onClick={() => {
                   if (screen.name !== screenName) {
-                    changers.changeScreen(screen.name as ScreenKind);
-                    changers.changeMenu(null);
+                    changers.changeScreen(state, screen.name as ScreenKind);
+                    changers.changeMenu(state, null);
                   }
                 }}
               >
@@ -59,4 +56,4 @@ export const PlacesMenu = ({ state }: Props) => {
       </Ant.Menu>
     </ComposableMenu>
   );
-};
+});

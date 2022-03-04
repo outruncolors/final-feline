@@ -6,7 +6,7 @@ import { HiOutlineUserGroup } from "react-icons/hi";
 import { IoIosGrid } from "react-icons/io";
 import { AiOutlineClose } from "react-icons/ai";
 import { screens } from "../data";
-import { GameState, changers, selectors } from "../state";
+import { state, changers, selectors } from "../state";
 import {
   MenuKind,
   PartyMenu,
@@ -18,22 +18,18 @@ import {
 } from "./menus";
 import { Selectable } from "./Selectable";
 
-interface Props {
-  state: GameState;
-}
-
-export function ActionBar({ state }: Props) {
+export function ActionBar() {
   const [menuContent, setMenuContent] = useState<ReactNode>(null);
   const playerData = selectors.selectPlayerData(state);
   const screenName = selectors.selectScreenName(state);
   const screenTitle = selectors.selectScreenTitle(state);
   const menu = selectors.selectActiveMenu(state);
   const closeMenu = () => {
-    changers.changeMenu(null);
+    changers.changeMenu(state, null);
     setMenuContent(null);
   };
   const closeButton = (
-    <Selectable>
+    <Selectable key="close">
       <Ant.Menu.Item
         style={{ marginRight: "1rem" }}
         className="noselect"
@@ -137,7 +133,7 @@ export function ActionBar({ state }: Props) {
             {screenTitle}
           </>
         ),
-      element: <PlacesMenu state={state} />,
+      element: <PlacesMenu />,
     },
   };
 
@@ -168,12 +164,12 @@ export function ActionBar({ state }: Props) {
           name === menu ? (
             closeButton
           ) : (
-            <Selectable>
+            <Selectable key={name}>
               <Ant.Menu.Item
                 className="noselect"
                 onClick={(event) => {
                   event.domEvent.preventDefault();
-                  changers.changeMenu(name as MenuKind);
+                  changers.changeMenu(state, name as MenuKind);
                   setMenuContent(element);
                 }}
               >

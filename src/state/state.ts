@@ -1,6 +1,14 @@
 import { ReactNode } from "react";
+import * as Ant from "antd";
 import * as PIXI from "pixi.js";
-import { makeAutoObservable } from "mobx";
+import {
+  IObjectDidChange,
+  makeAutoObservable,
+  observe,
+  configure,
+  observable,
+} from "mobx";
+import { colors, loadScreenAnimations } from "../common";
 import {
   AfflictionKind,
   FoeKind,
@@ -11,52 +19,122 @@ import {
 } from "../data";
 import type { MenuKind } from "../components";
 
-export type GameState = ReturnType<typeof initState>;
-export type GameStateProperty = keyof GameState;
+export type GameStateProperty = keyof MyGameState;
 
 // === config
 const config = {
   SCREEN_SIZE: [1920 / 2, 1080 / 2],
 };
 
-const initState = () => {
-  const [width, height] = config.SCREEN_SIZE;
-  const app = new PIXI.Application({ width, height });
-  const screen = new PIXI.Container();
+configure({
+  enforceActions: "never",
+});
 
-  app.stage.addChild(screen);
-  app.renderer.render(app.stage);
-
-  return {
-    app,
-    ticks: 0,
-    player: {
-      id: "",
-      name: "Foo Bar",
-      stuff: [] as ItemAndQuantity[],
-      party: [] as TeamMember[],
-      roster: [] as TeamMember[],
-      felidae: 0,
-      transactions: [],
-    },
-    screen: {
-      container: screen,
-      which: null as null | ScreenKind,
-      animation: null as null | string,
-      width,
-      height,
-      fuzzing: false,
-    },
-    notifications: [] as GameNotification[],
-    log: [] as GameLog[],
-    dialogue: [] as GameDialogue[],
-    menu: null as null | MenuKind,
+export class MyGameState {
+  app: PIXI.Application;
+  ticks = 0;
+  player = {
+    id: "",
+    name: "Bob",
+    stuff: [] as ItemAndQuantity[],
+    party: [] as TeamMember[],
+    roster: [] as TeamMember[],
+    felidae: 0,
+    transactions: [],
   };
+  screen = {
+    container: null as null | PIXI.Container,
+    which: null as null | ScreenKind,
+    width: 1920 / 2,
+    height: 1080 / 2,
+    fuzzing: false,
+    animation: null as null | string,
+  };
+  notifications = [] as GameNotification[];
+  log = [] as GameLog[];
+  dialogue = [] as GameDialogue[];
+  menu = null as null | MenuKind;
+
+  constructor() {
+    this.app = new PIXI.Application({
+      width: this.screen.width,
+      height: this.screen.height,
+    });
+    this.screen.container = new PIXI.Container();
+
+    this.app.stage.addChild(this.screen.container);
+    this.app.renderer.render(this.app.stage);
+
+    makeAutoObservable(this);
+
+    (window as any).GAME_STATE = this;
+  }
+}
+
+export const state = observable(new MyGameState());
+
+export type GameStateChangeHandler = (
+  change: IObjectDidChange<MyGameState>
+) => void;
+
+const handleScreenChange: GameStateChangeHandler = (change) => {
+  if (change.name === "which") {
+    if (state.screen.which && state.screen.animation) {
+      const animations = loadScreenAnimations(state.screen.which);
+
+      const { animation } = state.screen;
+      const [defaultAnimation] = Object.values(animations);
+      const animationToUse = animation
+        ? animations[animation]
+        : defaultAnimation;
+
+      if (animationToUse) {
+        state.screen.container?.addChild(animationToUse);
+      }
+    }
+  }
+
+  if (change.name === "fuzzing" && state.screen.container) {
+    if ((change as any).newValue) {
+      const fuzzer = new PIXI.Sprite(PIXI.Texture.WHITE);
+      fuzzer.name = "fuzzer";
+      fuzzer.width = state.screen.container.width;
+      fuzzer.height = state.screen.container.height;
+      const noise = new PIXI.filters.NoiseFilter();
+      fuzzer.filters = [noise];
+      fuzzer.tint = colors.black;
+      state.screen.container.addChild(fuzzer);
+    } else {
+      const fuzzer = state.screen.container.getChildByName("fuzzer");
+
+      if (fuzzer) {
+        state.screen.container.removeChild(fuzzer);
+      }
+    }
+  }
 };
+observe(state.screen, handleScreenChange);
 
-export let state = initState();
+const handleNotificationsChange: GameStateChangeHandler = () => {
+  const { message } = state.notifications[0];
 
-makeAutoObservable(state);
+  Ant.notification.open({
+    message,
+    style: {
+      position: "fixed",
+      top: 200,
+      right: 815,
+      width: 400,
+    },
+  });
+};
+observe(state.notifications, handleNotificationsChange);
+
+const handleLogChange: GameStateChangeHandler = () => {
+  const newest = { ...state.log[0] };
+  console.log(`Log) [${newest.kind}]: `, newest.message);
+};
+observe(state.log, handleLogChange);
 
 // == player
 export interface GameEntity {

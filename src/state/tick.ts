@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import throttle from "lodash.throttle";
-import { state } from "../state";
 import { selectors } from "./selectors";
+import { state } from "./state";
 
 // Handle each frame update.
 const handleGameTick = () => {
@@ -15,12 +15,14 @@ export const beginTrackingTicks = () => {
 };
 
 const randomizeFuzzerNoise = throttle(() => {
-  const fuzzer = selectors
-    .selectScreenContainer(state)
-    .getChildByName("fuzzer");
-  const [noise] = fuzzer?.filters ?? [];
+  const container = selectors.selectScreenContainer(state);
 
-  if (fuzzer && noise) {
-    (noise as any).seed = Math.random();
+  if (container) {
+    const fuzzer = container.getChildByName("fuzzer");
+    const [noise] = fuzzer?.filters ?? [];
+
+    if (fuzzer && noise) {
+      (noise as any).seed = Math.random();
+    }
   }
 }, 100);

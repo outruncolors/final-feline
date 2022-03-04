@@ -1,20 +1,28 @@
 import { ReactNode } from "react";
 import { ScreenKind, screens } from "../data";
-import { state } from "./state";
 import type { MenuKind } from "../components";
+import type { MyGameState } from "./state";
 
-const changeLog = (kind: "misc" | "error", message: string) => {
+const changeLog = (
+  state: MyGameState,
+  kind: "misc" | "error",
+  message: string
+) => {
   state.log.unshift({ kind, message });
 };
 
-const notify = (message: ReactNode, duration = 3000) => {
+const notify = (state: MyGameState, message: ReactNode, duration = 3000) => {
   state.notifications.unshift({
     message,
     duration,
   });
 };
 
-const changeScreen = (screen: ScreenKind, animation?: string) => {
+const changeScreen = (
+  state: MyGameState,
+  screen: ScreenKind,
+  animation?: string
+) => {
   const entry = screens[screen];
 
   if (entry) {
@@ -26,16 +34,16 @@ const changeScreen = (screen: ScreenKind, animation?: string) => {
       state.screen.animation = entry.initialAnimation;
     }
 
-    changeFuzzing();
+    changeFuzzing(state);
   }
 };
 
-const changeFuzzing = () => {
+const changeFuzzing = (state: MyGameState) => {
   state.screen.fuzzing = true;
   setTimeout(() => (state.screen.fuzzing = false), 2000);
 };
 
-const addDialogue = (name: string, content: string) => {
+const addDialogue = (state: MyGameState, name: string, content: string) => {
   state.dialogue.push({
     name,
     avatar: name,
@@ -43,15 +51,15 @@ const addDialogue = (name: string, content: string) => {
   });
 };
 
-const nextDialogue = () => {
+const nextDialogue = (state: MyGameState) => {
   state.dialogue.shift();
 };
 
-const finishDialogue = () => {
+const finishDialogue = (state: MyGameState) => {
   state.dialogue = [];
 };
 
-const changeMenu = (menu: null | MenuKind) => {
+const changeMenu = (state: MyGameState, menu: null | MenuKind) => {
   state.menu = menu;
 };
 
