@@ -2,7 +2,7 @@ export const GAME_TITLE = "FINAL FELINE";
 
 export const ENTITY_MOVING_DISTANCE = 256;
 export const ENTITY_WALKING_VELOCITY = 2;
-export const ENTITY_SCALE = 4;
+export const ENTITY_SCALE = 3;
 export const ENTITY_VITAL_BAR_WIDTH = 17;
 export const ENTITY_VITAL_BAR_HEIGHT = 5;
 export const ENTITY_ATB_BAR_HEIGHT = 4;

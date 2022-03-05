@@ -1,11 +1,21 @@
-import { GiTvTower, GiRingedPlanet, GiSharpAxe, GiHouse } from "react-icons/gi";
+import {
+  GiTvTower,
+  GiRingedPlanet,
+  GiSharpAxe,
+  GiHouse,
+  GiFist,
+} from "react-icons/gi";
 import { MdCasino, MdTitle } from "react-icons/md";
 import { IconType } from "react-icons/lib";
 import {
   barEnterScript,
   cityEnterScript,
   cityExitScript,
+  fightEnterScript,
+  fightExitScript,
   titleScript,
+  towerEnterScript,
+  towerExitScript,
 } from "./scripts";
 import type { GameState, GameChangers } from "../App";
 
@@ -53,8 +63,8 @@ export const screens = {
     animations: ["blink", "blink-talk", "jot", "pat", "send", "talk"],
     initialAnimation: "talk",
     Icon: GiTvTower,
-    onEnter() {},
-    onExit() {},
+    onEnter: towerEnterScript,
+    onExit: towerExitScript,
   },
   housing: {
     id: 3,
@@ -106,6 +116,18 @@ export const screens = {
     Icon: MdTitle,
     onEnter: cityEnterScript,
     onExit: cityExitScript,
+  },
+  fight: {
+    id: 7,
+    name: "fight",
+    title: "Fight",
+    description: "Lorem ipsum dolor sit amet.",
+    animations: ["idle"],
+    initialAnimation: "idle",
+    canVisit: false as undefined | false,
+    Icon: GiFist,
+    onEnter: fightEnterScript,
+    onExit: fightExitScript,
   },
 };
 

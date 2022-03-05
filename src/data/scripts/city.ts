@@ -1,6 +1,6 @@
 import * as PIXI from "pixi.js";
-import { ScreenKind } from "..";
-import { GameChangers, GameState } from "../../App";
+import type { ScreenKind } from "../screens";
+import type { GameChangers, GameState } from "../../App";
 
 const squares: PIXI.Sprite[] = [];
 let screenReference: null | PIXI.Container = null;

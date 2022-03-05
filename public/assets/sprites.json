@@ -1992,7 +1992,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":245,"h":124},
 	"sourceSize": {"w":245,"h":124}
 },
-"screens/housing/left-blink/screen_housing_left-blink_000":
+"screens/fight/idle/screen_fight_idle_000":
 {
 	"frame": {"x":648,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -2000,7 +2000,15 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/left-blink/screen_housing_left-blink_001":
+"screens/fight/idle/screen_fight_idle_001":
+{
+	"frame": {"x":648,"y":1,"w":254,"h":124},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
+	"sourceSize": {"w":254,"h":124}
+},
+"screens/housing/left-blink/screen_housing_left-blink_000":
 {
 	"frame": {"x":1,"y":679,"w":254,"h":124},
 	"rotated": false,
@@ -2008,15 +2016,7 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/left-talk/screen_housing_left-talk_000":
-{
-	"frame": {"x":648,"y":1,"w":254,"h":124},
-	"rotated": false,
-	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
-	"sourceSize": {"w":254,"h":124}
-},
-"screens/housing/left-talk/screen_housing_left-talk_001":
+"screens/housing/left-blink/screen_housing_left-blink_001":
 {
 	"frame": {"x":648,"y":127,"w":254,"h":124},
 	"rotated": false,
@@ -2024,15 +2024,15 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/look-viewer/screen_housing_look-viewer_000":
+"screens/housing/left-talk/screen_housing_left-talk_000":
 {
-	"frame": {"x":648,"y":1,"w":254,"h":124},
+	"frame": {"x":1,"y":679,"w":254,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/look-viewer/screen_housing_look-viewer_001":
+"screens/housing/left-talk/screen_housing_left-talk_001":
 {
 	"frame": {"x":904,"y":1,"w":254,"h":124},
 	"rotated": false,
@@ -2040,15 +2040,15 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/right-blink/screen_housing_right-blink_000":
+"screens/housing/look-viewer/screen_housing_look-viewer_000":
 {
-	"frame": {"x":648,"y":1,"w":254,"h":124},
+	"frame": {"x":1,"y":679,"w":254,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
-"screens/housing/right-blink/screen_housing_right-blink_001":
+"screens/housing/look-viewer/screen_housing_look-viewer_001":
 {
 	"frame": {"x":1,"y":805,"w":254,"h":124},
 	"rotated": false,
@@ -2056,9 +2056,25 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
 	"sourceSize": {"w":254,"h":124}
 },
+"screens/housing/right-blink/screen_housing_right-blink_000":
+{
+	"frame": {"x":1,"y":679,"w":254,"h":124},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
+	"sourceSize": {"w":254,"h":124}
+},
+"screens/housing/right-blink/screen_housing_right-blink_001":
+{
+	"frame": {"x":904,"y":127,"w":254,"h":124},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
+	"sourceSize": {"w":254,"h":124}
+},
 "screens/housing/right-talk/screen_housing_right-talk_000":
 {
-	"frame": {"x":648,"y":1,"w":254,"h":124},
+	"frame": {"x":1,"y":679,"w":254,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
@@ -2066,7 +2082,7 @@
 },
 "screens/housing/right-talk/screen_housing_right-talk_001":
 {
-	"frame": {"x":904,"y":127,"w":254,"h":124},
+	"frame": {"x":1160,"y":1,"w":254,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
@@ -2170,7 +2186,7 @@
 },
 "screens/title/title/screen_title_title_000":
 {
-	"frame": {"x":1160,"y":1,"w":254,"h":124},
+	"frame": {"x":648,"y":1,"w":254,"h":124},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":254,"h":124},
@@ -3822,6 +3838,7 @@
 	"screens/city/intro/screen_city_intro": ["screens/city/intro/screen_city_intro_000","screens/city/intro/screen_city_intro_001","screens/city/intro/screen_city_intro_002","screens/city/intro/screen_city_intro_003","screens/city/intro/screen_city_intro_004","screens/city/intro/screen_city_intro_005","screens/city/intro/screen_city_intro_006","screens/city/intro/screen_city_intro_007","screens/city/intro/screen_city_intro_008","screens/city/intro/screen_city_intro_009","screens/city/intro/screen_city_intro_010","screens/city/intro/screen_city_intro_011"],
 	"screens/city/shop/screen_city_shop": ["screens/city/shop/screen_city_shop_000","screens/city/shop/screen_city_shop_001","screens/city/shop/screen_city_shop_002","screens/city/shop/screen_city_shop_003","screens/city/shop/screen_city_shop_004"],
 	"screens/city/tower/screen_city_tower": ["screens/city/tower/screen_city_tower_000","screens/city/tower/screen_city_tower_001","screens/city/tower/screen_city_tower_002","screens/city/tower/screen_city_tower_003","screens/city/tower/screen_city_tower_004"],
+	"screens/fight/idle/screen_fight_idle": ["screens/fight/idle/screen_fight_idle_000","screens/fight/idle/screen_fight_idle_001"],
 	"screens/housing/left-blink/screen_housing_left-blink": ["screens/housing/left-blink/screen_housing_left-blink_000","screens/housing/left-blink/screen_housing_left-blink_001"],
 	"screens/housing/left-talk/screen_housing_left-talk": ["screens/housing/left-talk/screen_housing_left-talk_000","screens/housing/left-talk/screen_housing_left-talk_001"],
 	"screens/housing/look-viewer/screen_housing_look-viewer": ["screens/housing/look-viewer/screen_housing_look-viewer_000","screens/housing/look-viewer/screen_housing_look-viewer_001"],
@@ -3864,6 +3881,6 @@
 	"format": "RGBA8888",
 	"size": {"w":1997,"h":1753},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:b122fa987b6157ec8e5587904582b534:5fed31c683088a0454f3703e2e60fe65:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:e30717e1368e5828b833a306751dc3b6:2794bc933524a6d05e7482c5eb6ac140:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }

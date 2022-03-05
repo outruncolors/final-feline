@@ -121,9 +121,9 @@ export function ActionBar() {
           <>
             {(() => {
               if (screenName) {
-                const { Icon, title } = screens[screenName as ScreenKind];
+                const { Icon, name, title } = screens[screenName as ScreenKind];
 
-                return (
+                return name === "fight" ? null : (
                   <>
                     <Icon /> {title}
                   </>
@@ -169,18 +169,23 @@ export function ActionBar() {
           name === activeMenu ? (
             closeButton
           ) : (
-            <Selectable key={name}>
-              <Ant.Menu.Item
-                className="noselect"
-                onClick={(event) => {
-                  event.domEvent.preventDefault();
-                  changeMenu(element);
-                  setActiveMenu(name as MenuKind);
-                }}
-              >
-                {inner}
-              </Ant.Menu.Item>
-            </Selectable>
+            <>
+              {inner === null ? null : (
+                <Selectable key={name}>
+                  <Ant.Menu.Item
+                    className="noselect"
+                    disabled={inner === null}
+                    onClick={(event) => {
+                      event.domEvent.preventDefault();
+                      changeMenu(element);
+                      setActiveMenu(name as MenuKind);
+                    }}
+                  >
+                    {inner}
+                  </Ant.Menu.Item>
+                </Selectable>
+              )}
+            </>
           )
         )}
       </Ant.Menu>

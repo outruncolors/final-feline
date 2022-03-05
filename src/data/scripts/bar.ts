@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
-import { GameChangers, GameState } from "../../App";
+import type { ScreenKind } from "../screens";
+import type { GameChangers, GameState } from "../../App";
 
 let hasGreeted = false;
 export const barEnterScript = (

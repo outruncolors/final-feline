@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { GameChangers, GameState } from "../../App";
+import type { GameChangers, GameState } from "../../App";
 
 export const titleScript = (
   gameState: GameState,
