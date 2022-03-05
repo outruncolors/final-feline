@@ -18,6 +18,7 @@ import {
   FoeKind,
   ItemKind,
   JobKind,
+  Screen,
   ScreenKind,
   screens,
   SkillKind,
@@ -69,20 +70,24 @@ function App() {
   const randomizingScreenAnimation = useRef<NodeJS.Timeout>();
   const randomizeScreenAnimation = useCallback(
     (frequencyInMs: number) => {
-      const chooseRandomAnimation = () => {
-        const willChange = CHANCE.bool({ likelihood: 20 });
+      if (frequencyInMs === -1 && randomizingScreenAnimation.current) {
+        clearTimeout(randomizingScreenAnimation.current);
+      } else {
+        const chooseRandomAnimation = () => {
+          const willChange = CHANCE.bool({ likelihood: 20 });
 
-        if (willChange && screenName) {
-          setScreenAnimation(CHANCE.pickone(screens[screenName].animations));
-        }
+          if (willChange && screenName) {
+            setScreenAnimation(CHANCE.pickone(screens[screenName].animations));
+          }
 
-        setTimeout(chooseRandomAnimation, frequencyInMs);
-      };
+          setTimeout(chooseRandomAnimation, frequencyInMs);
+        };
 
-      randomizingScreenAnimation.current = setTimeout(
-        chooseRandomAnimation,
-        frequencyInMs
-      );
+        randomizingScreenAnimation.current = setTimeout(
+          chooseRandomAnimation,
+          frequencyInMs
+        );
+      }
     },
     [screenName]
   );
@@ -139,7 +144,7 @@ function App() {
         app.current.renderer.render(app.current.stage);
 
         setScreenName("title");
-        setTimeout(() => screens.title.script(gameState, gameChangers));
+        setTimeout(() => screens.title.onEnter(gameState, gameChangers));
       });
     }
   });
@@ -156,10 +161,6 @@ function App() {
 
       if (animationToUse) {
         _screen.addChild(animationToUse);
-
-        return () => {
-          _screen.removeChild(animationToUse);
-        };
       }
     }
   }, [screenName, screenAnimation]);
@@ -171,20 +172,19 @@ function App() {
     const _lastScreen = lastScreenLoaded.current;
 
     if (_screen && screenName && screenName !== _lastScreen) {
+      const screenThen = screens[
+        lastScreenLoaded.current as ScreenKind
+      ] as Screen;
+
+      if (screenThen.onExit) {
+        screenThen.onExit(gameState, gameChangers);
+      }
+
       if (randomizingScreenAnimation.current) {
         clearTimeout(randomizingScreenAnimation.current);
       }
 
       lastScreenLoaded.current = screenName;
-
-      for (const child of _screen.children) {
-        if (child.name === "TEMP") {
-          child.parent.removeChild(child);
-          child.interactive = false;
-          child.visible = false;
-          child.destroy();
-        }
-      }
 
       const noise = new PIXI.filters.NoiseFilter();
       const fuzzer = new PIXI.Sprite(PIXI.Texture.WHITE);
@@ -195,7 +195,7 @@ function App() {
       fuzzer.tint = colors.black;
       fuzzer.on("destroyed", () => {
         const screenNow = screens[lastScreenLoaded.current as ScreenKind];
-        screenNow?.script(gameState, gameChangers);
+        screenNow?.onEnter(gameState, gameChangers);
       });
 
       _screen.addChild(fuzzer);

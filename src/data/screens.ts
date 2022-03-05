@@ -1,7 +1,12 @@
 import { GiTvTower, GiRingedPlanet, GiSharpAxe, GiHouse } from "react-icons/gi";
 import { MdCasino, MdTitle } from "react-icons/md";
 import { IconType } from "react-icons/lib";
-import { barScript, cityScript, titleScript } from "./scripts";
+import {
+  barEnterScript,
+  cityEnterScript,
+  cityExitScript,
+  titleScript,
+} from "./scripts";
 import type { GameState, GameChangers } from "../App";
 
 export interface Screen {
@@ -13,7 +18,8 @@ export interface Screen {
   initialAnimation: string;
   canVisit?: boolean;
   Icon: IconType;
-  script(gameState: GameState, gameChangers: GameChangers): void;
+  onEnter?(gameState: GameState, gameChangers: GameChangers): void;
+  onExit?(gameState: GameState, gameChangers: GameChangers): void;
 }
 
 export const screens = {
@@ -25,7 +31,8 @@ export const screens = {
     animations: ["blink", "blink-talk", "charge", "mad", "talk"],
     initialAnimation: "talk",
     Icon: GiRingedPlanet,
-    script: barScript,
+    onEnter: barEnterScript,
+    onExit() {},
   },
   shop: {
     id: 1,
@@ -35,7 +42,8 @@ export const screens = {
     animations: ["blink", "blink-talk", "caught", "sleep", "talk"],
     initialAnimation: "talk",
     Icon: GiSharpAxe,
-    script() {},
+    onEnter() {},
+    onExit() {},
   },
   tower: {
     id: 2,
@@ -45,7 +53,8 @@ export const screens = {
     animations: ["blink", "blink-talk", "jot", "pat", "send", "talk"],
     initialAnimation: "talk",
     Icon: GiTvTower,
-    script() {},
+    onEnter() {},
+    onExit() {},
   },
   housing: {
     id: 3,
@@ -61,7 +70,8 @@ export const screens = {
     ],
     initialAnimation: "left-talk",
     Icon: GiHouse,
-    script() {},
+    onEnter() {},
+    onExit() {},
   },
   casino: {
     id: 4,
@@ -71,7 +81,8 @@ export const screens = {
     animations: ["left-blink", "right-blink"],
     initialAnimation: "right-blink",
     Icon: MdCasino,
-    script() {},
+    onEnter() {},
+    onExit() {},
   },
   title: {
     id: 5,
@@ -82,7 +93,8 @@ export const screens = {
     initialAnimation: "title",
     canVisit: false as undefined | false,
     Icon: MdTitle,
-    script: titleScript,
+    onEnter: titleScript,
+    onExit() {},
   },
   city: {
     id: 6,
@@ -92,7 +104,8 @@ export const screens = {
     animations: ["bar", "casino", "housing", "intro", "shop", "tower", "idle"],
     initialAnimation: "intro",
     Icon: MdTitle,
-    script: cityScript,
+    onEnter: cityEnterScript,
+    onExit: cityExitScript,
   },
 };
 

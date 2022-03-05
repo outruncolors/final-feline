@@ -2,7 +2,10 @@ import * as PIXI from "pixi.js";
 import { GameChangers, GameState } from "../../App";
 
 let hasGreeted = false;
-export const barScript = (gameState: GameState, gameChangers: GameChangers) => {
+export const barEnterScript = (
+  gameState: GameState,
+  gameChangers: GameChangers
+) => {
   const screen = gameState.getScreen();
   const onClose = () => {
     gameChangers.changeScreenAnimation("blink");
@@ -36,4 +39,12 @@ export const barScript = (gameState: GameState, gameChangers: GameChangers) => {
       ]);
     }
   }
+};
+
+export const barExitScript = (
+  gameState: GameState,
+  gameChangers: GameChangers
+) => {
+  gameChangers.randomizeScreenAnimation(-1);
+  gameChangers.changeScreenAnimation("talk");
 };

@@ -2,14 +2,17 @@ import * as PIXI from "pixi.js";
 import { ScreenKind } from "..";
 import { GameChangers, GameState } from "../../App";
 
+const squares: PIXI.Sprite[] = [];
+let screenReference: null | PIXI.Container = null;
 let hasPlayedIntro = false;
-export const cityScript = (
+export const cityEnterScript = (
   gameState: GameState,
   gameChangers: GameChangers
 ) => {
   const screen = gameState.getScreen();
 
   if (screen) {
+    screenReference = screen;
     screen.sortableChildren = true;
 
     if (hasPlayedIntro) {
@@ -73,7 +76,6 @@ function buildHitboxes(screen: PIXI.Container, gameChangers: GameChangers) {
     },
   ];
 
-  const squares: PIXI.Sprite[] = [];
   for (const location of locations) {
     const square = new PIXI.Sprite(PIXI.Texture.WHITE);
     squares.push(square);
@@ -89,10 +91,6 @@ function buildHitboxes(screen: PIXI.Container, gameChangers: GameChangers) {
     const onInteraction = () => {
       gameChangers.changeScreenName(location.leadsTo as ScreenKind);
       gameChangers.changeScreenAnimation(null);
-
-      squares.forEach((square) => {
-        square.interactive = false;
-      });
     };
 
     square.on("mousedown", onInteraction);
@@ -124,3 +122,13 @@ function buildHitboxes(screen: PIXI.Container, gameChangers: GameChangers) {
 
   gameChangers.changeScreenAnimation("idle");
 }
+
+export const cityExitScript = (
+  gameState: GameState,
+  gameChangers: GameChangers
+) => {
+  squares.forEach((square) => {
+    square.interactive = false;
+    screenReference?.removeChild(square);
+  });
+};
