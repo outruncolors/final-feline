@@ -130,6 +130,7 @@ function App() {
 
         screen.current = new PIXI.Container();
         screen.current.name = "screen";
+
         app.current = new PIXI.Application({
           width: 1920 / 2,
           height: 1080 / 2,
@@ -181,22 +182,23 @@ function App() {
           child.parent.removeChild(child);
           child.interactive = false;
           child.visible = false;
+          child.destroy();
         }
       }
 
+      const noise = new PIXI.filters.NoiseFilter();
       const fuzzer = new PIXI.Sprite(PIXI.Texture.WHITE);
       fuzzer.name = "fuzzer";
       fuzzer.width = _screen.width;
       fuzzer.height = _screen.height;
-      const noise = new PIXI.filters.NoiseFilter();
       fuzzer.filters = [noise];
       fuzzer.tint = colors.black;
-      _screen.addChild(fuzzer);
-
       fuzzer.on("destroyed", () => {
         const screenNow = screens[lastScreenLoaded.current as ScreenKind];
         screenNow?.script(gameState, gameChangers);
       });
+
+      _screen.addChild(fuzzer);
 
       setTimeout(() => {
         _screen.removeChild(fuzzer);
