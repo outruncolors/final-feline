@@ -176,6 +176,14 @@ function App() {
 
       lastScreenLoaded.current = screenName;
 
+      for (const child of _screen.children) {
+        if (child.name === "TEMP") {
+          child.parent.removeChild(child);
+          child.interactive = false;
+          child.visible = false;
+        }
+      }
+
       const fuzzer = new PIXI.Sprite(PIXI.Texture.WHITE);
       fuzzer.name = "fuzzer";
       fuzzer.width = _screen.width;
@@ -193,7 +201,7 @@ function App() {
       setTimeout(() => {
         _screen.removeChild(fuzzer);
         fuzzer.destroy();
-      }, 3000);
+      }, 1200);
     }
   }, [screenName, gameState, gameChangers]);
 
