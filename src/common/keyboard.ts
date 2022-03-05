@@ -1,3 +1,5 @@
+export type KeyboardHandler = ReturnType<typeof keyboard>;
+
 export function keyboard(value: string) {
   const key = {
     value,

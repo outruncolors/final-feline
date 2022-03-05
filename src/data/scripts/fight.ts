@@ -2,9 +2,15 @@ import * as PIXI from "pixi.js";
 import Chance from "chance";
 import type { GameState, GameChangers } from "../../App";
 import { foes, FoeKind } from "../foes";
-import { loadFoeAnimations } from "../../common";
+import {
+  loadFoeAnimations,
+  loadJobAnimations,
+  keyboard,
+  KeyboardHandler,
+} from "../../common";
 
 const CHANCE = new Chance();
+const keyboardHandlers: KeyboardHandler[] = [];
 
 export const fightEnterScript = (
   gameState: GameState,
@@ -27,13 +33,44 @@ export const fightEnterScript = (
     foeContainer.position.x = screen.width - foeContainer.width;
     foeContainer.scale.x *= -1;
     foeContainer.position.x -= foeContainer.width;
+
+    const hero = loadJobAnimations("copamancer");
+    const partyContainer = new PIXI.Container();
+    screen.addChild(partyContainer);
+    partyContainer.name = "Party Container";
+    partyContainer.addChild(hero.container);
+
+    const [up, left, down, right] = ["w", "a", "s", "d"].map(keyboard);
+    keyboardHandlers.push(up, left, down, right);
+
+    up.press = () => {
+      console.log("Up.");
+    };
+    left.press = () => {
+      console.log("Left.");
+    };
+    down.press = () => {
+      console.log("Down.");
+    };
+    right.press = () => {
+      hero.animations.standing.visible = false;
+      hero.animations.walking.visible = true;
+    };
+    right.release = () => {
+      hero.animations.walking.visible = false;
+      hero.animations.standing.visible = true;
+    };
   }
 };
 
 export const fightExitScript = (
   gameState: GameState,
   gameChangers: GameChangers
-) => {};
+) => {
+  for (const keyboardHandler of keyboardHandlers) {
+    keyboardHandler.unsubscribe();
+  }
+};
 
 const makeFoesToFight = () =>
   Array.from({ length: CHANCE.integer({ min: 1, max: 3 }) }, () =>
