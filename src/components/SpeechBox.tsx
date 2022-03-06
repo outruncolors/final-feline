@@ -1,10 +1,10 @@
 import { useContext } from "react";
 import * as Ant from "antd";
-import { GameStateContext, GameChangerContext } from "../App";
+import { AppStateContext, AppChangerContext } from "../App";
 
 export function SpeechBox() {
-  const { dialogue } = useContext(GameStateContext);
-  const { changeDialogue } = useContext(GameChangerContext);
+  const { dialogue } = useContext(AppStateContext);
+  const { changeDialogue } = useContext(AppChangerContext);
 
   const activeDialogue = dialogue[0];
 
@@ -65,7 +65,7 @@ export function SpeechBox() {
     return (
       <Ant.Comment
         className="speech-box"
-        author={name}
+        author={<Ant.Typography.Title level={3}>{name}</Ant.Typography.Title>}
         avatar={
           <Ant.Avatar
             size="large"
@@ -73,7 +73,11 @@ export function SpeechBox() {
             alt={avatar}
           />
         }
-        content={text}
+        content={
+          <Ant.Typography.Text style={{ fontSize: "1.2rem" }}>
+            {text}
+          </Ant.Typography.Text>
+        }
         actions={actions}
       />
     );

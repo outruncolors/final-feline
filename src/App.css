@@ -1,4 +1,213 @@
+html,
+body {
+  background: #010101 !important;
+  font-family: "VCR OSD Mono 1" !important;
+}
+
 body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
+}
+
+canvas {
+  border: 2px solid #ffffff;
+  border-bottom: none;
+}
+
+.wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.ant-layout {
+  background: #001528 !important;
+}
+
+.ant-layout-header,
+.ant-layout-footer {
+  background: rgba(13, 61, 95, 0.7) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(13, 61, 95, 0.7) 0%,
+    rgba(24, 9, 66, 0.7) 100%
+  ) !important;
+  font-family: "VCR OSD Mono 1";
+  text-transform: uppercase;
+  letter-spacing: 0.6ch;
+  position: fixed;
+  left: 0;
+  width: 100vw;
+  position: fixed;
+  color: #effeef !important;
+}
+
+.ant-layout-header {
+  top: 0;
+  border-bottom: 2px solid #ffffff;
+  font-size: 2rem;
+  z-index: 2;
+}
+
+.ant-layout-footer {
+  border-top: 2px solid #ffffff;
+  bottom: 0;
+  z-index: 2;
+}
+
+.ant-layout-content {
+  background: #010101;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+.ant-layout-sider {
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  border-bottom-left-radius: 8px;
+  margin-top: 63px;
+}
+
+.television {
+  -webkit-box-shadow: -9px 9px 15px 0px #000000;
+  box-shadow: -9px 9px 15px 0px #000000;
+  padding: 2.5rem;
+  background: #333333;
+  border-radius: 8px;
+}
+
+.ant-notification-notice {
+  background: rgba(0, 21, 40, 0.9) !important;
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+}
+
+.ant-notification-notice * {
+  color: rgb(239, 254, 239) !important;
+}
+
+.action-menu {
+  background: transparent !important;
+}
+
+.action-menu li svg {
+  position: relative;
+  top: 2px;
+  left: -4px;
+}
+
+.right-drawer {
+  position: fixed !important;
+  top: 120px !important;
+  height: calc(100vh - 297px) !important;
+  z-index: 3;
+}
+
+.right-drawer .ant-drawer-content {
+  background: rgba(0, 21, 40, 0.95) !important;
+  border: 2px solid #ffffff !important;
+  border-bottom: none;
+}
+
+.bottom-drawer {
+  position: absolute !important;
+  bottom: 97px !important;
+}
+
+.bottom-drawer .ant-drawer-body {
+  display: flex !important;
+  flex-direction: column-reverse !important;
+}
+
+.bottom-drawer .ant-drawer-content {
+  background: transparent !important;
+}
+
+.speech-box .ant-comment-actions {
+  background: transparent !important;
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  padding-right: 1rem;
+}
+
+*,
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.ant-comment {
+  background: rgba(0, 21, 40, 0.95) !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+.game-font,
+.ant-comment *,
+.ant-page-header-heading-title,
+.ant-page-header-heading-sub-title {
+  color: rgb(239, 254, 239) !important;
+}
+
+.ant-comment-content-author-name {
+  flex: 1;
+}
+
+.game-font,
+.vitals {
+  font-family: "VCR OSD Mono 1";
+}
+
+.ant-page-header-heading-title,
+.action-menu-action,
+.fancy {
+  text-transform: uppercase;
+  letter-spacing: 0.6ch;
+}
+
+@keyframes pointing {
+  0% {
+    top: -8px;
+    right: 4px;
+  }
+  50% {
+    top: -16px;
+    right: 0px;
+  }
+  100% {
+    top: -8px;
+    right: 4px;
+  }
+}
+.pointing-at-selection {
+  position: absolute;
+  animation: pointing 1s ease-in-out infinite forwards;
+  opacity: 1;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.speech-box {
+  position: fixed !important;
+  z-index: 3 !important;
+  bottom: 147px !important;
+  min-width: 380px !important;
+  max-width: 1000px !important;
 }

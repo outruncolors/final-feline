@@ -1,46 +1,23 @@
 import * as Ant from "antd";
-import { useCallback, useContext, useEffect, useState } from "react";
-import { GoLocation } from "react-icons/go";
-import { GiOpenTreasureChest } from "react-icons/gi";
+import { useCallback, useContext } from "react";
+import { GiOpenTreasureChest, GiWrench } from "react-icons/gi";
 import { HiOutlineUserGroup } from "react-icons/hi";
-import { IoIosGrid } from "react-icons/io";
-import { AiOutlineClose } from "react-icons/ai";
-import { ScreenKind, screens } from "../data";
 import {
   MenuKind,
+  DebugMenu,
   EntityMenu,
   PartyMenu,
-  PlacesMenu,
   ProfileMenu,
-  RosterMenu,
   StuffMenu,
   TransactionMenu,
 } from "./menus";
 import { Selectable } from "./Selectable";
-import { GameStateContext, GameChangerContext } from "../App";
+import { AppStateContext, AppChangerContext } from "../App";
 
 export function ActionBar() {
-  const [activeMenu, setActiveMenu] = useState<null | MenuKind>(null);
-  const { screenName, menu, player: playerData, actions } = useContext(
-    GameStateContext
-  );
-  const { changeMenu } = useContext(GameChangerContext);
-  const closeMenu = useCallback(() => {
-    changeMenu(null);
-    setActiveMenu(null);
-  }, [changeMenu, setActiveMenu]);
-  const closeButton = (
-    <Selectable key="close">
-      <Ant.Menu.Item
-        style={{ marginRight: "1rem" }}
-        className="noselect"
-        onClick={closeMenu}
-      >
-        <AiOutlineClose />
-        Close
-      </Ant.Menu.Item>
-    </Selectable>
-  );
+  const { menu, player: playerData, actions } = useContext(AppStateContext);
+  const { changeMenu } = useContext(AppChangerContext);
+  const closeMenu = useCallback(() => changeMenu(null), [changeMenu]);
   const menuConfig = {
     profile: {
       name: "profile",
@@ -92,16 +69,6 @@ export function ActionBar() {
       ),
       element: <PartyMenu />,
     },
-    roster: {
-      name: "roster",
-      inner: (
-        <>
-          <IoIosGrid />
-          Roster
-        </>
-      ),
-      element: <RosterMenu />,
-    },
     stuff: {
       name: "stuff",
       inner: (
@@ -112,32 +79,15 @@ export function ActionBar() {
       ),
       element: <StuffMenu />,
     },
-    places: {
-      name: "places",
-      inner:
-        screenName === "title" ? (
-          <>
-            <GoLocation />
-            Places
-          </>
-        ) : (
-          <>
-            {(() => {
-              if (screenName) {
-                const { Icon, name, title } = screens[screenName as ScreenKind];
-
-                return name === "fight" ? null : (
-                  <>
-                    <Icon /> {title}
-                  </>
-                );
-              } else {
-                return null;
-              }
-            })()}
-          </>
-        ),
-      element: <PlacesMenu />,
+    debug: {
+      name: "Debug",
+      inner: (
+        <>
+          <GiWrench />
+          Debug
+        </>
+      ),
+      element: <DebugMenu />,
     },
     entity: {
       name: "entity",
@@ -145,10 +95,6 @@ export function ActionBar() {
       element: <EntityMenu />,
     },
   };
-
-  useEffect(() => {
-    closeMenu();
-  }, [closeMenu, screenName]);
 
   return (
     <>
@@ -175,29 +121,22 @@ export function ActionBar() {
       >
         {Object.values(menuConfig)
           .filter((each) => actions.includes(each.name as MenuKind))
-          .map(({ name, inner, element }) =>
-            name === activeMenu ? (
-              closeButton
-            ) : (
-              <>
-                {inner === null ? null : (
-                  <Selectable key={name}>
-                    <Ant.Menu.Item
-                      className="noselect"
-                      disabled={inner === null}
-                      onClick={(event) => {
-                        event.domEvent.preventDefault();
-                        changeMenu(element);
-                        setActiveMenu(name as MenuKind);
-                      }}
-                    >
-                      {inner}
-                    </Ant.Menu.Item>
-                  </Selectable>
-                )}
-              </>
-            )
-          )}
+          .map(({ name, inner, element }) => (
+            <>
+              <Selectable key={name}>
+                <Ant.Menu.Item
+                  className="noselect"
+                  disabled={inner === null}
+                  onClick={(event) => {
+                    event.domEvent.preventDefault();
+                    changeMenu(element);
+                  }}
+                >
+                  {inner}
+                </Ant.Menu.Item>
+              </Selectable>
+            </>
+          ))}
       </Ant.Menu>
     </>
   );

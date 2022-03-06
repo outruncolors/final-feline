@@ -1,8 +1,7 @@
 import * as Ant from "antd";
-import { ReactNode, useContext } from "react";
+import { ReactNode } from "react";
 import { FaRegClock } from "react-icons/fa";
 import { GiHearts, GiLightningTrio } from "react-icons/gi";
-import { GameStateContext } from "../App";
 
 interface Props {
   name: string;
@@ -115,32 +114,3 @@ const VitalTooltip = ({
     {children}
   </Ant.Tooltip>
 );
-
-export function BattleVitals({ id }: { id: string }) {
-  const { fight } = useContext(GameStateContext);
-
-  if (fight) {
-    const { entities } = fight;
-    const entity = entities.byId[id];
-
-    console.log("Rerendering.");
-
-    if (entity) {
-      return (
-        <Vitals
-          name={entity.name}
-          title={entity.description}
-          stage={1}
-          hp={entity.stats.HP as [number, number]}
-          mp={entity.stats.MP as [number, number]}
-          atb={entity.stats.ATB}
-          fin={entity.stats.FIN}
-        />
-      );
-    } else {
-      return null;
-    }
-  } else {
-    return null;
-  }
-}
