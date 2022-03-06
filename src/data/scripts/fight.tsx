@@ -10,6 +10,7 @@ import {
   KeyboardHandler,
   EntityAnimations,
   hitTestRectangle,
+  colors,
 } from "../../common";
 import { Job, JobKind, jobs } from "../jobs";
 import type { GameState, GameChangers } from "../../App";
@@ -18,13 +19,15 @@ const CHANCE = new Chance();
 const keyboardHandlers: KeyboardHandler[] = [];
 let gameChangersRef: GameChangers;
 let screenRef: PIXI.Container;
+let charm: any;
 
 export const fightEnterScript = (
   gameState: GameState,
   gameChangers: GameChangers
 ) => {
-  gameChangersRef = gameChangers;
+  charm = new (window as any).Charm(PIXI) as any;
 
+  gameChangersRef = gameChangers;
   gameChangers.changeActions(["profile", "party", "stuff"]);
 
   observe(battleState, () => {
@@ -49,23 +52,7 @@ export const fightExitScript = (
   cleanupBattleData();
 };
 
-type BattleAction = {
-  who: FoeWithAnimations | HeroWithAnimations;
-  what: string;
-};
-type FoeWithAnimations = Foe & EntityAnimations & { guid: string };
-type HeroWithAnimations = Job & EntityAnimations & { guid: string };
-type Entity = FoeWithAnimations | HeroWithAnimations;
-type TrackedEntity = {
-  vx: number;
-  vy: number;
-  func(): void;
-};
-type NormalizedEntities = {
-  ids: string[];
-  byId: Record<string, Entity>;
-};
-
+// #region Helpers
 const initBattleState = () => ({
   frames: 0,
   time: 0,
@@ -77,6 +64,7 @@ const initBattleState = () => ({
     ids: [],
     byId: {},
   } as NormalizedEntities,
+  targetting: {} as Record<string, string>, // <Targetter: Entity.guid, Target: Entity.guid>
 });
 
 let battleState = observable(initBattleState());
@@ -89,6 +77,8 @@ export type BattleState = typeof battleState;
 
 const tracker = new Map<string, TrackedEntity>();
 const gameLoop = () => {
+  charm.update();
+
   battleState.frames++;
   battleState.time = battleState.frames / 60;
 
@@ -144,7 +134,7 @@ const gameLoop = () => {
         resetAtb(who);
 
         let initialTime = battleState.time;
-        const tag = `${who.guid}/move`;
+        const tag = makeMoveTag(who);
         const walkForward = () => {
           tracker.set(tag, {
             vx: CHANCE.integer({ min: 0, max: 3 }),
@@ -154,7 +144,7 @@ const gameLoop = () => {
 
               if (elapsedTime > 1) {
                 initialTime = battleState.time;
-                tracker.delete(who.guid);
+                tracker.delete(tag);
                 walkBackward();
               }
             },
@@ -170,7 +160,7 @@ const gameLoop = () => {
               const elapsedTime = battleState.time - initialTime;
 
               if (elapsedTime > 1) {
-                tracker.delete(who.guid);
+                tracker.delete(tag);
                 battleState.processingAction = false;
               }
             },
@@ -239,11 +229,65 @@ const gameLoop = () => {
           }
         }
       }
+
+      // Handle targetting.
+      const target = battleState.targetting[entity.guid];
+      if (target) {
+        const targetEntity = battleState.entities.byId[target];
+        const { container: targetContainer } = targetEntity;
+        const targetTag = makeTargettingTag(entity, targetEntity);
+        const existingLine = screenRef?.getChildByName(
+          targetTag
+        ) as PIXI.Graphics;
+        const line = existingLine ?? new PIXI.Graphics();
+
+        if (existingLine) {
+          line.clear();
+        } else {
+          screenRef?.addChild(line);
+        }
+        line.name = targetTag;
+
+        const { x: entityX, y: entityY } = entity.container.getGlobalPosition();
+        const targetterOrigin = {
+          x: entityX + entity.container.width / 2,
+          y: isFoe ? entityY : entityY + entity.container.height / 2,
+        };
+        const { x: targetX, y: targetY } = targetContainer.getGlobalPosition();
+        const targetOrigin = {
+          x: targetX + targetContainer.width / 2,
+          y: targetY + targetContainer.height / 2,
+        };
+        line.lineStyle({ width: 4, color: colors.red, alpha: 0.6 });
+        line.moveTo(targetterOrigin.x, targetterOrigin.y);
+        line.lineTo(targetOrigin.x, targetOrigin.y);
+
+        // setTimeout(() => {
+        //   if (!getScreen().getChildByName("line thing")) {
+        //     const { points } = line.geometry;
+        //     const values: Array<{ x: number; y: number }> = [];
+
+        //     for (let i = 0; i < points.length; i += 2) {
+        //       values.push({ x: points[i], y: points[i + 1] });
+        //     }
+
+        //     const sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
+        //     getScreen().addChild(sprite);
+        //     sprite.name = "line thing";
+        //     sprite.width = 30;
+        //     sprite.height = 30;
+        //     sprite.tint = colors.red;
+        //     const [start] = values;
+        //     const [end] = [...values.reverse()];
+        //     sprite.position.set(start.x, start.y);
+
+        //     charm.slide(sprite, end.x, end.y, 60 * 1, "smoothstep", true, 100);
+        //   }
+        // });
+      }
     }
   }
 };
-
-// #region Helpers
 
 const cleanupBattleData = () => {
   PIXI.Ticker.shared.remove(gameLoop);
@@ -299,7 +343,7 @@ const registerEntities = (screen: PIXI.Container) => {
     let initialTime = battleState.time;
     const initialX = hero.container.position.x;
     const initialY = hero.container.position.y;
-    const tag = `${hero.guid}/focus`;
+    const tag = makeFocusTag(hero);
     const handlers = {
       focus: () => {
         blur.enabled = false;
@@ -317,12 +361,25 @@ const registerEntities = (screen: PIXI.Container) => {
             }
           },
         });
+
+        startTargetting(hero, foesToFight[0]);
       },
       blur: () => {
         blur.enabled = true;
         tracker.delete(tag);
         hero.container.position.set(initialX, initialY);
         initialTime = getBattleState().time;
+
+        const screen = getScreen();
+        const target = getTargetOf(hero);
+        const targetTag = makeTargettingTag(hero, target);
+        const targetLine = screen.getChildByName(targetTag);
+
+        if (targetLine) {
+          screen.removeChild(targetLine);
+        }
+
+        stopTargetting(hero);
       },
     };
 
@@ -363,18 +420,38 @@ const increaseAtb = (entity: Entity) => {
   entity.stats.ATB = nextAtb;
 };
 const resetAtb = (entity: Entity) => (entity.stats.ATB = 0);
+const startTargetting = (entity: Entity, target: Entity) => {
+  battleState.targetting[entity.guid] = target.guid;
+};
+const stopTargetting = (entity: Entity) => {
+  delete battleState.targetting[entity.guid];
+
+  const screen = getScreen();
+  const targettingPulse = screen.getChildByName("line thing");
+
+  if (targettingPulse) {
+    screen.removeChild(targettingPulse);
+  }
+};
 
 // Selectors
+const getScreen = () => screenRef;
 const foesRemain = () => battleState.foes.some((foe) => foe.stats.HP[0] > 0);
 const heroesRemain = () =>
   battleState.heroes.some((hero) => hero.stats.HP[0] > 0);
-const isQueued = (entity: FoeWithAnimations | HeroWithAnimations) =>
+const isQueued = (entity: Entity) =>
   battleState.actionQueue.some((action) => action.who === entity);
-const isAlive = (entity: FoeWithAnimations | HeroWithAnimations) =>
-  entity.stats.HP[0] > 0;
-const isReady = (entity: FoeWithAnimations | HeroWithAnimations) =>
-  entity.stats.ATB === 100;
+const isAlive = (entity: Entity) => entity.stats.HP[0] > 0;
+const isReady = (entity: Entity) => entity.stats.ATB === 100;
+const getTargetOf = (entity: Entity) =>
+  battleState.entities.byId[battleState.targetting[entity.guid] ?? ""];
 
+// Helpers
+const makeTag = (tag: string) => (entity: Entity) => `${entity.guid}/${tag}`;
+const makeMoveTag = makeTag("move");
+const makeFocusTag = makeTag("focus");
+const makeTargettingTag = (entity: Entity, target: Entity) =>
+  `Targetting Line: ${entity.name} to ${target.name}`;
 const makeFoesToFight = () =>
   Array.from({ length: CHANCE.integer({ min: 1, max: 3 }) }, () =>
     CHANCE.pickone(Object.keys(foes))
@@ -406,4 +483,23 @@ const makeHeroesToFight = () =>
       guid: CHANCE.guid(),
     };
   });
+// #endregion
+
+// #region Types
+type BattleAction = {
+  who: FoeWithAnimations | HeroWithAnimations;
+  what: string;
+};
+type FoeWithAnimations = Foe & EntityAnimations & { guid: string };
+type HeroWithAnimations = Job & EntityAnimations & { guid: string };
+type Entity = FoeWithAnimations | HeroWithAnimations;
+type TrackedEntity = {
+  vx: number;
+  vy: number;
+  func(): void;
+};
+type NormalizedEntities = {
+  ids: string[];
+  byId: Record<string, Entity>;
+};
 // #endregion
