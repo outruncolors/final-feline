@@ -253,6 +253,7 @@ export interface GameDialogue {
   name: string;
   avatar: string;
   text: string;
+  closable?: boolean;
   onOpen?(): void;
   onClose?(): void;
 }

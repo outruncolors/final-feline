@@ -15,47 +15,52 @@ export function SpeechBox() {
       name,
       avatar,
       text,
+      closable = true,
       onClose = noop,
       onOpen = noop,
     } = activeDialogue;
-    const closeDialogue = () => {
-      onClose();
 
-      changeDialogue([]);
+    let actions = [] as JSX.Element[];
+    if (closable) {
+      const closeDialogue = () => {
+        onClose();
 
-      // Handle the rest of the unseen messages.
-      for (const each of restOfDialogue) {
-        each.onOpen?.();
-        each.onClose?.();
+        changeDialogue([]);
+
+        // Handle the rest of the unseen messages.
+        for (const each of restOfDialogue) {
+          each.onOpen?.();
+          each.onClose?.();
+        }
+      };
+      const nextDialog = () => {
+        onClose();
+        changeDialogue(restOfDialogue);
+        onOpen();
+      };
+
+      actions = [
+        <Ant.Button key="done" type="ghost" onClick={closeDialogue}>
+          Done
+        </Ant.Button>,
+      ];
+
+      const hasNextOne = dialogue.length > 1;
+      if (hasNextOne) {
+        actions.unshift(
+          <Ant.Button
+            key="next"
+            type="ghost"
+            style={{ marginRight: "1rem" }}
+            onClick={nextDialog}
+          >
+            Next
+          </Ant.Button>
+        );
       }
-    };
-    const nextDialog = () => {
-      onClose();
-      changeDialogue(restOfDialogue);
-      onOpen();
-    };
 
-    const actions = [
-      <Ant.Button key="done" type="ghost" onClick={closeDialogue}>
-        Done
-      </Ant.Button>,
-    ];
-
-    const hasNextOne = dialogue.length > 1;
-    if (hasNextOne) {
-      actions.unshift(
-        <Ant.Button
-          key="next"
-          type="ghost"
-          style={{ marginRight: "1rem" }}
-          onClick={nextDialog}
-        >
-          Next
-        </Ant.Button>
-      );
+      actions.reverse();
     }
-
-    actions.reverse();
 
     return (
       <Ant.Comment
