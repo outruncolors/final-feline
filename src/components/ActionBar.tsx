@@ -8,6 +8,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { ScreenKind, screens } from "../data";
 import {
   MenuKind,
+  EntityMenu,
   PartyMenu,
   PlacesMenu,
   ProfileMenu,
@@ -20,7 +21,9 @@ import { GameStateContext, GameChangerContext } from "../App";
 
 export function ActionBar() {
   const [activeMenu, setActiveMenu] = useState<null | MenuKind>(null);
-  const { screenName, menu, player: playerData } = useContext(GameStateContext);
+  const { screenName, menu, player: playerData, actions } = useContext(
+    GameStateContext
+  );
   const { changeMenu } = useContext(GameChangerContext);
   const closeMenu = useCallback(() => {
     changeMenu(null);
@@ -136,6 +139,11 @@ export function ActionBar() {
         ),
       element: <PlacesMenu />,
     },
+    entity: {
+      name: "entity",
+      inner: "(entity)",
+      element: <EntityMenu />,
+    },
   };
 
   useEffect(() => {
@@ -165,29 +173,31 @@ export function ActionBar() {
         className="action-menu game-font"
         selectable={false}
       >
-        {Object.values(menuConfig).map(({ name, inner, element }) =>
-          name === activeMenu ? (
-            closeButton
-          ) : (
-            <>
-              {inner === null ? null : (
-                <Selectable key={name}>
-                  <Ant.Menu.Item
-                    className="noselect"
-                    disabled={inner === null}
-                    onClick={(event) => {
-                      event.domEvent.preventDefault();
-                      changeMenu(element);
-                      setActiveMenu(name as MenuKind);
-                    }}
-                  >
-                    {inner}
-                  </Ant.Menu.Item>
-                </Selectable>
-              )}
-            </>
-          )
-        )}
+        {Object.values(menuConfig)
+          .filter((each) => actions.includes(each.name as MenuKind))
+          .map(({ name, inner, element }) =>
+            name === activeMenu ? (
+              closeButton
+            ) : (
+              <>
+                {inner === null ? null : (
+                  <Selectable key={name}>
+                    <Ant.Menu.Item
+                      className="noselect"
+                      disabled={inner === null}
+                      onClick={(event) => {
+                        event.domEvent.preventDefault();
+                        changeMenu(element);
+                        setActiveMenu(name as MenuKind);
+                      }}
+                    >
+                      {inner}
+                    </Ant.Menu.Item>
+                  </Selectable>
+                )}
+              </>
+            )
+          )}
       </Ant.Menu>
     </>
   );

@@ -12,7 +12,7 @@ import * as PIXI from "pixi.js";
 import "./App.css";
 import "antd/dist/antd.css";
 import { colors, loadAssets, loadScreenAnimations } from "./common";
-import { Layout, Wrapper } from "./components";
+import { Layout, MenuKind, Wrapper } from "./components";
 import {
   AfflictionKind,
   FoeKind,
@@ -37,6 +37,7 @@ export const GameStateContext = createContext<GameState>({
   dialogue: [],
   menu: null,
   fight: null,
+  actions: [],
 });
 export const GameChangerContext = createContext<GameChangers>({
   changeScreenName: noop,
@@ -46,6 +47,7 @@ export const GameChangerContext = createContext<GameChangers>({
   changeDialogue: noop,
   changeMenu: noop,
   changeFight: noop,
+  changeActions: noop,
   randomizeScreenAnimation: noop,
 });
 
@@ -58,6 +60,14 @@ function App() {
   const [notifications, setNotifications] = useState<GameNotification[]>([]);
   const [dialogue, setDialogue] = useState<GameDialogue[]>([]);
   const [menu, setMenu] = useState<null | ReactNode>(null);
+  const [actions, setActions] = useState<MenuKind[]>([
+    "profile",
+    "transaction",
+    "stuff",
+    "party",
+    "places",
+    "roster",
+  ]);
   const [fight, setFight] = useState<null | BattleState>(null);
   const gameState = useMemo<GameState>(
     () => ({
@@ -68,9 +78,19 @@ function App() {
       notifications,
       dialogue,
       menu,
+      actions,
       fight,
     }),
-    [screenName, screenAnimation, player, notifications, dialogue, menu, fight]
+    [
+      screenName,
+      screenAnimation,
+      player,
+      notifications,
+      dialogue,
+      menu,
+      actions,
+      fight,
+    ]
   );
   const randomizingScreenAnimation = useRef<NodeJS.Timeout>();
   const randomizeScreenAnimation = useCallback(
@@ -79,7 +99,7 @@ function App() {
         clearTimeout(randomizingScreenAnimation.current);
       } else {
         const chooseRandomAnimation = () => {
-          const willChange = CHANCE.bool({ likelihood: 20 });
+          const willChange = CHANCE.bool({ likelihood: 50 });
 
           if (willChange && screenName) {
             setScreenAnimation(CHANCE.pickone(screens[screenName].animations));
@@ -105,6 +125,7 @@ function App() {
       changeDialogue: setDialogue,
       changeMenu: setMenu,
       changeFight: setFight,
+      changeActions: setActions,
       randomizeScreenAnimation: randomizeScreenAnimation,
     }),
     [randomizeScreenAnimation]
@@ -283,6 +304,7 @@ export interface GameState {
   dialogue: GameDialogue[];
   menu: null | ReactNode;
   fight: null | BattleState;
+  actions: MenuKind[];
 }
 
 export interface GameChangers {
@@ -293,5 +315,6 @@ export interface GameChangers {
   changeDialogue(dialogue: GameDialogue[]): void;
   changeMenu(menu: null | ReactNode): void;
   changeFight(fight: null | BattleState): void;
+  changeActions(actions: MenuKind[]): void;
   randomizeScreenAnimation(frequency: number): void;
 }

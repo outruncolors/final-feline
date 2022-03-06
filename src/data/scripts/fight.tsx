@@ -10,20 +10,20 @@ import {
   KeyboardHandler,
   EntityAnimations,
 } from "../../common";
-import { BattleVitals } from "../../components";
 import { Job, JobKind, jobs } from "../jobs";
 import type { GameState, GameChangers } from "../../App";
 
 const CHANCE = new Chance();
 const keyboardHandlers: KeyboardHandler[] = [];
 let gameChangersRef: GameChangers;
-let activeVitals: ReactNode;
 
 export const fightEnterScript = (
   gameState: GameState,
   gameChangers: GameChangers
 ) => {
   gameChangersRef = gameChangers;
+
+  gameChangers.changeActions(["profile", "party", "stuff"]);
 
   observe(battleState, () => {
     gameChangers.changeFight(battleState);
