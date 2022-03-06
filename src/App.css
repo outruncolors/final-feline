@@ -76,14 +76,6 @@ canvas {
   margin-top: 63px;
 }
 
-.television {
-  -webkit-box-shadow: -9px 9px 15px 0px #000000;
-  box-shadow: -9px 9px 15px 0px #000000;
-  padding: 2.5rem;
-  background: #333333;
-  border-radius: 8px;
-}
-
 .ant-notification-notice {
   background: rgba(0, 21, 40, 0.9) !important;
   border: 2px solid #ffffff;
@@ -183,15 +175,15 @@ canvas {
 @keyframes pointing {
   0% {
     top: -8px;
-    right: 4px;
+    left: -8px;
   }
   50% {
     top: -16px;
-    right: 0px;
+    left: -16px;
   }
   100% {
     top: -8px;
-    right: 4px;
+    left: -8px;
   }
 }
 .pointing-at-selection {

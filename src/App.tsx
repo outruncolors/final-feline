@@ -1,3 +1,4 @@
+import * as Ant from "antd";
 import { ReactNode, useState, createContext, useMemo, useEffect } from "react";
 import "./App.css";
 import "antd/dist/antd.css";
@@ -37,15 +38,24 @@ function App() {
   );
 
   useEffect(() => {
-    setDialogue([
+    setNotifications([
       {
-        name: "Lorem McIpsum",
-        avatar: "A",
-        text:
-          "Lorem McIpsum Lorem McIpsum Lorem McIpsum Lorem McIpsum Lorem McIpsum Lorem McIpsum Lorem McIpsum ",
+        message: "Test",
+        duration: 3000,
       },
     ]);
   }, []);
+
+  useEffect(() => {
+    const [active] = notifications;
+
+    if (active) {
+      Ant.notification.open({
+        message: active.message,
+        duration: active.duration,
+      });
+    }
+  }, [notifications]);
 
   return (
     <AppStateContext.Provider value={gameState}>
