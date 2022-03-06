@@ -174,5 +174,5 @@ canvas {
   position: absolute !important;
   bottom: 50px !important;
   left: 10% !important;
-  width: 80% !important;
+  min-width: 380px !important;
 }

@@ -22,6 +22,7 @@ import {
   ScreenKind,
   screens,
   SkillKind,
+  BattleState,
 } from "./data";
 
 const noop = () => {};
@@ -35,6 +36,7 @@ export const GameStateContext = createContext<GameState>({
   notifications: [],
   dialogue: [],
   menu: null,
+  fight: null,
 });
 export const GameChangerContext = createContext<GameChangers>({
   changeScreenName: noop,
@@ -43,6 +45,7 @@ export const GameChangerContext = createContext<GameChangers>({
   changeNotifications: noop,
   changeDialogue: noop,
   changeMenu: noop,
+  changeFight: noop,
   randomizeScreenAnimation: noop,
 });
 
@@ -55,6 +58,7 @@ function App() {
   const [notifications, setNotifications] = useState<GameNotification[]>([]);
   const [dialogue, setDialogue] = useState<GameDialogue[]>([]);
   const [menu, setMenu] = useState<null | ReactNode>(null);
+  const [fight, setFight] = useState<null | BattleState>(null);
   const gameState = useMemo<GameState>(
     () => ({
       getScreen: () => screen.current,
@@ -64,8 +68,9 @@ function App() {
       notifications,
       dialogue,
       menu,
+      fight,
     }),
-    [screenName, screenAnimation, player, notifications, dialogue, menu]
+    [screenName, screenAnimation, player, notifications, dialogue, menu, fight]
   );
   const randomizingScreenAnimation = useRef<NodeJS.Timeout>();
   const randomizeScreenAnimation = useCallback(
@@ -99,6 +104,7 @@ function App() {
       changeNotifications: setNotifications,
       changeDialogue: setDialogue,
       changeMenu: setMenu,
+      changeFight: setFight,
       randomizeScreenAnimation: randomizeScreenAnimation,
     }),
     [randomizeScreenAnimation]
@@ -252,7 +258,7 @@ export type ItemAndQuantity = [ItemKind, number];
 export interface GameDialogue {
   name: string;
   avatar: string;
-  text: string;
+  text: ReactNode;
   closable?: boolean;
   onOpen?(): void;
   onClose?(): void;
@@ -276,6 +282,7 @@ export interface GameState {
   notifications: GameNotification[];
   dialogue: GameDialogue[];
   menu: null | ReactNode;
+  fight: null | BattleState;
 }
 
 export interface GameChangers {
@@ -285,5 +292,6 @@ export interface GameChangers {
   changeNotifications(notifications: GameNotification[]): void;
   changeDialogue(dialogue: GameDialogue[]): void;
   changeMenu(menu: null | ReactNode): void;
+  changeFight(fight: null | BattleState): void;
   randomizeScreenAnimation(frequency: number): void;
 }

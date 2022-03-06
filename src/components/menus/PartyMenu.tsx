@@ -6,7 +6,7 @@ export const PartyMenu = () => (
   <ComposableMenu title="Party" Icon={HiOutlineUserGroup}>
     <Vitals
       name="Foo Bar"
-      job="copamancer"
+      title="copamancer"
       stage={3}
       hp={[90, 100]}
       mp={[80, 100]}

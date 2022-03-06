@@ -5,4 +5,5 @@ export * from "./foes";
 export * from "./items";
 export * from "./jobs";
 export * from "./screens";
+export * from "./scripts";
 export * from "./skills";
