@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import * as PIXI from "pixi.js";
 import { observable, observe } from "mobx";
 import Chance from "chance";
@@ -32,87 +31,10 @@ export const fightEnterScript = (
   const screen = gameState.getScreen();
 
   if (screen) {
-    // Foes
-    const foesToFight = makeFoesToFight() as FoeWithAnimations[];
-    const foeContainer = new PIXI.Container();
-    screen.addChild(foeContainer);
-    foeContainer.name = "Foe Container";
-
-    for (let i = 0; i < foesToFight.length; i++) {
-      const foe = foesToFight[i];
-      foeContainer.addChild(foe.container);
-      foe.container.position.y += i * foe.container.height;
-      foe.container.interactive = true;
-      foe.container.buttonMode = true;
-
-      let checkingFoe = false;
-      const handleCheckFoe = () => {
-        if (checkingFoe) {
-          gameChangers.changeDialogue([]);
-          checkingFoe = false;
-        } else {
-          gameChangers.changeDialogue([
-            {
-              name: foe.name,
-              avatar: "",
-              text: foe.description,
-              onClose: handleCheckFoe,
-            },
-          ]);
-          checkingFoe = true;
-        }
-      };
-
-      foe.container.on("mouseover", handleCheckFoe);
-      foe.container.on("mouseout", handleCheckFoe);
-      foe.container.on("mousedown", handleCheckFoe);
-      foe.container.on("touchstart", handleCheckFoe);
-    }
-
-    foeContainer.position.x = screen.width - foeContainer.width;
-    foeContainer.scale.x *= -1;
-    foeContainer.position.x -= foeContainer.width;
-
-    registerFoes(foesToFight);
-
-    // Heroes
-    const heroes = makeHeroesToFight() as HeroWithAnimations[];
-    const heroContainer = new PIXI.Container();
-    screen.addChild(heroContainer);
-    heroContainer.name = "Hero Container";
-
-    for (let i = 0; i < heroes.length; i++) {
-      const hero = heroes[i];
-      heroContainer.addChild(hero.container);
-      hero.container.position.y += i * hero.container.height;
-    }
-
-    registerHeroes(heroes);
-
-    for (const entity of (foesToFight as Entity[]).concat(heroes)) {
-      battleState.entities.ids.push(entity.guid);
-      battleState.entities.byId[entity.guid] = entity;
-    }
-
-    // Keys
-    const [up, left, down, right] = ["w", "a", "s", "d"].map(keyboard);
-    keyboardHandlers.push(up, left, down, right);
-
-    up.press = () => {
-      console.log("Up.");
-    };
-    left.press = () => {
-      console.log("Left.");
-    };
-    down.press = () => {
-      console.log("Down.");
-    };
-    right.press = () => {
-      console.log("Right");
-    };
+    registerEntities(screen);
+    registerKeys();
   }
 
-  // Game Loop
   PIXI.Ticker.shared.add(gameLoop);
 };
 
@@ -122,38 +44,6 @@ export const fightExitScript = (
 ) => {
   cleanupBattleData();
 };
-
-const makeFoesToFight = () =>
-  Array.from({ length: CHANCE.integer({ min: 1, max: 3 }) }, () =>
-    CHANCE.pickone(Object.keys(foes))
-  ).map((foeKind) => {
-    const foe = foes[foeKind as FoeKind];
-    const animations = loadFoeAnimations(foeKind as FoeKind);
-
-    return {
-      ...foe,
-      animations: animations.animations,
-      container: animations.container,
-      effects: animations.effects,
-      guid: CHANCE.guid(),
-    };
-  });
-
-const makeHeroesToFight = () =>
-  Array.from({ length: CHANCE.integer({ min: 1, max: 3 }) }, () =>
-    CHANCE.pickone(Object.keys(jobs))
-  ).map((jobKind) => {
-    const hero = jobs[jobKind as JobKind];
-    const animations = loadJobAnimations(jobKind as JobKind);
-
-    return {
-      ...hero,
-      animations: animations.animations,
-      container: animations.container,
-      effects: animations.effects,
-      guid: CHANCE.guid(),
-    };
-  });
 
 type BattleAction = {
   who: FoeWithAnimations | HeroWithAnimations;
@@ -176,7 +66,6 @@ const initBattleState = () => ({
   frames: 0,
   time: 0,
   foes: [] as FoeWithAnimations[],
-  checkingFoe: false,
   heroes: [] as HeroWithAnimations[],
   actionQueue: [] as BattleAction[],
   processingAction: false,
@@ -188,34 +77,13 @@ const initBattleState = () => ({
 
 let battleState = observable(initBattleState());
 
+const getBattleState = () => battleState;
+
 export type BattleState = typeof battleState;
 
 (window as any).checkBattleState = () => battleState;
 
-// Changers
-const registerFoes = (foes: FoeWithAnimations[]) => (battleState.foes = foes);
-const registerHeroes = (heroes: HeroWithAnimations[]) =>
-  (battleState.heroes = heroes);
-const queueEntityAction = (entity: Entity, action: string) =>
-  battleState.actionQueue.push({ who: entity, what: action });
-const increaseAtb = (entity: Entity) => {
-  const nextAtb = Math.min(entity.stats.ATB + 0.2, 100);
-  entity.stats.ATB = nextAtb;
-};
-const resetAtb = (entity: Entity) => (entity.stats.ATB = 0);
-
-// Selectors
-const foesRemain = () => battleState.foes.some((foe) => foe.stats.HP[0] > 0);
-const heroesRemain = () =>
-  battleState.heroes.some((hero) => hero.stats.HP[0] > 0);
-const isQueued = (entity: FoeWithAnimations | HeroWithAnimations) =>
-  battleState.actionQueue.some((action) => action.who === entity);
-const isAlive = (entity: FoeWithAnimations | HeroWithAnimations) =>
-  entity.stats.HP[0] > 0;
-const isReady = (entity: FoeWithAnimations | HeroWithAnimations) =>
-  entity.stats.ATB === 100;
-
-const tracker = new WeakMap<Entity, TrackedEntity>();
+const tracker = new Map<string, TrackedEntity>();
 const gameLoop = () => {
   battleState.frames++;
   battleState.time = battleState.frames / 60;
@@ -272,17 +140,9 @@ const gameLoop = () => {
         resetAtb(who);
 
         let initialTime = battleState.time;
+        const tag = `${who.guid}/move`;
         const walkForward = () => {
-          // gameChangersRef.changeDialogue([
-          //   {
-          //     name: "",
-          //     avatar: "",
-          //     text: `${who.name} performed ${what}`,
-          //     closable: false,
-          //   },
-          // ]);
-
-          tracker.set(who, {
+          tracker.set(tag, {
             vx: 2,
             vy: 0,
             func: () => {
@@ -290,7 +150,7 @@ const gameLoop = () => {
 
               if (elapsedTime > 1) {
                 initialTime = battleState.time;
-                tracker.delete(who);
+                tracker.delete(who.guid);
                 walkBackward();
               }
             },
@@ -299,14 +159,14 @@ const gameLoop = () => {
         const walkBackward = () => {
           gameChangersRef.changeDialogue([]);
 
-          tracker.set(who, {
+          tracker.set(tag, {
             vx: -2,
             vy: 0,
             func: () => {
               const elapsedTime = battleState.time - initialTime;
 
               if (elapsedTime > 1) {
-                tracker.delete(who);
+                tracker.delete(who.guid);
                 battleState.processingAction = false;
               }
             },
@@ -321,16 +181,21 @@ const gameLoop = () => {
     for (const entity of (battleState.foes as Entity[]).concat(
       battleState.heroes
     )) {
-      if (tracker.has(entity)) {
-        const { vx, vy, func } = tracker.get(entity)!;
+      for (const handler of ["focus", "move"]) {
+        const tag = `${entity.guid}/${handler}`;
 
-        entity.container.position.x += vx;
-        entity.container.position.y += vy;
-        func();
+        if (tracker.has(tag)) {
+          const { vx, vy, func } = tracker.get(tag)!;
+          entity.container.position.x += vx;
+          entity.container.position.y += vy;
+          func();
+        }
       }
     }
   }
 };
+
+// #region Helpers
 
 const cleanupBattleData = () => {
   PIXI.Ticker.shared.remove(gameLoop);
@@ -341,3 +206,156 @@ const cleanupBattleData = () => {
 
   battleState = initBattleState();
 };
+
+const registerEntities = (screen: PIXI.Container) => {
+  // Foes
+  const foesToFight = makeFoesToFight() as FoeWithAnimations[];
+  const foeContainer = new PIXI.Container();
+  screen.addChild(foeContainer);
+  foeContainer.name = "Foe Container";
+
+  for (let i = 0; i < foesToFight.length; i++) {
+    const foe = foesToFight[i];
+    foeContainer.addChild(foe.container);
+    foe.container.position.x += i * foe.container.height;
+    foe.container.interactive = true;
+    foe.container.buttonMode = true;
+  }
+
+  registerFoes(foesToFight);
+
+  // Heroes
+  const heroes = makeHeroesToFight() as HeroWithAnimations[];
+  const heroContainer = new PIXI.Container();
+  screen.addChild(heroContainer);
+  heroContainer.position.set(0, 380);
+  heroContainer.name = "Hero Container";
+
+  registerHeroes(heroes);
+
+  for (const entity of (foesToFight as Entity[]).concat(heroes)) {
+    battleState.entities.ids.push(entity.guid);
+    battleState.entities.byId[entity.guid] = entity;
+  }
+
+  for (let i = 0; i < heroes.length; i++) {
+    const hero = heroes[i];
+    heroContainer.addChild(hero.container);
+    hero.container.scale.set(2, 3);
+    hero.container.position.x += (i * hero.container.width) / 1.33;
+    hero.container.interactive = true;
+    hero.container.buttonMode = true;
+    const blur = new PIXI.filters.BlurFilter();
+    hero.container.filters = [blur];
+
+    let initialTime = battleState.time;
+    const initialX = hero.container.position.x;
+    const initialY = hero.container.position.y;
+    const tag = `${hero.guid}/focus`;
+    const handlers = {
+      focus: () => {
+        blur.enabled = false;
+
+        tracker.set(tag, {
+          vx: 0,
+          vy: -2,
+          func: () => {
+            const state = getBattleState();
+            const elapsedTime = state.time - initialTime;
+
+            if (elapsedTime > 1) {
+              initialTime = state.time;
+              tracker.delete(tag);
+            }
+          },
+        });
+      },
+      blur: () => {
+        blur.enabled = true;
+        tracker.delete(tag);
+        hero.container.position.set(initialX, initialY);
+        initialTime = getBattleState().time;
+      },
+    };
+
+    hero.container.on("mouseover", handlers.focus);
+    hero.container.on("touchstart", handlers.focus);
+    hero.container.on("mouseout", handlers.blur);
+    hero.container.on("touchend", handlers.blur);
+  }
+};
+
+const registerKeys = () => {
+  // Keys
+  const [up, left, down, right] = ["w", "a", "s", "d"].map(keyboard);
+  keyboardHandlers.push(up, left, down, right);
+
+  up.press = () => {
+    console.log("Up.");
+  };
+  left.press = () => {
+    console.log("Left.");
+  };
+  down.press = () => {
+    console.log("Down.");
+  };
+  right.press = () => {
+    console.log("Right");
+  };
+};
+
+// Changers
+const registerFoes = (foes: FoeWithAnimations[]) => (battleState.foes = foes);
+const registerHeroes = (heroes: HeroWithAnimations[]) =>
+  (battleState.heroes = heroes);
+const queueEntityAction = (entity: Entity, action: string) =>
+  battleState.actionQueue.push({ who: entity, what: action });
+const increaseAtb = (entity: Entity) => {
+  const nextAtb = Math.min(entity.stats.ATB + 0.2, 100);
+  entity.stats.ATB = nextAtb;
+};
+const resetAtb = (entity: Entity) => (entity.stats.ATB = 0);
+
+// Selectors
+const foesRemain = () => battleState.foes.some((foe) => foe.stats.HP[0] > 0);
+const heroesRemain = () =>
+  battleState.heroes.some((hero) => hero.stats.HP[0] > 0);
+const isQueued = (entity: FoeWithAnimations | HeroWithAnimations) =>
+  battleState.actionQueue.some((action) => action.who === entity);
+const isAlive = (entity: FoeWithAnimations | HeroWithAnimations) =>
+  entity.stats.HP[0] > 0;
+const isReady = (entity: FoeWithAnimations | HeroWithAnimations) =>
+  entity.stats.ATB === 100;
+
+const makeFoesToFight = () =>
+  Array.from({ length: CHANCE.integer({ min: 1, max: 3 }) }, () =>
+    CHANCE.pickone(Object.keys(foes))
+  ).map((foeKind) => {
+    const foe = foes[foeKind as FoeKind];
+    const animations = loadFoeAnimations(foeKind as FoeKind);
+
+    return {
+      ...foe,
+      animations: animations.animations,
+      container: animations.container,
+      effects: animations.effects,
+      guid: CHANCE.guid(),
+    };
+  });
+
+const makeHeroesToFight = () =>
+  Array.from({ length: CHANCE.integer({ min: 1, max: 3 }) }, () =>
+    CHANCE.pickone(Object.keys(jobs))
+  ).map((jobKind) => {
+    const hero = jobs[jobKind as JobKind];
+    const animations = loadJobAnimations(jobKind as JobKind);
+
+    return {
+      ...hero,
+      animations: animations.animations,
+      container: animations.container,
+      effects: animations.effects,
+      guid: CHANCE.guid(),
+    };
+  });
+// #endregion

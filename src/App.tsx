@@ -170,8 +170,8 @@ function App() {
         app.current.stage.addChild(screen.current);
         app.current.renderer.render(app.current.stage);
 
-        setScreenName("title");
-        setTimeout(() => screens.title.onEnter(gameState, gameChangers));
+        setScreenName("fight");
+        setTimeout(() => screens.fight.onEnter(gameState, gameChangers));
       });
     }
   });
@@ -193,7 +193,7 @@ function App() {
   }, [screenName, screenAnimation]);
 
   // Fuzzing
-  const lastScreenLoaded = useRef("title");
+  const lastScreenLoaded = useRef("fight");
   useEffect(() => {
     const _screen = screen.current;
     const _lastScreen = lastScreenLoaded.current;
