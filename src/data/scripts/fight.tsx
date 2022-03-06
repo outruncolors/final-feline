@@ -3,11 +3,13 @@ import { observable, observe } from "mobx";
 import Chance from "chance";
 import { foes, Foe, FoeKind } from "../foes";
 import {
+  contain,
   loadFoeAnimations,
   loadJobAnimations,
   keyboard,
   KeyboardHandler,
   EntityAnimations,
+  hitTestRectangle,
 } from "../../common";
 import { Job, JobKind, jobs } from "../jobs";
 import type { GameState, GameChangers } from "../../App";
@@ -15,6 +17,7 @@ import type { GameState, GameChangers } from "../../App";
 const CHANCE = new Chance();
 const keyboardHandlers: KeyboardHandler[] = [];
 let gameChangersRef: GameChangers;
+let screenRef: PIXI.Container;
 
 export const fightEnterScript = (
   gameState: GameState,
@@ -33,6 +36,7 @@ export const fightEnterScript = (
   if (screen) {
     registerEntities(screen);
     registerKeys();
+    screenRef = screen;
   }
 
   PIXI.Ticker.shared.add(gameLoop);
@@ -143,8 +147,8 @@ const gameLoop = () => {
         const tag = `${who.guid}/move`;
         const walkForward = () => {
           tracker.set(tag, {
-            vx: 2,
-            vy: 0,
+            vx: CHANCE.integer({ min: 0, max: 3 }),
+            vy: CHANCE.integer({ min: 0, max: 3 }),
             func: () => {
               const elapsedTime = battleState.time - initialTime;
 
@@ -160,8 +164,8 @@ const gameLoop = () => {
           gameChangersRef.changeDialogue([]);
 
           tracker.set(tag, {
-            vx: -2,
-            vy: 0,
+            vx: -CHANCE.integer({ min: 0, max: 3 }),
+            vy: -CHANCE.integer({ min: 0, max: 3 }),
             func: () => {
               const elapsedTime = battleState.time - initialTime;
 
@@ -181,6 +185,8 @@ const gameLoop = () => {
     for (const entity of (battleState.foes as Entity[]).concat(
       battleState.heroes
     )) {
+      const isFoe = battleState.foes.includes(entity as FoeWithAnimations);
+
       for (const handler of ["focus", "move"]) {
         const tag = `${entity.guid}/${handler}`;
 
@@ -189,6 +195,48 @@ const gameLoop = () => {
           entity.container.position.x += vx;
           entity.container.position.y += vy;
           func();
+
+          // Contain to boundaries.
+          if (isFoe && screenRef) {
+            const entityCollision = contain(entity.container as any, screenRef);
+
+            if (["left", "right"].includes(entityCollision ?? "")) {
+              tracker.set(tag, {
+                vx: 0,
+                vy: vy,
+                func,
+              });
+            }
+
+            if (["up", "down"].includes(entityCollision ?? "")) {
+              tracker.set(tag, {
+                vx: vx,
+                vy: 0,
+                func,
+              });
+            }
+
+            // Handle collision with other foes.
+            const otherFoes = battleState.foes.filter(
+              (foe) => foe.guid !== entity.guid
+            );
+            for (const foe of otherFoes) {
+              if (hitTestRectangle(entity.container, foe.container)) {
+                tracker.set(tag, {
+                  vx: -vx,
+                  vy: -vy,
+                  func,
+                });
+              }
+            }
+
+            // Foes grow larger when closer to the party.
+            const verticalDistance = entity.container.y;
+            const fullDistance = screenRef.height;
+            const distancePercent = verticalDistance / fullDistance;
+
+            entity.container.scale.set(1 + distancePercent * 2);
+          }
         }
       }
     }

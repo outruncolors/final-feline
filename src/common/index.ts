@@ -4,6 +4,7 @@ export * from "./contain";
 export * as config from "./config";
 export * from "./effects";
 export * from "./helpers";
+export * from "./hittest";
 export * from "./keyboard";
 export * from "./spacing";
 export * from "./sprites";
