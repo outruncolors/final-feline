@@ -2,7 +2,7 @@ import * as Ant from "antd";
 import { ReactNode, useState, createContext, useMemo, useEffect } from "react";
 import "./App.css";
 import "antd/dist/antd.css";
-import { ActionBar, SpeechBox, Layout, MenuKind } from "./components";
+import { ActionBar, Game, SpeechBox, Layout, MenuKind } from "./components";
 import { noop } from "./common";
 
 function App() {
@@ -61,6 +61,7 @@ function App() {
     <AppStateContext.Provider value={gameState}>
       <AppChangerContext.Provider value={gameChangers}>
         <Layout footer={<ActionBar />}>
+          <Game />
           <SpeechBox />
         </Layout>
       </AppChangerContext.Provider>
