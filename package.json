@@ -16,6 +16,7 @@
     "antd": "^4.18.9",
     "chance": "^1.1.8",
     "classnames": "^2.3.1",
+    "gsap": "^3.9.1",
     "lodash.clonedeep": "^4.5.0",
     "lodash.throttle": "^4.1.1",
     "mobx": "^6.4.2",
@@ -54,6 +55,7 @@
     ]
   },
   "devDependencies": {
+    "@types/gsap": "^3.0.0",
     "@types/lodash.clonedeep": "^4.5.6",
     "@types/lodash.throttle": "^4.1.6",
     "@types/webfontloader": "^1.6.34"

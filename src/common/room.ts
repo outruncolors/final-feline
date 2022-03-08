@@ -179,7 +179,11 @@ export const generateRoomShell = (width: number, height: number) => {
   return shell;
 };
 
-export const useRoom = (tilesetName: string, roomLayout: RoomLayout) => {
+export const useRoom = (
+  tilesetName: string,
+  roomLayout: RoomLayout,
+  onEachSprite?: (sprite: PIXI.Sprite) => void
+) => {
   const tileset = useTileset(tilesetName);
   const [room, setRoom] = useState<Nullable<PIXI.Container>>(null);
 
@@ -206,6 +210,8 @@ export const useRoom = (tilesetName: string, roomLayout: RoomLayout) => {
             clone.anchor.set(0.5);
             clone.position.x += xDistance;
             clone.angle = determineAngleFromName(piece);
+
+            onEachSprite?.(clone);
           }
 
           j++;
@@ -218,7 +224,7 @@ export const useRoom = (tilesetName: string, roomLayout: RoomLayout) => {
 
       setRoom(_room);
     }
-  }, [tileset, roomLayout]);
+  }, [tileset, roomLayout, onEachSprite]);
 
   return room;
 };
