@@ -13,7 +13,9 @@ export function Game() {
   const gameWrapper = useRef<Nullable<HTMLDivElement>>(null);
   const { screen } = usePixiApp(gameWrapper.current);
   const _layout = useMemo(() => generateRoomShell(4, 4), []);
-  const adjustEachSprite = useCallback((sprite: PIXI.Sprite) => {}, []);
+  const adjustEachSprite = useCallback((sprite: PIXI.Sprite) => {
+    sprite.name = sprite.texture.textureCacheIds[0];
+  }, []);
   const room = useRoom("bar", _layout, adjustEachSprite);
   const handleSheetLoad = useCallback(
     (sheet: PIXI.Spritesheet) => {

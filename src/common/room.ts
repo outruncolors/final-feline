@@ -203,6 +203,8 @@ export const useRoom = (
           const sprite = tileset[piece];
 
           if (sprite) {
+            sprite.name = piece;
+
             const xDistance = j * 128;
             const clone = PIXI.Sprite.from(sprite.texture);
             _row.addChild(clone);

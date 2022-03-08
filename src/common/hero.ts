@@ -1,5 +1,4 @@
 import * as PIXI from "pixi.js";
-import { InteractionEvent } from "pixi.js";
 import { registerCharacterMovement } from "./movement";
 
 type HeroWeapon = "sword" | "axe" | "hammer";
@@ -7,7 +6,7 @@ export type Hero = ReturnType<typeof createHero>;
 
 export const createHero = (sheet: PIXI.Spritesheet, weapon: HeroWeapon) => {
   const container = new PIXI.Container();
-  container.pivot.set(0.5);
+  container.pivot.set(0.5, 1);
   container.scale.set(2);
   const idleSprite = new PIXI.AnimatedSprite(
     sheet.animations[`hero/idle/${weapon}`]
@@ -47,20 +46,26 @@ export const createHero = (sheet: PIXI.Spritesheet, weapon: HeroWeapon) => {
   let unregister: ReturnType<typeof registerCharacterMovement>;
   const hero = {
     container,
-    animations: [idleSprite, walkSprite],
+    animations: {
+      all: [idleSprite, walkSprite],
+      each: {
+        idleSprite,
+        walkSprite,
+      },
+    },
     methods: {
       stand,
       walk,
       moveTo,
       flip: () => {
-        for (const sprite of hero.animations) {
+        for (const sprite of hero.animations.all) {
           const prevX = sprite.anchor.x;
           sprite.anchor.x = prevX === 0 ? 1 : 0;
           sprite.scale.x *= -1;
         }
       },
       register: (room: PIXI.Container) => {
-        unregister = registerCharacterMovement(hero);
+        unregister = registerCharacterMovement(hero, room);
       },
       unregister: (room: PIXI.Container) => {
         unregister?.();

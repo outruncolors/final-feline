@@ -1,13 +1,15 @@
 import * as PIXI from "pixi.js";
-import { useEffect } from "react";
+import { gsap } from "gsap";
 import { contain } from "./contain";
+import { colors } from "./colors";
 import { keyboard } from "./keyboard";
 import { pixiNames } from "./pixi";
 import type { Hero } from "./hero";
+import { hitTestRectangle } from ".";
 
 const CHARACTER_MOVEMENT_SPEED = 3;
 
-export const registerCharacterMovement = (hero: Hero) => {
+export const registerCharacterMovement = (hero: Hero, room: PIXI.Container) => {
   const { container } = hero;
   const directions = ["w", "a", "s", "d"].map(keyboard);
   const [up, left, down, right] = directions;
@@ -64,12 +66,28 @@ export const registerCharacterMovement = (hero: Hero) => {
 
   // Sprite Direction
   let flipped = false;
+
+  const text = new PIXI.Text("hey", {
+    fill: colors.white,
+    stroke: colors.black,
+    fontSize: 36,
+  });
+  room.addChild(text);
+  // Bind to floor.
+  for (const row of room.children) {
+    for (const tile of (row as PIXI.Container).children as PIXI.Sprite[]) {
+      if (tile.name?.includes("tileset") && !tile.name?.includes("floor")) {
+        tile.alpha = 0.1;
+      }
+    }
+  }
   const move = () => {
     const { vx, vy } = tracked;
 
     container.position.x += vx;
     container.position.y += vy;
 
+    // Flip when moving left.
     if (vx < 0 && !flipped) {
       hero.methods.flip();
       flipped = true;
@@ -78,11 +96,20 @@ export const registerCharacterMovement = (hero: Hero) => {
       flipped = false;
     }
 
+    // Switch animation.
     if (vx === 0 && vy === 0) {
       hero.methods.stand();
     } else {
       hero.methods.walk();
     }
+
+    // Bind to floor.
+    contain(hero.container, {
+      x: 128,
+      y: 128,
+      width: 128 * 6,
+      height: 128 * 6,
+    });
   };
 
   PIXI.Ticker.shared.add(move);
@@ -91,113 +118,4 @@ export const registerCharacterMovement = (hero: Hero) => {
     directions.forEach((handler) => handler.unsubscribe());
     PIXI.Ticker.shared.remove(move);
   };
-};
-
-export const useCharacterMovement = (
-  bootstrapped: boolean,
-  screen: Nullable<PIXI.Container>
-) => {
-  useEffect(() => {
-    if (bootstrapped && screen) {
-      const heroWalkSheet =
-        PIXI.Loader.shared.resources["/assets/textures/hero-walk.json"]
-          .spritesheet;
-
-      if (heroWalkSheet) {
-        const heroWalkAnimation = new PIXI.AnimatedSprite(
-          heroWalkSheet.animations["walk.xml."]
-        );
-        screen.addChild(heroWalkAnimation);
-        heroWalkAnimation.scale.set(0.6);
-        heroWalkAnimation.anchor.set(0.5);
-        heroWalkAnimation.animationSpeed = 0.8;
-
-        //
-        const hitbox = PIXI.Sprite.from(PIXI.Texture.WHITE);
-        hitbox.name = pixiNames.HITBOX;
-        hitbox.width = 200 * 0.6;
-        hitbox.height = 200 * 0.6;
-        hitbox.visible = false;
-        hitbox.anchor.set(0.5);
-        hitbox.position.set(40 * 0.6, 100 * 0.6);
-        heroWalkAnimation.addChild(hitbox);
-        heroWalkAnimation.hitArea = {
-          contains: (x, y) => {
-            return hitbox.containsPoint({ x, y });
-          },
-        };
-
-        //
-        const up = keyboard("w"),
-          right = keyboard("d"),
-          down = keyboard("s"),
-          left = keyboard("a");
-        const directionKeys = [up, right, down, left];
-
-        let walking: "left" | "none" | "right" = "none";
-        let velocity = {
-          x: 0,
-          y: 0,
-        };
-        let flipped = false;
-
-        up.press = () => {
-          if (!down.isDown) {
-            if (walking === "none") {
-              walking = "right";
-            }
-            velocity.y = -8;
-          }
-        };
-        right.press = () => {
-          walking = "right";
-          velocity.x = 8;
-        };
-        down.press = () => {
-          if (walking === "none") {
-            walking = "right";
-          }
-
-          velocity.y = 8;
-        };
-        left.press = () => {
-          walking = "left";
-          velocity.x = -8;
-        };
-
-        const handleWalking = () => {
-          if (directionKeys.some((key) => key.isDown)) {
-            heroWalkAnimation.play();
-
-            if (
-              (walking === "left" && !flipped) ||
-              (walking !== "left" && flipped)
-            ) {
-              heroWalkAnimation.scale.x *= -1;
-              flipped = !flipped;
-            }
-          } else {
-            heroWalkAnimation.gotoAndStop(0);
-            velocity = {
-              x: 0,
-              y: 0,
-            };
-          }
-
-          heroWalkAnimation.position.x += velocity.x;
-          heroWalkAnimation.position.y += velocity.y;
-
-          contain(heroWalkAnimation, screen);
-        };
-
-        PIXI.Ticker.shared.add(handleWalking);
-
-        return () => {
-          screen.removeChild(heroWalkAnimation);
-          directionKeys.forEach((key) => key.unsubscribe());
-          PIXI.Ticker.shared.remove(handleWalking);
-        };
-      }
-    }
-  }, [bootstrapped, screen]);
 };

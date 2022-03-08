@@ -1,4 +1,17 @@
-export function hitTestRectangle(r1: any, r2: any) {
+interface Testable {
+  x: number;
+  y: number;
+  centerX?: number;
+  centerY?: number;
+  width: number;
+  halfWidth?: number;
+  height: number;
+  halfHeight?: number;
+}
+
+export function hitTestRectangle(r1: Testable, r2: Testable) {
+  (window as any).hitt = { r1, r2, z: (r2 as any).toLocal(r1) };
+
   //Define the variables we'll need to calculate
   let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
 

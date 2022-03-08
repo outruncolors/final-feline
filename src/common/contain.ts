@@ -1,21 +1,19 @@
 import * as PIXI from "pixi.js";
-import { pixiNames } from ".";
 
-export const contain = (
-  sprite: PIXI.Sprite | PIXI.AnimatedSprite,
-  container: PIXI.Container
-) => {
-  let collision: undefined | "left" | "top" | "right" | "bottom" = undefined;
-  const _container = container as any;
-  const hitbox = sprite.getChildByName(pixiNames.HITBOX) as PIXI.AnimatedSprite;
-
-  if (!hitbox) {
-    throw new Error();
+export function contain(
+  sprite: PIXI.Container,
+  container: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
   }
+) {
+  let collision = undefined;
 
   //Left
-  if (hitbox.getGlobalPosition().x - hitbox.width / 2 < container.x) {
-    sprite.x = container.x + hitbox.width / 2;
+  if (sprite.x < container.x) {
+    sprite.x = container.x;
     collision = "left";
   }
 
@@ -26,17 +24,17 @@ export const contain = (
   }
 
   //Right
-  if (hitbox.getGlobalPosition().x + hitbox.width / 2 > _container._width) {
-    sprite.x = _container._width - hitbox.width / 2;
+  if (sprite.x + sprite.width > container.width) {
+    sprite.x = container.width - sprite.width;
     collision = "right";
   }
 
   //Bottom
-  if (hitbox.getGlobalPosition().y + hitbox.height / 2 > _container._height) {
-    sprite.y = _container._height - hitbox.height;
+  if (sprite.y + sprite.height > container.height) {
+    sprite.y = container.height - sprite.height;
     collision = "bottom";
   }
 
   //Return the `collision` value
   return collision;
-};
+}
