@@ -1,5 +1,197 @@
 {"frames": {
 
+"hero/idle/axe/0":
+{
+	"frame": {"x":65,"y":197,"w":57,"h":63},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":57,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/idle/axe/1":
+{
+	"frame": {"x":311,"y":131,"w":56,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":56,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/idle/axe/2":
+{
+	"frame": {"x":427,"y":131,"w":54,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":54,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/idle/hammer/0":
+{
+	"frame": {"x":324,"y":196,"w":56,"h":63},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":56,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/idle/hammer/1":
+{
+	"frame": {"x":471,"y":1,"w":54,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":54,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/idle/hammer/2":
+{
+	"frame": {"x":414,"y":1,"w":55,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":55,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/idle/sword/0":
+{
+	"frame": {"x":517,"y":196,"w":53,"h":63},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":53,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/idle/sword/1":
+{
+	"frame": {"x":471,"y":66,"w":54,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":54,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/idle/sword/2":
+{
+	"frame": {"x":483,"y":131,"w":54,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":54,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/axe/0":
+{
+	"frame": {"x":130,"y":197,"w":57,"h":63},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":57,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/axe/1":
+{
+	"frame": {"x":389,"y":196,"w":56,"h":62},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":2,"w":56,"h":62},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/axe/2":
+{
+	"frame": {"x":1,"y":131,"w":63,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":63,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/axe/3":
+{
+	"frame": {"x":259,"y":196,"w":59,"h":63},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":59,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/axe/4":
+{
+	"frame": {"x":195,"y":197,"w":57,"h":62},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":57,"h":62},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/hammer/0":
+{
+	"frame": {"x":369,"y":131,"w":56,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":56,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/hammer/1":
+{
+	"frame": {"x":1,"y":197,"w":58,"h":62},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":2,"w":58,"h":62},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/hammer/2":
+{
+	"frame": {"x":66,"y":131,"w":63,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":63,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/hammer/3":
+{
+	"frame": {"x":249,"y":131,"w":60,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":60,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/hammer/4":
+{
+	"frame": {"x":453,"y":196,"w":56,"h":62},
+	"rotated": true,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":56,"h":62},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/sword/0":
+{
+	"frame": {"x":527,"y":1,"w":53,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":53,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/sword/1":
+{
+	"frame": {"x":196,"y":131,"w":51,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":0,"w":51,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/sword/2":
+{
+	"frame": {"x":131,"y":131,"w":63,"h":64},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":63,"h":64},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/sword/3":
+{
+	"frame": {"x":414,"y":66,"w":55,"h":63},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":0,"w":55,"h":63},
+	"sourceSize": {"w":64,"h":64}
+},
+"hero/walk/sword/4":
+{
+	"frame": {"x":527,"y":66,"w":53,"h":62},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":0,"w":53,"h":62},
+	"sourceSize": {"w":64,"h":64}
+},
 "tilesets/bar/floor":
 {
 	"frame": {"x":1,"y":1,"w":128,"h":128},
@@ -10,7 +202,7 @@
 },
 "tilesets/bar/wall-corner":
 {
-	"frame": {"x":1,"y":131,"w":128,"h":128},
+	"frame": {"x":131,"y":1,"w":128,"h":128},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
@@ -18,7 +210,7 @@
 },
 "tilesets/bar/wall-top-corner":
 {
-	"frame": {"x":1,"y":414,"w":17,"h":17},
+	"frame": {"x":539,"y":130,"w":17,"h":17},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":111,"w":17,"h":17},
@@ -26,27 +218,35 @@
 },
 "tilesets/bar/wall-top":
 {
-	"frame": {"x":1,"y":391,"w":128,"h":21},
-	"rotated": false,
+	"frame": {"x":391,"y":1,"w":128,"h":21},
+	"rotated": true,
 	"trimmed": true,
 	"spriteSourceSize": {"x":0,"y":107,"w":128,"h":21},
 	"sourceSize": {"w":128,"h":128}
 },
 "tilesets/bar/wall":
 {
-	"frame": {"x":1,"y":261,"w":128,"h":128},
+	"frame": {"x":261,"y":1,"w":128,"h":128},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
 	"sourceSize": {"w":128,"h":128}
 }},
+"animations": {
+	"hero/idle/axe": ["hero/idle/axe/0","hero/idle/axe/1","hero/idle/axe/2"],
+	"hero/idle/hammer": ["hero/idle/hammer/0","hero/idle/hammer/1","hero/idle/hammer/2"],
+	"hero/idle/sword": ["hero/idle/sword/0","hero/idle/sword/1","hero/idle/sword/2"],
+	"hero/walk/axe": ["hero/walk/axe/0","hero/walk/axe/1","hero/walk/axe/2","hero/walk/axe/3","hero/walk/axe/4"],
+	"hero/walk/hammer": ["hero/walk/hammer/0","hero/walk/hammer/1","hero/walk/hammer/2","hero/walk/hammer/3","hero/walk/hammer/4"],
+	"hero/walk/sword": ["hero/walk/sword/0","hero/walk/sword/1","hero/walk/sword/2","hero/walk/sword/3","hero/walk/sword/4"]
+},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "sprites.png",
 	"format": "RGBA8888",
-	"size": {"w":130,"h":432},
+	"size": {"w":581,"h":256},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:d5218384faa8c25ed504b2e36b6c3a55:6a18a6a535ea04d3144e34e64b3dc1c6:1eabdf11f75e3a4fe3147baf7b5be24b$"
+	"smartupdate": "$TexturePacker:SmartUpdate:4ca40763aac2cd7ad05d640f2ee3d0cf:838cf1e2b5e224fb4feb59d62ca492d5:1eabdf11f75e3a4fe3147baf7b5be24b$"
 }
 }
