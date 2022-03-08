@@ -1,0 +1,52 @@
+{"frames": {
+
+"tilesets/bar/floor":
+{
+	"frame": {"x":1,"y":1,"w":128,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"tilesets/bar/wall-corner":
+{
+	"frame": {"x":1,"y":131,"w":128,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+	"sourceSize": {"w":128,"h":128}
+},
+"tilesets/bar/wall-top-corner":
+{
+	"frame": {"x":1,"y":414,"w":17,"h":17},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":111,"w":17,"h":17},
+	"sourceSize": {"w":128,"h":128}
+},
+"tilesets/bar/wall-top":
+{
+	"frame": {"x":1,"y":391,"w":128,"h":21},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":107,"w":128,"h":21},
+	"sourceSize": {"w":128,"h":128}
+},
+"tilesets/bar/wall":
+{
+	"frame": {"x":1,"y":261,"w":128,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
+	"sourceSize": {"w":128,"h":128}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "sprites.png",
+	"format": "RGBA8888",
+	"size": {"w":130,"h":432},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:d5218384faa8c25ed504b2e36b6c3a55:6a18a6a535ea04d3144e34e64b3dc1c6:1eabdf11f75e3a4fe3147baf7b5be24b$"
+}
+}
