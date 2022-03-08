@@ -2,6 +2,7 @@ export * as chance from "./chance";
 export * from "./colors";
 export * from "./contain";
 export * from "./helpers";
+export * from "./hero";
 export * from "./hittest";
 export * from "./keyboard";
 export * from "./movement";

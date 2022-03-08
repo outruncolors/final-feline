@@ -50,17 +50,18 @@ export const usePixiApp = (wrapper: Nullable<HTMLElement>) => {
 };
 
 let alreadyLoaded = false;
-export const useSpritesheet = () => {
+export const useSpritesheet = (onLoad?: (sheet: PIXI.Spritesheet) => void) => {
   const [spritesheet, setSpritesheet] =
     useState<Nullable<PIXI.Spritesheet>>(null);
 
   useEffect(() => {
     if (!spritesheet) {
       if (alreadyLoaded) {
-        setSpritesheet(
+        const sheet =
           PIXI.Loader.shared.resources["/assets/textures/sprites.json"]
-            .spritesheet!
-        );
+            .spritesheet!;
+        setSpritesheet(sheet);
+        onLoad?.(sheet);
       } else {
         if (!PIXI.Loader.shared.loading) {
           new Promise((resolve) => {
@@ -75,11 +76,12 @@ export const useSpritesheet = () => {
                 .spritesheet!;
             setSpritesheet(sheet);
             alreadyLoaded = true;
+            onLoad?.(sheet);
           });
         }
       }
     }
-  }, [spritesheet]);
+  }, [spritesheet, onLoad]);
 
   return spritesheet;
 };
