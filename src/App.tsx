@@ -38,15 +38,6 @@ function App() {
   );
 
   useEffect(() => {
-    setNotifications([
-      {
-        message: "Test",
-        duration: 3000,
-      },
-    ]);
-  }, []);
-
-  useEffect(() => {
     const [active] = notifications;
 
     if (active) {
