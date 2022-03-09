@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import { gsap } from "gsap";
 import PixiPlugin from "gsap/PixiPlugin";
 import MotionPathPlugin from "gsap/MotionPathPlugin";
-import { chance, colors, hitTestRectangle, keyboard } from "../common";
+import { chance, colors, keyboard } from "../common";
 
 const makeTarget = (index: number) =>
   new PIXI.Graphics()
@@ -160,14 +160,6 @@ export const createSpelkirv = (screen: PIXI.Container, difficulty: number) => {
             PIXI.Ticker.shared.remove(handleAttempts);
           }
         }
-
-        targets.forEach((target) => {
-          if (hitTestRectangle(measure, target)) {
-            target.tint = colors.blue;
-          } else {
-            target.tint = colors.white;
-          }
-        });
       }
     };
     PIXI.Ticker.shared.add(handleAttempts);

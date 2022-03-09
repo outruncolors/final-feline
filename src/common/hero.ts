@@ -6,8 +6,8 @@ export type Hero = ReturnType<typeof createHero>;
 
 export const createHero = (sheet: PIXI.Spritesheet, weapon: HeroWeapon) => {
   const container = new PIXI.Container();
-  container.pivot.set(0.5, 1);
   container.scale.set(2);
+  container.pivot.set(0.5);
   const idleSprite = new PIXI.AnimatedSprite(
     sheet.animations[`hero/idle/${weapon}`]
   );

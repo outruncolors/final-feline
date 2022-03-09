@@ -1,11 +1,7 @@
 import * as PIXI from "pixi.js";
-import { gsap } from "gsap";
-import { contain } from "./contain";
 import { colors } from "./colors";
 import { keyboard } from "./keyboard";
-import { pixiNames } from "./pixi";
 import type { Hero } from "./hero";
-import { hitTestRectangle } from ".";
 
 const CHARACTER_MOVEMENT_SPEED = 3;
 
@@ -104,12 +100,12 @@ export const registerCharacterMovement = (hero: Hero, room: PIXI.Container) => {
     }
 
     // Bind to floor.
-    contain(hero.container, {
-      x: 128,
-      y: 128,
-      width: 128 * 6,
-      height: 128 * 6,
-    });
+    // contain(hero.container, {
+    //   x: 128,
+    //   y: 128,
+    //   width: 128 * 6,
+    //   height: 128 * 6,
+    // } as PIXI.Container);
   };
 
   PIXI.Ticker.shared.add(move);

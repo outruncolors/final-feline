@@ -1,12 +1,13 @@
 import * as PIXI from "pixi.js";
-import { gsap } from "gsap";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   usePixiApp,
   useRoom,
   generateRoomShell,
   createHero,
+  createDramanode,
   useSpritesheet,
+  Bump,
 } from "../common";
 
 export function Game() {
@@ -20,13 +21,36 @@ export function Game() {
   const handleSheetLoad = useCallback(
     (sheet: PIXI.Spritesheet) => {
       if (room) {
+        const node = createDramanode(sheet);
+        room.addChild(node.container);
+        node.methods.moveTo(room.width / 2, room.height / 2 + 64);
+
         const hero = createHero(sheet, "axe");
         room.addChild(hero.container);
         hero.methods.register(room);
         hero.methods.moveTo(room.width / 2, room.height / 2);
 
+        const checkin = () => {
+          if (bump.current) {
+            for (const each of [node]) {
+              const hit = bump.current.hit(
+                hero.container,
+                each.container,
+                true
+              );
+
+              if (hit) {
+                node.methods.explode();
+              }
+            }
+          }
+        };
+
+        PIXI.Ticker.shared.add(checkin);
+
         return () => {
           hero.methods.unregister(room);
+          PIXI.Ticker.shared.remove(checkin);
         };
       }
     },
@@ -34,6 +58,7 @@ export function Game() {
   );
   useSpritesheet(handleSheetLoad);
   const done = useRef(false);
+  const bump = useRef<Nullable<Bump>>(null);
 
   useEffect(() => {
     if (!done.current && screen && room) {
@@ -45,9 +70,7 @@ export function Game() {
         _screen._height / 2 - room.height / 2
       );
 
-      const foo = gsap.utils.interpolate({ x: 1, y: 1 }, { x: 2, y: 2 }, 0.5);
-      console.log({ foo });
-
+      bump.current = new Bump(PIXI);
       done.current = true;
     }
   });
