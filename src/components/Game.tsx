@@ -6,6 +6,7 @@ import {
   generateRoomShell,
   createHero,
   createDramanode,
+  createGlitchGate,
   useSpritesheet,
   Bump,
 } from "../common";
@@ -21,14 +22,22 @@ export function Game() {
   const handleSheetLoad = useCallback(
     (sheet: PIXI.Spritesheet) => {
       if (room) {
-        const node = createDramanode(sheet);
-        room.addChild(node.container);
-        node.methods.moveTo(room.width / 2, room.height / 2 + 64);
+        const gate = createGlitchGate(sheet);
+        room.addChild(gate.container);
+        gate.methods.moveTo(room.width / 4, room.height / 2);
 
         const hero = createHero(sheet, "axe");
         room.addChild(hero.container);
         hero.methods.register(room);
         hero.methods.moveTo(room.width / 2, room.height / 2);
+
+        gate.container.interactive = true;
+        gate.container.buttonMode = true;
+        gate.container.on("pointerdown", gate.methods.toggle);
+
+        const node = createDramanode(sheet);
+        room.addChild(node.container);
+        node.methods.moveTo(room.width / 2, room.height / 2);
 
         const checkin = () => {
           if (bump.current) {

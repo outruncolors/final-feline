@@ -1,7 +1,8 @@
+export * from "./bump";
 export * as chance from "./chance";
 export * from "./colors";
 export * from "./dramanode";
-export * from "./bump";
+export * from "./glitch-gate";
 export * from "./helpers";
 export * from "./hero";
 export * from "./keyboard";
