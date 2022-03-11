@@ -40,7 +40,7 @@ export function Game() {
               );
 
               if (hit) {
-                node.methods.explode();
+                // node.methods.explode();
               }
             }
           }

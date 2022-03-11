@@ -7,8 +7,9 @@ export const createDramanode = (sheet: PIXI.Spritesheet) => {
   const pulseSprite = new PIXI.AnimatedSprite(
     sheet.animations[`etc/dramanode/pulse`]
   );
+
   container.addChild(pulseSprite);
-  pulseSprite.animationSpeed = 0.05;
+  pulseSprite.animationSpeed = 0.2;
   pulseSprite.play();
 
   const explodeSprite = new PIXI.AnimatedSprite(
@@ -37,7 +38,6 @@ export const createDramanode = (sheet: PIXI.Spritesheet) => {
         if (!explodeSprite.visible) {
           explodeSprite.visible = true;
           pulseSprite.visible = false;
-
           explodeSprite.play();
         }
       },

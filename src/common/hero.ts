@@ -14,9 +14,8 @@ export const createHero = (sheet: PIXI.Spritesheet, weapon: HeroWeapon) => {
   idleSprite.animationSpeed = 0.05;
   idleSprite.play();
 
-  const walkSprite = new PIXI.AnimatedSprite(
-    sheet.animations[`hero/walk/${weapon}`]
-  );
+  const walkSprite = new PIXI.AnimatedSprite(sheet.animations[`hero/walk`]);
+  console.log(walkSprite);
   walkSprite.animationSpeed = 0.2;
   walkSprite.play();
   walkSprite.visible = false;
